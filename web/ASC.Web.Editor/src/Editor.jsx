@@ -24,22 +24,23 @@ import {
   updateFile,
   removeFromFavorite,
   markAsFavorite,
-  createTextFileInMy,
   getFileVersionInfo,
 } from "@appserver/common/api/files";
-import { checkIsAuthenticated } from "@appserver/common/api/user";
-import { getUser } from "@appserver/common/api/people";
 import FilesFilter from "@appserver/common/api/files/filter";
 
 import throttle from "lodash/throttle";
 import { isIOS, deviceType } from "react-device-detect";
 import { homepage } from "../package.json";
 
-import { AppServerConfig } from "@appserver/common/constants";
+import { AppServerConfig, FolderType } from "@appserver/common/constants";
 import SharingDialog from "files/SharingDialog";
-import { createNewFile, getDefaultFileName, openDocEditor } from "files/utils";
+import { getDefaultFileName } from "files/utils";
 import i18n from "./i18n";
-import { FolderType } from "@appserver/common/constants";
+
+import store from "studio/store";
+
+const { auth: authStore } = store;
+
 let documentIsReady = false;
 
 const text = "text";
@@ -47,12 +48,14 @@ const spreadSheet = "spreadsheet";
 const presentation = "presentation";
 
 let docTitle = null;
-let fileType = null;
-let config;
+let actionLink;
 let docSaved = null;
 let docEditor;
 let fileInfo;
 let successAuth;
+let isSharingAccess;
+let user = null;
+let config;
 const url = window.location.href;
 const filesUrl = url.substring(0, url.indexOf("/doceditor"));
 
@@ -70,16 +73,13 @@ const Editor = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(true);
 
-  const throttledChangeTitle = throttle(
-    () => changeTitle(docSaved, docTitle),
-    500
-  );
+  const throttledChangeTitle = throttle(() => changeTitle(), 500);
 
   useEffect(() => {
     init();
   }, []);
 
-  const updateUsersRightsList = () => {
+  const loadUsersRightsList = () => {
     SharingDialog.getSharingSettings(fileId).then((sharingSettings) => {
       docEditor.setSharingSettings({
         sharingSettings,
@@ -89,6 +89,90 @@ const Editor = () => {
 
   const updateFavorite = (favorite) => {
     docEditor.setFavorite(favorite);
+  };
+
+  const getRecent = async (config) => {
+    try {
+      const recentFolderList = await getRecentFolderList();
+
+      const filesArray = recentFolderList.files.slice(0, 25);
+
+      const recentFiles = filesArray.filter(
+        (file) =>
+          file.rootFolderType !== FolderType.SHARE &&
+          ((config.documentType === text && file.fileType === 7) ||
+            (config.documentType === spreadSheet && file.fileType === 5) ||
+            (config.documentType === presentation && file.fileType === 6))
+      );
+
+      const groupedByFolder = recentFiles.reduce((r, a) => {
+        r[a.folderId] = [...(r[a.folderId] || []), a];
+        return r;
+      }, {});
+
+      const requests = Object.entries(groupedByFolder).map((item) =>
+        getFolderInfo(item[0])
+          .then((folderInfo) =>
+            Promise.resolve({
+              files: item[1],
+              folderInfo: folderInfo,
+            })
+          )
+          .catch((e) => console.error(e))
+      );
+
+      let recent = [];
+
+      let responses = await Promise.all(requests);
+
+      for (let res of responses) {
+        res.files.forEach((file) => {
+          const convertedData = convertRecentData(file, res.folderInfo);
+          if (Object.keys(convertedData).length !== 0)
+            recent.push(convertedData);
+        });
+      }
+
+      return recent;
+    } catch (e) {
+      console.error(e);
+    }
+
+    return null;
+  };
+
+  const initDesktop = (config) => {
+    const isEncryption = config.editorConfig["encryptionKeys"] !== undefined;
+
+    regDesktop(
+      user,
+      isEncryption,
+      config.editorConfig.encryptionKeys,
+      (keys) => {
+        setEncryptionKeys(keys);
+      },
+      true,
+      (callback) => {
+        getEncryptionAccess(fileId)
+          .then((keys) => {
+            var data = {
+              keys,
+            };
+
+            callback(data);
+          })
+          .catch((error) => {
+            console.log(error);
+            toastr.error(
+              typeof error === "string" ? error : error.message,
+              null,
+              0,
+              true
+            );
+          });
+      },
+      i18n.t
+    );
   };
 
   const init = async () => {
@@ -105,9 +189,15 @@ const Editor = () => {
       }
 
       //showLoader();
-
       const docApiUrl = await getDocServiceUrl();
-      successAuth = await checkIsAuthenticated();
+
+      try {
+        await authStore.init(true);
+        user = authStore.userStore.user;
+        successAuth = user !== null;
+      } catch (e) {
+        successAuth = false;
+      }
 
       if (!doc && !successAuth) {
         window.open(
@@ -131,107 +221,27 @@ const Editor = () => {
 
       config = await openEdit(fileId, version, doc);
 
+      actionLink = config?.editorConfig?.actionLink;
+
       if (isDesktop) {
-        const isEncryption =
-          config.editorConfig["encryptionKeys"] !== undefined;
-        const user = await getUser();
-
-        regDesktop(
-          user,
-          isEncryption,
-          config.editorConfig.encryptionKeys,
-          (keys) => {
-            setEncryptionKeys(keys);
-          },
-          true,
-          (callback) => {
-            getEncryptionAccess(fileId)
-              .then((keys) => {
-                var data = {
-                  keys,
-                };
-
-                callback(data);
-              })
-              .catch((error) => {
-                console.log(error);
-                toastr.error(
-                  typeof error === "string" ? error : error.message,
-                  null,
-                  0,
-                  true
-                );
-              });
-          },
-          i18n.t
-        );
+        initDesktop();
       }
 
       if (successAuth) {
-        const recentFolderList = await getRecentFolderList();
+        const recent = await getRecent(config); //TODO: too slow for 1st loading
 
-        let recentFilesArray = [];
-
-        const filesArray = recentFolderList.files;
-
-        for (let i = 0; i < filesArray.length; i++) {
-          if (
-            config.documentType === text &&
-            filesArray[i].fileType === 7 &&
-            filesArray[i].rootFolderType !== FolderType.SHARE
-          ) {
-            const folderInfo = await getFolderInfo(filesArray[i].folderId);
-
-            const convertedData = convertRecentData(filesArray[i], folderInfo);
-
-            if (Object.keys(convertedData).length !== 0)
-              recentFilesArray.push(convertedData);
-          }
-
-          if (
-            config.documentType === spreadSheet &&
-            filesArray[i].fileType === 5 &&
-            filesArray[i].rootFolderType !== FolderType.SHARE
-          ) {
-            const folderInfo = await getFolderInfo(filesArray[i].folderId);
-
-            const convertedData = convertRecentData(filesArray[i], folderInfo);
-
-            if (Object.keys(convertedData).length !== 0)
-              recentFilesArray.push(convertedData);
-          }
-
-          if (
-            config.documentType === presentation &&
-            filesArray[i].fileType === 6 &&
-            filesArray[i].rootFolderType !== FolderType.SHARE
-          ) {
-            const folderInfo = await getFolderInfo(filesArray[i].folderId);
-
-            const convertedData = convertRecentData(filesArray[i], folderInfo);
-
-            if (Object.keys(convertedData).length !== 0)
-              recentFilesArray.push(convertedData);
-          }
+        if (recent) {
+          config.editorConfig = {
+            ...config.editorConfig,
+            recent: recent,
+          };
         }
-
-        config.editorConfig = {
-          ...config.editorConfig,
-          recent: recentFilesArray,
-        };
       }
 
-      if (
-        config &&
-        config.document.permissions.edit &&
-        config.document.permissions.modifyFilter &&
-        fileInfo
-      ) {
-        const sharingSettings = await SharingDialog.getSharingSettings(fileId);
-        config.document.info = {
-          ...config.document.info,
-          sharingSettings,
-        };
+      isSharingAccess = fileInfo && fileInfo.canShare;
+
+      if (url.indexOf("action=view") !== -1) {
+        config.editorConfig.mode = "view";
       }
 
       setIsLoading(false);
@@ -252,12 +262,12 @@ const Editor = () => {
     let obj = {};
     const folderName = folder.title;
     const fileName = file.title;
-    const url = file.webUrl;
-    if (fileId !== file.id)
+
+    if (+fileId !== file.id)
       obj = {
         folder: folderName,
         title: fileName,
-        url: url,
+        url: file.webUrl,
       };
     return obj;
   };
@@ -266,18 +276,18 @@ const Editor = () => {
     return isIOS && deviceType === "tablet";
   };
 
-  const setFavicon = (fileType) => {
+  const setFavicon = (documentType) => {
     const favicon = document.getElementById("favicon");
     if (!favicon) return;
     let icon = null;
-    switch (fileType) {
-      case "docx":
+    switch (documentType) {
+      case "text":
         icon = "text.ico";
         break;
-      case "pptx":
+      case "presentation":
         icon = "presentation.ico";
         break;
-      case "xlsx":
+      case "spreadsheet":
         icon = "spreadsheet.ico";
         break;
       default:
@@ -287,7 +297,7 @@ const Editor = () => {
     if (icon) favicon.href = `${homepage}/images/${icon}`;
   };
 
-  const changeTitle = (docSaved, docTitle) => {
+  const changeTitle = () => {
     docSaved ? setDocumentTitle(docTitle) : setDocumentTitle(`*${docTitle}`);
   };
 
@@ -328,29 +338,28 @@ const Editor = () => {
   };
 
   const onLoad = (config) => {
-    console.log("Editor config: ", config);
-
     try {
-      console.log(config);
+      if (!window.DocsAPI) throw new Error("DocsAPI is not defined");
+
+      console.log("Editor config: ", config);
 
       docTitle = config.document.title;
-      fileType = config.document.fileType;
 
-      setFavicon(fileType);
+      setFavicon(config.documentType);
       setDocumentTitle(docTitle);
 
       if (window.innerWidth < 720) {
         config.type = "mobile";
       }
 
-      let goback;
+      let goBack;
 
       if (fileInfo) {
         const filterObj = FilesFilter.getDefault();
         filterObj.folder = fileInfo.folderId;
         const urlFilter = filterObj.toUrlParams();
 
-        goback = {
+        goBack = {
           blank: true,
           requestClose: false,
           text: i18n.t("FileLocation"),
@@ -360,24 +369,50 @@ const Editor = () => {
 
       config.editorConfig.customization = {
         ...config.editorConfig.customization,
-        goback,
+        goback: goBack,
       };
 
-      let onRequestSharingSettings;
-      let onRequestRename;
-      let onRequestCreateNew;
+      if (url.indexOf("anchor") !== -1) {
+        const splitUrl = url.split("anchor=");
+        const decodeURI = decodeURIComponent(splitUrl[1]);
+        const obj = JSON.parse(decodeURI);
 
-      if (
-        fileInfo &&
-        config.document.permissions.edit &&
-        config.document.permissions.modifyFilter
-      ) {
-        onRequestSharingSettings = onSDKRequestSharingSettings;
-        onRequestRename = onSDKRequestRename;
+        config.editorConfig.actionLink = {
+          action: obj.action,
+        };
       }
 
       if (successAuth) {
-        onRequestCreateNew = onSDKRequestCreateNew;
+        const documentType = config.documentType;
+        const fileExt =
+          documentType === text
+            ? "docx"
+            : documentType === presentation
+            ? "pptx"
+            : "xlsx";
+
+        const defaultFileName = getDefaultFileName(fileExt);
+
+        if (!user.isVisitor)
+          config.editorConfig.createUrl = combineUrl(
+            window.location.origin,
+            AppServerConfig.proxyURL,
+            "products/files/",
+            `/httphandlers/filehandler.ashx?action=create&doctype=text&title=${encodeURIComponent(
+              defaultFileName
+            )}`
+          );
+      }
+
+      let onRequestSharingSettings;
+      let onRequestRename;
+
+      if (isSharingAccess) {
+        onRequestSharingSettings = onSDKRequestSharingSettings;
+      }
+
+      if (fileInfo && fileInfo.canEdit) {
+        onRequestRename = onSDKRequestRename;
       }
 
       const events = {
@@ -391,7 +426,7 @@ const Editor = () => {
           onError: onSDKError,
           onRequestSharingSettings,
           onRequestRename,
-          onRequestCreateNew,
+          onMakeActionLink: onMakeActionLink,
           onRequestHistory: onSDKRequestHistory,
           onRequestHistoryClose: onSDKRequestHistoryClose,
           onRequestHistoryData: onSDKRequestHistoryData,
@@ -399,8 +434,6 @@ const Editor = () => {
       };
 
       const newConfig = Object.assign(config, events);
-
-      if (!window.DocsAPI) throw new Error("DocsAPI is not defined");
 
       docEditor = window.DocsAPI.DocEditor("editor", newConfig);
     } catch (error) {
@@ -456,6 +489,18 @@ const Editor = () => {
 
   const onSDKAppReady = () => {
     console.log("ONLYOFFICE Document Editor is ready");
+
+    const index = url.indexOf("#message/");
+    if (index > -1) {
+      const splitUrl = url.split("#message/");
+      const message = decodeURIComponent(splitUrl[1]).replaceAll("+", " ");
+      message && toastr.info(message);
+      history.pushState({}, null, url.substring(0, index));
+    }
+
+    if (fileInfo && fileInfo.canShare) {
+      loadUsersRightsList();
+    }
   };
 
   const onSDKInfo = (event) => {
@@ -470,32 +515,25 @@ const Editor = () => {
     setIsVisible(true);
   };
 
-  const onSDKRequestCreateNew = () => {
-    const documentType = config.documentType;
-    const fileExst =
-      documentType === text
-        ? "docx"
-        : documentType === presentation
-        ? "pptx"
-        : "xlsx";
-
-    const defaultFileName = getDefaultFileName(fileExst);
-
-    fileInfo && fileInfo.rootFolderType !== FolderType.SHARE
-      ? createNewFile(
-          fileInfo.folderId,
-          `${defaultFileName}.${fileExst}`
-        ).catch((error) => console.log("error", error))
-      : createTextFileInMy(`${defaultFileName}.${fileExst}`).then((file) =>
-          openDocEditor(file.id, file.providerKey).catch((error) =>
-            console.log("error", error)
-          )
-        );
-  };
-
   const onSDKRequestRename = (event) => {
     const title = event.data;
     updateFile(fileInfo.id, title);
+  };
+
+  const onMakeActionLink = (event) => {
+    var ACTION_DATA = event.data;
+
+    const link = generateLink(ACTION_DATA);
+
+    const urlFormation = !actionLink ? url : url.split("&anchor=")[0];
+
+    const linkFormation = `${urlFormation}&anchor=${link}`;
+
+    docEditor.setActionLink(linkFormation);
+  };
+
+  const generateLink = (actionData) => {
+    return encodeURIComponent(JSON.stringify(actionData));
   };
 
   const onCancel = () => {
@@ -560,12 +598,12 @@ const Editor = () => {
       {!isLoading ? (
         <>
           <div id="editor"></div>
-          {fileInfo && (
+          {isSharingAccess && (
             <SharingDialog
               isVisible={isVisible}
               sharingObject={fileInfo}
               onCancel={onCancel}
-              onSuccess={updateUsersRightsList}
+              onSuccess={loadUsersRightsList}
             />
           )}
         </>

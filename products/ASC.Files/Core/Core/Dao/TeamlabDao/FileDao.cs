@@ -713,8 +713,8 @@ namespace ASC.Files.Core.Data
         {
             return Query(FilesDbContext.Files)
                 .AsNoTracking()
-                .Any(r => r.Title == title && 
-                          r.FolderId == folderId && 
+                .Any(r => r.Title == title &&
+                          r.FolderId == folderId &&
                           r.CurrentVersion);
         }
 
@@ -1201,14 +1201,11 @@ namespace ASC.Files.Core.Data
                     .Select(r =>
                         {
                             var item = ServiceProvider.GetService<EditHistory>();
-                            var editHistoryAuthor = ServiceProvider.GetService<EditHistoryAuthor>();
-
-                            editHistoryAuthor.Id = r.ModifiedBy;
                             item.ID = r.Id;
                             item.Version = r.Version;
                             item.VersionGroup = r.VersionGroup;
                             item.ModifiedOn = TenantUtil.DateTimeFromUtc(r.ModifiedOn);
-                            item.ModifiedBy = editHistoryAuthor;
+                            item.ModifiedBy = r.ModifiedBy;
                             item.ChangesString = r.Changes;
                             item.Key = documentServiceHelper.GetDocKey(item.ID, item.Version, TenantUtil.DateTimeFromUtc(r.CreateOn));
 
@@ -1225,8 +1222,8 @@ namespace ASC.Files.Core.Data
         public bool ContainChanges(int fileId, int fileVersion)
         {
             return Query(FilesDbContext.Files)
-                .Any(r => r.Id == fileId && 
-                          r.Version == fileVersion && 
+                .Any(r => r.Id == fileId &&
+                          r.Version == fileVersion &&
                           r.Changes != null);
         }
 
@@ -1282,7 +1279,7 @@ namespace ASC.Files.Core.Data
             var toUpdate = FilesDbContext.Files
                 .FirstOrDefault(r => r.Id == file.ID && r.Version == file.Version && r.TenantId == TenantID);
 
-            if (toUpdate != null) 
+            if (toUpdate != null)
             {
                 toUpdate.Thumb = thumbnail != null ? Thumbnail.Created : file.ThumbnailStatus;
                 FilesDbContext.SaveChanges();

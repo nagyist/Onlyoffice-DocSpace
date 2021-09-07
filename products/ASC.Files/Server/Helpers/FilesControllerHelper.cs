@@ -18,7 +18,9 @@ using ASC.Core;
 using ASC.Core.Common.Settings;
 using ASC.FederatedLogin.Helpers;
 using ASC.Files.Core;
+using ASC.Files.Core.Model;
 using ASC.Files.Model;
+using ASC.Web.Api.Models;
 using ASC.Web.Core.Files;
 using ASC.Web.Files.Classes;
 using ASC.Web.Files.Core.Entries;
@@ -63,6 +65,8 @@ namespace ASC.Files.Helpers
         private DocumentServiceTrackerHelper DocumentServiceTracker { get; }
         private SettingsManager SettingsManager { get; }
         private EncryptionKeyPairHelper EncryptionKeyPairHelper { get; }
+        private ApiDateTimeHelper ApiDateTimeHelper { get; }
+        private EmployeeWraperHelper EmployeeWraperHelper { get; }
         private ILog Logger { get; set; }
 
         /// <summary>
@@ -89,7 +93,9 @@ namespace ASC.Files.Helpers
             DocumentServiceTrackerHelper documentServiceTracker,
             IOptionsMonitor<ILog> optionMonitor,
             SettingsManager settingsManager,
-            EncryptionKeyPairHelper encryptionKeyPairHelper)
+            EncryptionKeyPairHelper encryptionKeyPairHelper,
+            ApiDateTimeHelper apiDateTimeHelper,
+            EmployeeWraperHelper employeeWraperHelper)
         {
             ApiContext = context;
             FileStorageService = fileStorageService;
@@ -110,6 +116,8 @@ namespace ASC.Files.Helpers
             DocumentServiceTracker = documentServiceTracker;
             SettingsManager = settingsManager;
             EncryptionKeyPairHelper = encryptionKeyPairHelper;
+            ApiDateTimeHelper = apiDateTimeHelper;
+            EmployeeWraperHelper = employeeWraperHelper;
             Logger = optionMonitor.Get("ASC.Files");
         }
 
@@ -218,7 +226,7 @@ namespace ASC.Files.Helpers
                     };
                 }
             }
-            
+
             if (!configuration.Document.Info.File.Encrypted && !configuration.Document.Info.File.ProviderEntry) EntryManager.MarkAsRecent(configuration.Document.Info.File);
 
             configuration.Token = DocumentServiceHelper.GetSignature(configuration);
@@ -493,19 +501,30 @@ namespace ASC.Files.Helpers
         public IEnumerable<FileWrapper<T>> GetFileVersionInfo(T fileId)
         {
             var files = FileStorageService.GetFileHistory(fileId);
-            return files.Select(r=> FileWrapperHelper.Get(r)).ToList();
+            return files.Select(r => FileWrapperHelper.Get(r)).ToList();
         }
 
         public IEnumerable<FileWrapper<T>> ChangeHistory(T fileId, int version, bool continueVersion)
         {
             var history = FileStorageService.CompleteVersion(fileId, version, continueVersion).Value;
-            return history.Select(r=> FileWrapperHelper.Get(r)).ToList();
+            return history.Select(r => FileWrapperHelper.Get(r)).ToList();
         }
 
         public FileWrapper<T> LockFile(T fileId, bool lockFile)
         {
             var result = FileStorageService.LockFile(fileId, lockFile);
             return FileWrapperHelper.Get(result);
+        }
+
+        public List<EditHistoryWrapper> GetEditHistory(T fileId, string doc = null)
+        {
+            var result = FileStorageService.GetEditHistory(fileId, doc);
+            return result.Select(r => new EditHistoryWrapper(r, ApiDateTimeHelper, EmployeeWraperHelper)).ToList();
+        }
+
+        public EditHistoryData GetEditDiffUrl(T fileId, int version = 0, string doc = null)
+        {
+            return FileStorageService.GetEditDiffUrl(fileId, version, doc);
         }
 
         public string UpdateComment(T fileId, int version, string comment)
@@ -543,7 +562,7 @@ namespace ASC.Files.Helpers
 
         public IEnumerable<FileShareWrapper> SetFolderSecurityInfo(T folderId, IEnumerable<FileShareParams> share, bool notify, string sharingMessage)
         {
-            return SetSecurityInfo(new List<T>(), new List<T> { folderId}, share, notify, sharingMessage);
+            return SetSecurityInfo(new List<T>(), new List<T> { folderId }, share, notify, sharingMessage);
         }
 
         public IEnumerable<FileShareWrapper> SetSecurityInfo(IEnumerable<T> fileIds, IEnumerable<T> folderIds, IEnumerable<FileShareParams> share, bool notify, string sharingMessage)

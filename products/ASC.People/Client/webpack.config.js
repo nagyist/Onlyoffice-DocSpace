@@ -173,31 +173,31 @@ module.exports = (env, argv) => {
   };
 
   const mfConfig = {
-      name: "people",
-      filename: "remoteEntry.js",
-      remotes: {
-        studio: `studio@${combineUrl(
-          AppServerConfig.proxyURL,
-          "/remoteEntry.js"
-        )}`,
-        people: `people@${combineUrl(
-          AppServerConfig.proxyURL,
-          "/products/people/remoteEntry.js"
-        )}`,
-      },
-      exposes: {
-        "./app": "./src/People.jsx",
-        "./GroupSelector": "./src/components/GroupSelector",
-        "./PeopleSelector": "./src/components/PeopleSelector",
-        "./PeopleSelector/UserTooltip":
-          "./src/components/PeopleSelector/sub-components/UserTooltip.js",
-        "./MyProfile": "./src/pages/My",
-      },
-      shared: {
-        ...deps,
-        ...sharedDeps,
-      },
-    };
+    name: "people",
+    filename: "remoteEntry.js",
+    remotes: {
+      studio: `studio@${combineUrl(
+        AppServerConfig.proxyURL,
+        "/remoteEntry.js"
+      )}`,
+      people: `people@${combineUrl(
+        AppServerConfig.proxyURL,
+        "/products/people/remoteEntry.js"
+      )}`,
+    },
+    exposes: {
+      "./app": "./src/People.jsx",
+      "./GroupSelector": "./src/components/GroupSelector",
+      "./PeopleSelector": "./src/components/PeopleSelector",
+      "./PeopleSelector/UserTooltip":
+        "./src/components/PeopleSelector/sub-components/UserTooltip.js",
+      "./MyProfile": "./src/pages/My",
+    },
+    shared: {
+      ...deps,
+      ...sharedDeps,
+    },
+  };
 
   if (argv.mode === "production") {
     config.mode = "production";
@@ -210,10 +210,13 @@ module.exports = (env, argv) => {
     console.log("env", env);
 
     if (env.CDN_URL) {
-      const publicPath = combineUrl(env.CDN_URL, homepage);
+      const publicPath = combineUrl(env.CDN_URL, homepage) + "/";
       console.log("publicPath with env.CDN_URL", publicPath);
+
       htmlConfig.publicPath = publicPath;
+
       config.output = { ...config.output, publicPath };
+
       mfConfig.remotes.studio = `studio@${combineUrl(
         publicPath,
         "/remoteEntry.js"
@@ -222,8 +225,9 @@ module.exports = (env, argv) => {
         publicPath,
         "/products/people/remoteEntry.js"
       )}`;
-      console.log("htmlConfig", htmlConfig);
-      console.log("mfConfig", mfConfig);
+
+      //console.log("htmlConfig", htmlConfig);
+      //console.log("mfConfig", mfConfig);
     }
   } else {
     config.devtool = "cheap-module-source-map";

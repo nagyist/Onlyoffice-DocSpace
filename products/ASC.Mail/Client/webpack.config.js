@@ -173,22 +173,22 @@ module.exports = (env, argv) => {
   };
 
   const mfConfig = {
-      name: "mail",
-      filename: "remoteEntry.js",
-      remotes: {
-        studio: `studio@${combineUrl(
-          AppServerConfig.proxyURL,
-          "/remoteEntry.js"
-        )}`,
-      },
-      exposes: {
-        "./app": "./src/Mail.jsx",
-      },
-      shared: {
-        ...deps,
-        ...sharedDeps,
-      },
-    };
+    name: "mail",
+    filename: "remoteEntry.js",
+    remotes: {
+      studio: `studio@${combineUrl(
+        AppServerConfig.proxyURL,
+        "/remoteEntry.js"
+      )}`,
+    },
+    exposes: {
+      "./app": "./src/Mail.jsx",
+    },
+    shared: {
+      ...deps,
+      ...sharedDeps,
+    },
+  };
 
   if (argv.mode === "production") {
     config.mode = "production";
@@ -201,16 +201,20 @@ module.exports = (env, argv) => {
     console.log("env", env);
 
     if (env.CDN_URL) {
-      const publicPath = combineUrl(env.CDN_URL, homepage);
+      const publicPath = combineUrl(env.CDN_URL, homepage) + "/";
       console.log("publicPath with env.CDN_URL", publicPath);
+
       htmlConfig.publicPath = publicPath;
+
       config.output = { ...config.output, publicPath };
+
       mfConfig.remotes.studio = `studio@${combineUrl(
         publicPath,
         "/remoteEntry.js"
       )}`;
-      console.log("htmlConfig", htmlConfig);
-      console.log("mfConfig", mfConfig);
+
+      //console.log("htmlConfig", htmlConfig);
+      //console.log("mfConfig", mfConfig);
     }
   } else {
     config.devtool = "cheap-module-source-map";

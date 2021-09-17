@@ -239,10 +239,19 @@ module.exports = (env, argv) => {
     console.log("env", env);
 
     if (env.CDN_URL) {
-      const publicPath = combineUrl(env.CDN_URL, homepage);
+      const publicPath = combineUrl(env.CDN_URL, homepage) + "/";
+
       console.log("publicPath with env.CDN_URL", publicPath);
+
       htmlConfig.publicPath = publicPath;
-      config.output = { ...config.output, publicPath };
+
+      config.output = {
+        ...config.output,
+        publicPath,
+        chunkFilename: "static/js/[id].[contenthash].js",
+        filename: "static/js/[name].[contenthash].bundle.js",
+      };
+
       mfConfig.remotes.studio = `studio@${combineUrl(
         publicPath,
         "/remoteEntry.js"
@@ -251,8 +260,9 @@ module.exports = (env, argv) => {
         publicPath,
         "/products/people/remoteEntry.js"
       )}`;
-      console.log("htmlConfig", htmlConfig);
-      console.log("mfConfig", mfConfig);
+
+      //console.log("htmlConfig", htmlConfig);
+      //console.log("mfConfig", mfConfig);
     }
   } else {
     config.devtool = "cheap-module-source-map";

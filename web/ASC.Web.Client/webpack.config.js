@@ -3,8 +3,10 @@ const CopyPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ModuleFederationPlugin = require("webpack").container
   .ModuleFederationPlugin;
+const DefinePlugin = require("webpack").DefinePlugin;
 const ExternalTemplateRemotesPlugin = require("external-remotes-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
+
 const combineUrl = require("@appserver/common/utils/combineUrl");
 const AppServerConfig = require("@appserver/common/constants/AppServerConfig");
 const sharedDeps = require("@appserver/common/constants/sharedDependencies");
@@ -14,6 +16,7 @@ const pkg = require("./package.json");
 const deps = pkg.dependencies || {};
 const homepage = pkg.homepage; //combineUrl(AppServerConfig.proxyURL, pkg.homepage);
 const title = pkg.title;
+const version = pkg.version;
 
 const config = {
   entry: "./src/index",
@@ -166,43 +169,7 @@ const config = {
 
   plugins: [
     new CleanWebpackPlugin(),
-    new ModuleFederationPlugin({
-      name: "studio",
-      filename: "remoteEntry.js",
-      remotes: {
-        studio: `studio@${combineUrl(
-          AppServerConfig.proxyURL,
-          "/remoteEntry.js"
-        )}`,
-        people: `people@${combineUrl(
-          AppServerConfig.proxyURL,
-          "/products/people/remoteEntry.js"
-        )}`,
-      },
-      exposes: {
-        "./shell": "./src/Shell",
-        "./store": "./src/store",
-        "./Error404": "./src/components/pages/Errors/404/",
-        "./Error401": "./src/components/pages/Errors/401",
-        "./Error403": "./src/components/pages/Errors/403",
-        "./Error520": "./src/components/pages/Errors/520",
-        "./Layout": "./src/components/Layout",
-        "./Layout/context": "./src/components/Layout/context.js",
-        "./Main": "./src/components/Main",
-        "./toastr": "./src/helpers/toastr",
-      },
-      shared: {
-        ...deps,
-        ...sharedDeps,
-      },
-    }),
     new ExternalTemplateRemotesPlugin(),
-    new HtmlWebpackPlugin({
-      template: "./public/index.html",
-      publicPath: homepage,
-      title: title,
-      base: `${homepage}/`,
-    }),
     new CopyPlugin({
       patterns: [
         {
@@ -219,6 +186,44 @@ const config = {
 };
 
 module.exports = (env, argv) => {
+  const htmlConfig = {
+    template: "./public/index.html",
+    publicPath: homepage,
+    title: title,
+    base: `${homepage}/`,
+  };
+
+  const mfConfig = {
+    name: "studio",
+    filename: "remoteEntry.js",
+    remotes: {
+      studio: `studio@${combineUrl(
+        AppServerConfig.proxyURL,
+        "/remoteEntry.js"
+      )}`,
+      people: `people@${combineUrl(
+        AppServerConfig.proxyURL,
+        "/products/people/remoteEntry.js"
+      )}`,
+    },
+    exposes: {
+      "./shell": "./src/Shell",
+      "./store": "./src/store",
+      "./Error404": "./src/components/pages/Errors/404/",
+      "./Error401": "./src/components/pages/Errors/401",
+      "./Error403": "./src/components/pages/Errors/403",
+      "./Error520": "./src/components/pages/Errors/520",
+      "./Layout": "./src/components/Layout",
+      "./Layout/context": "./src/components/Layout/context.js",
+      "./Main": "./src/components/Main",
+      "./toastr": "./src/helpers/toastr",
+    },
+    shared: {
+      ...deps,
+      ...sharedDeps,
+    },
+  };
+
   if (argv.mode === "production") {
     config.mode = "production";
     config.optimization = {
@@ -230,9 +235,43 @@ module.exports = (env, argv) => {
         }),
       ],
     };
+
+    console.log("env", env);
+
+    if (env.CDN_URL) {
+      const publicPath = combineUrl(env.CDN_URL, homepage);
+      console.log("publicPath with env.CDN_URL", publicPath);
+      htmlConfig.publicPath = publicPath;
+      config.output = { ...config.output, publicPath };
+      mfConfig.remotes.studio = `studio@${combineUrl(
+        publicPath,
+        "/remoteEntry.js"
+      )}`;
+      mfConfig.remotes.people = `people@${combineUrl(
+        publicPath,
+        "/products/people/remoteEntry.js"
+      )}`;
+      console.log("htmlConfig", htmlConfig);
+      console.log("mfConfig", mfConfig);
+    }
   } else {
     config.devtool = "cheap-module-source-map";
   }
+
+  config.plugins = [
+    ...config.plugins,
+    new ModuleFederationPlugin(mfConfig),
+    new HtmlWebpackPlugin(htmlConfig),
+    new DefinePlugin({
+      VERSION: JSON.stringify(version),
+      BUILD_AT: DefinePlugin.runtimeValue(function () {
+        const timeElapsed = Date.now();
+        const today = new Date(timeElapsed);
+        return JSON.stringify(today.toUTCString());
+      }, true),
+      CDN_URL: JSON.stringify(env.CDN_URL || ""),
+    }),
+  ];
 
   return config;
 };

@@ -152,9 +152,12 @@ const Shell = ({ items = [], page = "home", ...rest }) => {
 
   useEffect(() => {
     try {
-      if (!window.AppServer) {
-        window.AppServer = {};
-      }
+      window.AppServer = {
+        ...(window.AppServer || {}),
+        cdnUrl: `${CDN_URL}`,
+        buildAt: `${BUILD_AT}`,
+        version: `${VERSION}`,
+      };
 
       //TEMP object, will be removed!!!
       window.AppServer.studio = {
@@ -349,7 +352,7 @@ const Shell = ({ items = [], page = "home", ...rest }) => {
   const dynamicRoutes = modules.map((m) => {
     const appURL = m.link;
     const remoteEntryURL = combineUrl(
-      window.location.origin,
+      window.AppServer.cdnUrl || window.location.origin,
       appURL,
       `remoteEntry.js?__index=${++index}`
     );
@@ -379,7 +382,10 @@ const Shell = ({ items = [], page = "home", ...rest }) => {
 
   if (isLoaded && !personal) {
     const loginSystem = {
-      url: combineUrl(AppServerConfig.proxyURL, "/login/remoteEntry.js"),
+      url: combineUrl(
+        window.AppServer.cdnUrl || window.location.origin,
+        "/login/remoteEntry.js"
+      ),
       scope: "login",
       module: "./app",
     };

@@ -148,30 +148,7 @@ var config = {
 
   plugins: [
     new CleanWebpackPlugin(),
-    new ModuleFederationPlugin({
-      name: "calendar",
-      filename: "remoteEntry.js",
-      remotes: {
-        studio: `studio@${combineUrl(
-          AppServerConfig.proxyURL,
-          "/remoteEntry.js"
-        )}`,
-      },
-      exposes: {
-        "./app": "./src/Calendar.jsx",
-      },
-      shared: {
-        ...deps,
-        ...sharedDeps,
-      },
-    }),
     new ExternalTemplateRemotesPlugin(),
-    new HtmlWebpackPlugin({
-      template: "./public/index.html",
-      publicPath: homepage,
-      title: title,
-      base: `${homepage}/`,
-    }),
     new CopyPlugin({
       patterns: [
         {
@@ -188,6 +165,31 @@ var config = {
 };
 
 module.exports = (env, argv) => {
+  const htmlConfig = {
+    template: "./public/index.html",
+    publicPath: homepage,
+    title: title,
+    base: `${homepage}/`,
+  };
+
+  const mfConfig = {
+      name: "calendar",
+      filename: "remoteEntry.js",
+      remotes: {
+        studio: `studio@${combineUrl(
+          AppServerConfig.proxyURL,
+          "/remoteEntry.js"
+        )}`,
+      },
+      exposes: {
+        "./app": "./src/Calendar.jsx",
+      },
+      shared: {
+        ...deps,
+        ...sharedDeps,
+      },
+    };
+
   if (argv.mode === "production") {
     config.mode = "production";
     config.optimization = {
@@ -195,9 +197,30 @@ module.exports = (env, argv) => {
       minimize: true,
       minimizer: [new TerserPlugin()],
     };
+
+    console.log("env", env);
+
+    if (env.CDN_URL) {
+      const publicPath = combineUrl(env.CDN_URL, homepage);
+      console.log("publicPath with env.CDN_URL", publicPath);
+      htmlConfig.publicPath = publicPath;
+      config.output = { ...config.output, publicPath };
+      mfConfig.remotes.studio = `studio@${combineUrl(
+        publicPath,
+        "/remoteEntry.js"
+      )}`;
+      console.log("htmlConfig", htmlConfig);
+      console.log("mfConfig", mfConfig);
+    }
   } else {
     config.devtool = "cheap-module-source-map";
   }
+
+  config.plugins = [
+    ...config.plugins,
+    new ModuleFederationPlugin(mfConfig),
+    new HtmlWebpackPlugin(htmlConfig),
+  ];
 
   return config;
 };

@@ -16,6 +16,7 @@ import { tablet, desktop } from "@appserver/components/utils/device";
 import { Consumer } from "@appserver/components/utils/context";
 import { inject, observer } from "mobx-react";
 import combineUrl from "@appserver/common/utils/combineUrl";
+import { homepage } from "../../../../../package.json";
 
 const StyledContainer = styled.div`
   .header-container {
@@ -415,7 +416,11 @@ class SectionHeaderContent extends React.Component {
                         <ContextMenuButton
                           className="add-button"
                           directionX="right"
-                          iconName="images/plus.svg"
+                          iconName={combineUrl(
+                            window.AppServer?.cdnUrl,
+                            homepage,
+                            "images/plus.svg"
+                          )}
                           size={17}
                           color="#A3A9AE"
                           hoverColor="#657077"
@@ -427,7 +432,11 @@ class SectionHeaderContent extends React.Component {
                           <ContextMenuButton
                             className="option-button"
                             directionX="right"
-                            iconName="images/vertical-dots.react.svg"
+                            iconName={combineUrl(
+                              window.AppServer?.cdnUrl,
+                              homepage,
+                              "images/vertical-dots.react.svg"
+                            )}
                             size={17}
                             color="#A3A9AE"
                             hoverColor="#657077"
@@ -442,7 +451,11 @@ class SectionHeaderContent extends React.Component {
                         <ContextMenuButton
                           className="add-button"
                           directionX="right"
-                          iconName="images/plus.svg"
+                          iconName={combineUrl(
+                            window.AppServer?.cdnUrl,
+                            homepage,
+                            "images/plus.svg"
+                          )}
                           size={17}
                           color="#A3A9AE"
                           hoverColor="#657077"

@@ -5,6 +5,7 @@ import EmptyContainer from "./EmptyContainer";
 import Link from "@appserver/components/link";
 import Box from "@appserver/components/box";
 import combineUrl from "@appserver/common/utils/combineUrl";
+import { homepage } from "../../../package.json";
 
 const EmptyFolderContainer = ({
   t,
@@ -26,7 +27,11 @@ const EmptyFolderContainer = ({
       <div className="empty-folder_container-links">
         <img
           className="empty-folder_container_plus-image"
-          src="images/plus.svg"
+          src={combineUrl(
+            window.AppServer?.cdnUrl,
+            homepage,
+            "images/plus.svg"
+          )}
           data-format="docx"
           onClick={onCreate}
           alt="plus_icon"
@@ -47,7 +52,11 @@ const EmptyFolderContainer = ({
       <div className="empty-folder_container-links">
         <img
           className="empty-folder_container_plus-image"
-          src="images/plus.svg"
+          src={combineUrl(
+            window.AppServer?.cdnUrl,
+            homepage,
+            "images/plus.svg"
+          )}
           onClick={onCreate}
           alt="plus_icon"
         />
@@ -59,7 +68,7 @@ const EmptyFolderContainer = ({
       <div className="empty-folder_container-links">
         <img
           className="empty-folder_container_up-image"
-          src="images/up.svg"
+          src={combineUrl(window.AppServer?.cdnUrl, homepage, "images/up.svg")}
           onClick={onBackToParentFolder}
           alt="up_icon"
         />

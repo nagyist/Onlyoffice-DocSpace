@@ -260,7 +260,11 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("Open"),
-              icon: "images/catalog.folder.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                config.homepage,
+                "images/catalog.folder.react.svg"
+              ),
               onClick: this.onOpenLocation,
               disabled: false,
             };
@@ -268,7 +272,11 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("ShowVersionHistory"),
-              icon: "images/history.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                config.homepage,
+                "images/history.react.svg"
+              ),
               onClick: this.showVersionHistory,
               disabled: false,
             };
@@ -276,7 +284,11 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("FinalizeVersion"),
-              icon: "images/history-finalized.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                config.homepage,
+                "images/history-finalized.react.svg"
+              ),
               onClick: this.finalizeVersion,
               disabled: false,
             };
@@ -289,7 +301,11 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("OpenLocation"),
-              icon: "images/download-as.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                config.homepage,
+                "images/download-as.react.svg"
+              ),
               onClick: this.onOpenLocation,
               disabled: false,
             };
@@ -297,7 +313,11 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("MarkAsFavorite"),
-              icon: "images/favorites.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                config.homepage,
+                "images/favorites.react.svg"
+              ),
               onClick: this.onClickFavorite,
               disabled: false,
               "data-action": "mark",
@@ -307,7 +327,11 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("UnblockVersion"),
-              icon: "images/lock.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                config.homepage,
+                "images/lock.react.svg"
+              ),
               onClick: this.lockFile,
               disabled: false,
             };
@@ -391,7 +415,11 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("Common:Download"),
-              icon: "images/download.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                config.homepage,
+                "images/download.react.svg"
+              ),
               onClick: this.onClickDownload,
               disabled: false,
             };
@@ -399,7 +427,11 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("Translations:DownloadAs"),
-              icon: "images/download-as.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                config.homepage,
+                "images/download-as.react.svg"
+              ),
               onClick: this.onClickDownloadAs,
               disabled: false,
             };
@@ -407,7 +439,11 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("MoveTo"),
-              icon: "images/move.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                config.homepage,
+                "images/move.react.svg"
+              ),
               onClick: this.onMoveAction,
               disabled: false,
             };
@@ -415,7 +451,11 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("Translations:Restore"),
-              icon: "images/move.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                config.homepage,
+                "images/move.react.svg"
+              ),
               onClick: this.onMoveAction,
               disabled: false,
             };
@@ -445,7 +485,11 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("Rename"),
-              icon: "images/rename.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                config.homepage,
+                "images/rename.react.svg"
+              ),
               onClick: this.onClickRename,
               disabled: false,
             };
@@ -477,7 +521,11 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("RemoveFromFavorites"),
-              icon: "images/favorites.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                config.homepage,
+                "images/favorites.react.svg"
+              ),
               onClick: this.onClickFavorite,
               disabled: false,
               "data-action": "remove",
@@ -487,7 +535,11 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("RemoveFromList"),
-              icon: "images/remove.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                config.homepage,
+                "images/remove.svg"
+              ),
               onClick: this.onClickUnsubscribe,
               disabled: false,
             };
@@ -495,7 +547,11 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("MarkRead"),
-              icon: "images/tick.rounded.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                config.homepage,
+                "images/tick.rounded.svg"
+              ),
               onClick: this.onClickMarkRead,
               disabled: false,
             };

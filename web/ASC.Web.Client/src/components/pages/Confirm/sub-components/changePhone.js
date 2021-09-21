@@ -8,6 +8,8 @@ import Text from "@appserver/components/text";
 import PageLayout from "@appserver/common/components/PageLayout";
 import { inject, observer } from "mobx-react";
 import withLoader from "../withLoader";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import { homepage } from "../../../../../package.json";
 
 const BodyStyle = styled.div`
   margin: 70px auto 0 auto;
@@ -65,7 +67,15 @@ const PhoneForm = (props) => {
   return (
     <BodyStyle>
       <div className="edit-header">
-        <img className="header-logo" src="images/dark_general.png" alt="Logo" />
+        <img
+          className="header-logo"
+          src={combineUrl(
+            window.AppServer?.cdnUrl,
+            homepage,
+            "images/dark_general.png"
+          )}
+          alt="Logo"
+        />
         <div className="header-title">{greetingTitle}</div>
       </div>
       <Text className="edit-text" isBold fontSize="14px">

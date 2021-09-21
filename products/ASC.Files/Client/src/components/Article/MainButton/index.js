@@ -82,42 +82,66 @@ class ArticleMainButtonContent extends React.Component {
       >
         <DropDownItem
           className="main-button_drop-down"
-          icon="images/actions.documents.react.svg"
+          icon={combineUrl(
+            window.AppServer?.cdnUrl,
+            config.homepage,
+            "images/actions.documents.react.svg"
+          )}
           label={t("NewDocument")}
           onClick={this.onCreate}
           data-format="docx"
         />
         <DropDownItem
           className="main-button_drop-down"
-          icon="images/spreadsheet.react.svg"
+          icon={combineUrl(
+            window.AppServer?.cdnUrl,
+            config.homepage,
+            "images/spreadsheet.react.svg"
+          )}
           label={t("NewSpreadsheet")}
           onClick={this.onCreate}
           data-format="xlsx"
         />
         <DropDownItem
           className="main-button_drop-down"
-          icon="images/actions.presentation.react.svg"
+          icon={combineUrl(
+            window.AppServer?.cdnUrl,
+            config.homepage,
+            "images/actions.presentation.react.svg"
+          )}
           label={t("NewPresentation")}
           onClick={this.onCreate}
           data-format="pptx"
         />
         <DropDownItem
           className="main-button_drop-down"
-          icon="images/catalog.folder.react.svg"
+          icon={combineUrl(
+            window.AppServer?.cdnUrl,
+            config.homepage,
+            "images/catalog.folder.react.svg"
+          )}
           label={t("NewFolder")}
           onClick={this.onCreate}
         />
         <DropDownItem isSeparator />
         <DropDownItem
           className="main-button_drop-down"
-          icon="images/actions.upload.react.svg"
+          icon={combineUrl(
+            window.AppServer?.cdnUrl,
+            config.homepage,
+            "images/actions.upload.react.svg"
+          )}
           label={t("UploadFiles")}
           onClick={this.onUploadFileClick}
         />
         {!isMobile && (
           <DropDownItem
             className="main-button_drop-down"
-            icon="images/actions.upload.react.svg"
+            icon={combineUrl(
+              window.AppServer?.cdnUrl,
+              config.homepage,
+              "images/actions.upload.react.svg"
+            )}
             label={t("UploadFolder")}
             disabled={isPrivacy}
             onClick={this.onUploadFolderClick}

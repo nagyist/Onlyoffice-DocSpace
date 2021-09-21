@@ -10,6 +10,8 @@ import Text from "@appserver/components/text";
 import PageLayout from "@appserver/common/components/PageLayout";
 import { deleteSelf } from "@appserver/common/api/people"; //TODO: Move inside UserStore
 import withLoader from "../withLoader";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import { homepage } from "../../../../../package.json";
 
 const ProfileRemoveContainer = styled.div`
   display: flex;
@@ -66,7 +68,14 @@ class ProfileRemove extends React.PureComponent {
         <div className="start-basis">
           <div className="confirm-row full-width break-word">
             <a href="/login">
-              <img src="images/dark_general.png" alt="Logo" />
+              <img
+                src={combineUrl(
+                  window.AppServer?.cdnUrl,
+                  homepage,
+                  "images/dark_general.png"
+                )}
+                alt="Logo"
+              />
             </a>
             <Text as="p" fontSize="24px" color="#116d9d">
               {greetingTitle}

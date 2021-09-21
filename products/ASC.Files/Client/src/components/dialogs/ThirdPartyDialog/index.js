@@ -8,6 +8,8 @@ import Text from "@appserver/components/text";
 import Link from "@appserver/components/link";
 import { connectedCloudsTitleTranslation } from "../../../helpers/utils";
 import NoUserSelect from "@appserver/components/utils/commonStyles";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import { homepage } from "../../../../package.json";
 
 const StyledServicesBlock = styled.div`
   display: grid;
@@ -152,7 +154,11 @@ const ThirdPartyDialog = (props) => {
             <ServiceItem
               capability={googleConnectItem}
               onClick={onShowService}
-              src="images/services/logo_google-drive.svg"
+              src={combineUrl(
+                window.AppServer?.cdnUrl,
+                homepage,
+                "images/services/logo_google-drive.svg"
+              )}
             />
           )}
 
@@ -160,7 +166,11 @@ const ThirdPartyDialog = (props) => {
             <ServiceItem
               capability={boxConnectItem}
               onClick={onShowService}
-              src="images/services/logo_box.svg"
+              src={combineUrl(
+                window.AppServer?.cdnUrl,
+                homepage,
+                "images/services/logo_box.svg"
+              )}
             />
           )}
 
@@ -168,7 +178,11 @@ const ThirdPartyDialog = (props) => {
             <ServiceItem
               capability={dropboxConnectItem}
               onClick={onShowService}
-              src="images/services/logo_dropbox.svg"
+              src={combineUrl(
+                window.AppServer?.cdnUrl,
+                homepage,
+                "images/services/logo_dropbox.svg"
+              )}
             />
           )}
 
@@ -176,7 +190,11 @@ const ThirdPartyDialog = (props) => {
             <ServiceItem
               capability={sharePointConnectItem}
               onClick={onShowService}
-              src="images/services/logo_sharepoint.svg"
+              src={combineUrl(
+                window.AppServer?.cdnUrl,
+                homepage,
+                "images/services/logo_sharepoint.svg"
+              )}
             />
           )}
 
@@ -184,7 +202,11 @@ const ThirdPartyDialog = (props) => {
             <ServiceItem
               capability={oneDriveConnectItem}
               onClick={onShowService}
-              src="images/services/logo_onedrive.svg"
+              src={combineUrl(
+                window.AppServer?.cdnUrl,
+                homepage,
+                "images/services/logo_onedrive.svg"
+              )}
             />
           )}
 
@@ -192,7 +214,11 @@ const ThirdPartyDialog = (props) => {
             <ServiceItem
               capability={sharePointConnectItem}
               onClick={onShowService}
-              src="images/services/logo_onedrive-for-business.svg"
+              src={combineUrl(
+                window.AppServer?.cdnUrl,
+                homepage,
+                "images/services/logo_onedrive-for-business.svg"
+              )}
             />
           )}
 
@@ -200,7 +226,11 @@ const ThirdPartyDialog = (props) => {
             <ServiceItem
               capability={webDavConnectItem}
               onClick={onShowService}
-              src="images/services/logo_nextcloud.svg"
+              src={combineUrl(
+                window.AppServer?.cdnUrl,
+                homepage,
+                "images/services/logo_nextcloud.svg"
+              )}
             />
           )}
 
@@ -208,7 +238,11 @@ const ThirdPartyDialog = (props) => {
             <ServiceItem
               capability={webDavConnectItem}
               onClick={onShowService}
-              src="images/services/logo_owncloud.svg"
+              src={combineUrl(
+                window.AppServer?.cdnUrl,
+                homepage,
+                "images/services/logo_owncloud.svg"
+              )}
             />
           )}
 
@@ -216,14 +250,22 @@ const ThirdPartyDialog = (props) => {
             <ServiceItem
               capability={kDriveConnectItem}
               onClick={onShowService}
-              src="images/services/logo_kdrive.svg"
+              src={combineUrl(
+                window.AppServer?.cdnUrl,
+                homepage,
+                "images/services/logo_kdrive.svg"
+              )}
             />
           )}
           {yandexConnectItem && (
             <ServiceItem
               capability={yandexConnectItem}
               onClick={onShowService}
-              src="images/services/logo_yandex_ru.svg"
+              src={combineUrl(
+                window.AppServer?.cdnUrl,
+                homepage,
+                "images/services/logo_yandex_ru.svg"
+              )}
             />
           )}
           {webDavConnectItem && (

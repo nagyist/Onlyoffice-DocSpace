@@ -283,7 +283,11 @@ class ProfileInfo extends React.PureComponent {
                     <IconButton
                       color="#C96C27"
                       size={16}
-                      iconName="images/danger.react.svg"
+                      iconName={combineUrl(
+                        window.AppServer?.cdnUrl,
+                        config.homepage,
+                        "images/danger.react.svg"
+                      )}
                       isFill={true}
                     />
                   </IconButtonWrapper>

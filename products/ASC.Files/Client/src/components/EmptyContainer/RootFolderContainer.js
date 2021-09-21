@@ -6,6 +6,8 @@ import EmptyContainer from "./EmptyContainer";
 import Link from "@appserver/components/link";
 import Text from "@appserver/components/text";
 import Box from "@appserver/components/box";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import { homepage } from "../../../package.json";
 
 const RootFolderContainer = (props) => {
   const {
@@ -33,7 +35,12 @@ const RootFolderContainer = (props) => {
   const recentDescription = t("RecentEmptyContainerDescription");
 
   const privateRoomHeader = t("PrivateRoomHeader");
-  const privacyIcon = <img alt="" src="images/privacy.svg" />;
+  const privacyIcon = (
+    <img
+      alt=""
+      src={combineUrl(window.AppServer?.cdnUrl, homepage, "images/privacy.svg")}
+    />
+  );
   const privateRoomDescTranslations = [
     t("PrivateRoomDescriptionSafest"),
     t("PrivateRoomDescriptionSecure"),
@@ -61,34 +68,58 @@ const RootFolderContainer = (props) => {
       case FolderType.SHARE:
         return {
           descriptionText: shareDescription,
-          imageSrc: "images/empty_screen_forme.png",
+          imageSrc: combineUrl(
+            window.AppServer?.cdnUrl,
+            homepage,
+            "images/empty_screen_forme.png"
+          ),
         };
       case FolderType.COMMON:
         return {
           descriptionText: commonDescription,
-          imageSrc: "images/empty_screen_corporate.png",
+          imageSrc: combineUrl(
+            window.AppServer?.cdnUrl,
+            homepage,
+            "images/empty_screen_corporate.png"
+          ),
           buttons: commonButtons,
         };
       case FolderType.Favorites:
         return {
           descriptionText: favoritesDescription,
-          imageSrc: "images/empty_screen_favorites.png",
+          imageSrc: combineUrl(
+            window.AppServer?.cdnUrl,
+            homepage,
+            "images/empty_screen_favorites.png"
+          ),
         };
       case FolderType.Recent:
         return {
           descriptionText: recentDescription,
-          imageSrc: "images/empty_screen_recent.png",
+          imageSrc: combineUrl(
+            window.AppServer?.cdnUrl,
+            homepage,
+            "images/empty_screen_recent.png"
+          ),
         };
       case FolderType.Privacy:
         return {
           descriptionText: privateRoomDescription,
-          imageSrc: "images/empty_screen_privacy.png",
+          imageSrc: combineUrl(
+            window.AppServer?.cdnUrl,
+            homepage,
+            "images/empty_screen_privacy.png"
+          ),
           buttons: isDesktop && isEncryptionSupport && commonButtons,
         };
       case FolderType.TRASH:
         return {
           descriptionText: trashDescription,
-          imageSrc: "images/empty_screen_trash.png",
+          imageSrc: combineUrl(
+            window.AppServer?.cdnUrl,
+            homepage,
+            "images/empty_screen_trash.png"
+          ),
           buttons: trashButtons,
         };
       default:
@@ -130,7 +161,11 @@ const RootFolderContainer = (props) => {
       <div className="empty-folder_container-links">
         <img
           className="empty-folder_container_plus-image"
-          src="images/plus.svg"
+          src={combineUrl(
+            window.AppServer?.cdnUrl,
+            homepage,
+            "images/plus.svg"
+          )}
           data-format="docx"
           onClick={onCreate}
           alt="plus_icon"
@@ -151,7 +186,11 @@ const RootFolderContainer = (props) => {
       <div className="empty-folder_container-links">
         <img
           className="empty-folder_container_plus-image"
-          src="images/plus.svg"
+          src={combineUrl(
+            window.AppServer?.cdnUrl,
+            homepage,
+            "images/plus.svg"
+          )}
           onClick={onCreate}
           alt="plus_icon"
         />
@@ -166,7 +205,11 @@ const RootFolderContainer = (props) => {
     <div className="empty-folder_container-links">
       <img
         className="empty-folder_container_up-image"
-        src="images/empty_screen_people.svg"
+        src={combineUrl(
+          window.AppServer?.cdnUrl,
+          homepage,
+          "images/empty_screen_people.svg"
+        )}
         width="12px"
         alt=""
         onClick={onGoToMyDocuments}

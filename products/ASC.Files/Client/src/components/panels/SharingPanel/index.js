@@ -490,12 +490,6 @@ class SharingPanelComponent extends React.Component {
                       )}
                     </DropDown>
                   </div>
-
-                  {/*<IconButton
-                  size="16"
-                  iconName="images/key.react.svg"
-                  onClick={this.onKeyClick}
-                />*/}
                 </div>
               )}
             </StyledHeaderContent>

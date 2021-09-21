@@ -6,6 +6,8 @@ import Box from "@appserver/components/box";
 import { tablet } from "@appserver/components/utils/device";
 import { useTranslation, Trans } from "react-i18next";
 import { inject } from "mobx-react";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import { homepage } from "../../../../../package.json";
 
 const StyledBodyAdvantages = styled.div`
   display: grid;
@@ -45,7 +47,11 @@ const AdvantagesContainer = ({ organizationName }) => {
 
       <Box className="row-advantages">
         <img
-          src="images/payments_enterprise_cubes.svg"
+          src={combineUrl(
+            window.AppServer?.cdnUrl,
+            homepage,
+            "images/payments_enterprise_cubes.svg"
+          )}
           width="24px"
           height="23px"
           alt="Icon_cubes"
@@ -61,7 +67,11 @@ const AdvantagesContainer = ({ organizationName }) => {
 
       <Box className="row-advantages">
         <img
-          src="images/payments_enterprise_lock.svg"
+          src={combineUrl(
+            window.AppServer?.cdnUrl,
+            homepage,
+            "images/payments_enterprise_lock.svg"
+          )}
           width="24px"
           height="23px"
           alt="Icon_lock"
@@ -73,7 +83,11 @@ const AdvantagesContainer = ({ organizationName }) => {
 
       <Box className="row-advantages">
         <img
-          src="images/payments_enterprise_smartphone.svg"
+          src={combineUrl(
+            window.AppServer?.cdnUrl,
+            homepage,
+            "images/payments_enterprise_smartphone.svg"
+          )}
           width="24px"
           height="23px"
           alt="Icon_smartphone"
@@ -85,7 +99,11 @@ const AdvantagesContainer = ({ organizationName }) => {
 
       <Box className="row-advantages">
         <img
-          src="images/payments_enterprise_update.svg"
+          src={combineUrl(
+            window.AppServer?.cdnUrl,
+            homepage,
+            "images/payments_enterprise_update.svg"
+          )}
           width="24px"
           height="23px"
           alt="Icon_update"
@@ -97,7 +115,11 @@ const AdvantagesContainer = ({ organizationName }) => {
 
       <Box className="row-advantages">
         <img
-          src="images/payments_enterprise_help.svg"
+          src={combineUrl(
+            window.AppServer?.cdnUrl,
+            homepage,
+            "images/payments_enterprise_help.svg"
+          )}
           width="24px"
           height="23px"
           alt="Icon_help"

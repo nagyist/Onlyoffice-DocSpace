@@ -172,48 +172,76 @@ const PureThirdPartyListContainer = ({
         {googleConnectItem && (
           <ServiceItem
             capability={googleConnectItem}
-            src="images/services/google_drive.svg"
+            src={combineUrl(
+              window.AppServer?.cdnUrl,
+              config.homepage,
+              "images/services/google_drive.svg"
+            )}
             onClick={onConnect}
           />
         )}
         {boxConnectItem && (
           <ServiceItem
             capability={boxConnectItem}
-            src="images/services/box.svg"
+            src={combineUrl(
+              window.AppServer?.cdnUrl,
+              config.homepage,
+              "images/services/box.svg"
+            )}
             onClick={onConnect}
           />
         )}
         {dropboxConnectItem && (
           <ServiceItem
             capability={dropboxConnectItem}
-            src="images/services/dropbox.svg"
+            src={combineUrl(
+              window.AppServer?.cdnUrl,
+              config.homepage,
+              "images/services/dropbox.svg"
+            )}
             onClick={onConnect}
           />
         )}
         {oneDriveConnectItem && (
           <ServiceItem
             capability={oneDriveConnectItem}
-            src="images/services/onedrive.svg"
+            src={combineUrl(
+              window.AppServer?.cdnUrl,
+              config.homepage,
+              "images/services/onedrive.svg"
+            )}
             onClick={onConnect}
           />
         )}
         {nextCloudConnectItem && (
           <ServiceItem
             capability={nextCloudConnectItem}
-            src="images/services/nextcloud.svg"
+            src={combineUrl(
+              window.AppServer?.cdnUrl,
+              config.homepage,
+              "images/services/nextcloud.svg"
+            )}
             onClick={onConnect}
           />
         )}
         {/* {webDavConnectItem && (
           <ServiceItem
             capability={webDavConnectItem}
-            src="images/services/more.svg"
+            src={combineUrl(
+              window.AppServer?.cdnUrl,
+              config.homepage,
+              "images/services/more.svg"
+            )}
             onClick={onConnect}
           />
         )} */}
 
         <IconButton
-          iconName="images/services/more.svg"
+          iconName={combineUrl(
+            window.AppServer?.cdnUrl,
+            config.homepage,
+            "images/services/more.svg"
+          )}
           onClick={onShowConnectPanel}
           {...iconButtonProps}
         />

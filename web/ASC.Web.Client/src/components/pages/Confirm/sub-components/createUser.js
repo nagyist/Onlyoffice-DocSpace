@@ -28,6 +28,8 @@ import {
 import { isMobile } from "react-device-detect";
 import { desktop } from "@appserver/components/utils/device";
 import withLoader from "../withLoader";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import { homepage } from "../../../../../package.json";
 
 const inputWidth = "400px";
 
@@ -403,7 +405,14 @@ class Confirm extends React.PureComponent {
 
             <div className="confirm-row full-width break-word">
               <a href="/login">
-                <img src="images/dark_general.png" alt="Logo" />
+                <img
+                  src={combineUrl(
+                    window.AppServer?.cdnUrl,
+                    homepage,
+                    "images/dark_general.png"
+                  )}
+                  alt="Logo"
+                />
               </a>
               <Text as="p" fontSize="24px" color="#116d9d">
                 {greetingTitle}

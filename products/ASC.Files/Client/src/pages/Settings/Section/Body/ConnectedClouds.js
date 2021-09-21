@@ -279,7 +279,11 @@ class ConnectClouds extends React.Component {
               <div className="empty-folder_container-links empty-connect_container-links">
                 <img
                   className="empty-folder_container_plus-image"
-                  src="images/plus.svg"
+                  src={combineUrl(
+                    window.AppServer?.cdnUrl,
+                    config.homepage,
+                    "images/plus.svg"
+                  )}
                   onClick={this.onShowThirdPartyDialog}
                   alt="plus_icon"
                 />

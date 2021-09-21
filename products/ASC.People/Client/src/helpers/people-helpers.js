@@ -6,7 +6,7 @@ import {
 import { isAdmin } from "@appserver/common/utils";
 import combineUrl from "@appserver/common/utils/combineUrl";
 import { id } from "../../package.json";
-//const { isAdmin } = utils;
+import { homepage } from "../../package.json";
 
 export const getUserStatus = (user) => {
   if (
@@ -49,62 +49,127 @@ export const getUserContactsPattern = () => {
       },
       {
         type: "phone",
-        icon: "/products/people/images/phone.react.svg",
+        icon: combineUrl(
+          window.AppServer?.cdnUrl,
+          homepage,
+          "images/phone.react.svg"
+        ),
         link: "tel:{0}",
       },
       {
         type: "mobphone",
-        icon: "/products/people/images/mobile.react.svg",
+        icon: combineUrl(
+          window.AppServer?.cdnUrl,
+          homepage,
+          "images/mobile.react.svg"
+        ),
         link: "tel:{0}",
       },
       {
         type: "gmail",
-        icon: "/products/people/images/gmail.react.svg",
+        icon: combineUrl(
+          window.AppServer?.cdnUrl,
+          homepage,
+          "images/gmail.react.svg"
+        ),
         link: "mailto:{0}",
       },
       {
         type: "skype",
-        icon: "/products/people/images/skype.react.svg",
+        icon: combineUrl(
+          window.AppServer?.cdnUrl,
+          homepage,
+          "images/skype.react.svg"
+        ),
         link: "skype:{0}?userinfo",
       },
-      { type: "msn", icon: "/products/people/images/windows.msn.react.svg" },
+      {
+        type: "msn",
+        icon: combineUrl(
+          window.AppServer?.cdnUrl,
+          homepage,
+          "images/windows.msn.react.svg"
+        ),
+      },
       {
         type: "icq",
-        icon: "/products/people/images/icq.react.svg",
+        icon: combineUrl(
+          window.AppServer?.cdnUrl,
+          homepage,
+          "images/icq.react.svg"
+        ),
         link: "https://www.icq.com/people/{0}",
       },
-      { type: "jabber", icon: "/products/people/images/jabber.react.svg" },
-      { type: "aim", icon: "/products/people/images/aim.react.svg" },
+      {
+        type: "jabber",
+        icon: combineUrl(
+          window.AppServer?.cdnUrl,
+          homepage,
+          "images/jabber.react.svg"
+        ),
+      },
+      {
+        type: "aim",
+        icon: combineUrl(
+          window.AppServer?.cdnUrl,
+          homepage,
+          "images/aim.react.svg"
+        ),
+      },
     ],
     social: [
       {
         type: "facebook",
-        icon: "/products/people/images/share.facebook.react.svg",
+        icon: combineUrl(
+          window.AppServer?.cdnUrl,
+          homepage,
+          "images/share.facebook.react.svg"
+        ),
         link: "https://facebook.com/{0}",
       },
       {
         type: "livejournal",
-        icon: "/products/people/images/livejournal.react.svg",
+        icon: combineUrl(
+          window.AppServer?.cdnUrl,
+          homepage,
+          "images/livejournal.react.svg"
+        ),
         link: "https://{0}.livejournal.com",
       },
       {
         type: "myspace",
-        icon: "/products/people/images/myspace.react.svg",
+        icon: combineUrl(
+          window.AppServer?.cdnUrl,
+          homepage,
+          "images/myspace.react.svg"
+        ),
         link: "https://myspace.com/{0}",
       },
       {
         type: "twitter",
-        icon: "/products/people/images/share.twitter.react.svg",
+        icon: combineUrl(
+          window.AppServer?.cdnUrl,
+          homepage,
+          "images/share.twitter.react.svg"
+        ),
         link: "https://twitter.com/{0}",
       },
       {
         type: "blogger",
-        icon: "/products/people/images/blogger.react.svg",
+        icon: combineUrl(
+          window.AppServer?.cdnUrl,
+          homepage,
+          "images/blogger.react.svg"
+        ),
         link: "https://{0}.blogspot.com",
       },
       {
         type: "yahoo",
-        icon: "/products/people/images/yahoo.react.svg",
+        icon: combineUrl(
+          window.AppServer?.cdnUrl,
+          homepage,
+          "images/yahoo.react.svg"
+        ),
         link: "mailto:{0}@yahoo.com",
       },
     ],

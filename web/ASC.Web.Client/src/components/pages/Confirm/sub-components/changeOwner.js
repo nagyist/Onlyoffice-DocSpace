@@ -9,6 +9,8 @@ import PageLayout from "@appserver/common/components/PageLayout";
 import { tryRedirectTo } from "@appserver/common/utils";
 import { inject, observer } from "mobx-react";
 import withLoader from "../withLoader";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import { homepage } from "../../../../../package.json";
 
 const BodyStyle = styled.div`
   margin-top: 70px;
@@ -78,7 +80,11 @@ class Form extends React.PureComponent {
           <div className="owner-wrapper">
             <img
               className="owner-img"
-              src="images/dark_general.png"
+              src={combineUrl(
+                window.AppServer?.cdnUrl,
+                homepage,
+                "images/dark_general.png"
+              )}
               alt="Logo"
             />
             <Text className="owner-title">{greetingTitle}</Text>

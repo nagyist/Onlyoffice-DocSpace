@@ -7,6 +7,7 @@ import Link from "@appserver/components/link";
 import IconButton from "@appserver/components/icon-button";
 import combineUrl from "@appserver/common/utils/combineUrl";
 import toastr from "studio/toastr";
+import { homepage } from "../../../package.json";
 
 const EmptyFilterContainer = ({
   t,
@@ -50,7 +51,11 @@ const EmptyFilterContainer = ({
       headerText={t("Filter")}
       subheadingText={subheadingText}
       descriptionText={descriptionText}
-      imageSrc="images/empty_screen_filter.png"
+      imageSrc={combineUrl(
+        window.AppServer?.cdnUrl,
+        homepage,
+        "images/empty_screen_filter.png"
+      )}
       buttons={buttons}
     />
   );

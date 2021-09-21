@@ -23,6 +23,7 @@ import {
   PasswordLimitSpecialCharacters,
 } from "@appserver/common/constants";
 import { combineUrl, createPasswordHash } from "@appserver/common/utils";
+import { homepage } from "../../../../../package.json";
 
 const inputWidth = "400px";
 
@@ -244,7 +245,14 @@ class Confirm extends React.PureComponent {
 
             <div className="confirm-row full-width break-word">
               <a href="/login">
-                <img src="images/dark_general.png" alt="Logo" />
+                <img
+                  src={combineUrl(
+                    window.AppServer?.cdnUrl,
+                    homepage,
+                    "images/dark_general.png"
+                  )}
+                  alt="Logo"
+                />
               </a>
               <Text as="p" fontSize="24px" color="#116d9d">
                 {greetingTitle}

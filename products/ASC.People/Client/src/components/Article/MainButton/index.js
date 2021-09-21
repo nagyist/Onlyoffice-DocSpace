@@ -114,7 +114,11 @@ class ArticleMainButtonContent extends React.Component {
             onClick={this.onInvitationDialogClick}
           />
           {/* <DropDownItem
-              icon="images/plane.react.svg"
+              icon={combineUrl(
+              window.AppServer?.cdnUrl,
+              config.homepage,
+              "images/plane.react.svg"
+            )}
               label={t("SendInvitesAgain")}
               onClick={this.onNotImplementedClick.bind(this, t("SendInvitesAgain"))}
             /> */}

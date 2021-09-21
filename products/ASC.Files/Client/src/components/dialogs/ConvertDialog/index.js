@@ -7,7 +7,8 @@ import Text from "@appserver/components/text";
 import Checkbox from "@appserver/components/checkbox";
 import { withTranslation } from "react-i18next";
 import { inject, observer } from "mobx-react";
-import Loaders from "@appserver/common/components/Loaders";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import { homepage } from "../../../../package.json";
 
 const ConvertDialogComponent = (props) => {
   const {
@@ -62,7 +63,11 @@ const ConvertDialogComponent = (props) => {
         <div className="convert_dialog_content">
           <img
             className="convert_dialog_image"
-            src="images/convert_alert.png"
+            src={combineUrl(
+              window.AppServer?.cdnUrl,
+              homepage,
+              "images/convert_alert.png"
+            )}
             alt="convert alert"
           />
           <div className="convert_dialog-content">

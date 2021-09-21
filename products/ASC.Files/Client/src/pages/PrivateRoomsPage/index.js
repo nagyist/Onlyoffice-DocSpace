@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import Text from "@appserver/components/text";
 import Link from "@appserver/components/link";
@@ -9,7 +9,8 @@ import { smallTablet, tablet } from "@appserver/components/utils/device";
 import { I18nextProvider, Trans, withTranslation } from "react-i18next";
 import { withRouter } from "react-router";
 import { isMobile } from "react-device-detect";
-//import { setDocumentTitle } from "../../helpers/utils";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import { homepage } from "../../../package.json";
 import i18n from "./i18n";
 import toastr from "studio/toastr";
 import { checkProtocol } from "../../helpers/files-helpers";
@@ -118,7 +119,11 @@ const PrivacyPageComponent = ({ t, history, tReady }) => {
         <Link href="/">
           <img
             className="privacy-rooms-logo"
-            src="images/dark_general.png"
+            src={combineUrl(
+              window.AppServer?.cdnUrl,
+              homepage,
+              "images/dark_general.png"
+            )}
             width="320"
             height="181"
             alt="Logo"

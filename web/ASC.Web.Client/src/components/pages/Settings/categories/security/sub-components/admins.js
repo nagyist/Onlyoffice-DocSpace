@@ -17,7 +17,6 @@ import Link from "@appserver/components/link";
 import IconButton from "@appserver/components/icon-button";
 import toastr from "@appserver/components/toast/toastr";
 import SearchInput from "@appserver/components/search-input";
-import RequestLoader from "@appserver/components/request-loader";
 import Loaders from "@appserver/common/components/Loaders";
 import EmptyScreenContainer from "@appserver/components/empty-screen-container";
 import PeopleSelector from "people/PeopleSelector";
@@ -28,7 +27,8 @@ import { getUserRole } from "@appserver/people/src/helpers/people-helpers";
 import { getNewModulesList } from "../../../utils";
 
 import isEmpty from "lodash/isEmpty";
-
+import combineUrl from "@appserver/common/utils/combineUrl";
+import { homepage } from "../../../../../../../package.json";
 import {
   EmployeeStatus,
   EmployeeActivationStatus,
@@ -949,7 +949,11 @@ class PortalAdmins extends Component {
                 />
               ) : (
                 <EmptyScreenContainer
-                  imageSrc="images/people_logolarge.png"
+                  imageSrc={combineUrl(
+                    window.AppServer?.cdnUrl,
+                    homepage,
+                    "images/people_logolarge.png"
+                  )}
                   imageAlt="Empty Screen Admins image"
                   headerText={t("NoAdmins")}
                   descriptionText={t("NoAdminsDescription")}

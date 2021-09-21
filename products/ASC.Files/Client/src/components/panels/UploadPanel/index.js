@@ -4,7 +4,7 @@ import Backdrop from "@appserver/components/backdrop";
 import Heading from "@appserver/components/heading";
 import Aside from "@appserver/components/aside";
 import { withTranslation } from "react-i18next";
-import SharingPanel from "../SharingPanel";
+//import SharingPanel from "../SharingPanel";
 import {
   StyledAsidePanel,
   StyledContent,
@@ -15,6 +15,8 @@ import FileList from "./FileList";
 import { inject, observer } from "mobx-react";
 import Loaders from "@appserver/common/components/Loaders";
 import withLoader from "../../../HOCs/withLoader";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import { homepage } from "../../../../package.json";
 
 class UploadPanelComponent extends React.Component {
   constructor(props) {
@@ -98,7 +100,11 @@ class UploadPanelComponent extends React.Component {
                   {uploaded && converted ? (
                     <IconButton
                       size="20"
-                      iconName="images/clear.active.react.svg"
+                      iconName={combineUrl(
+                        window.AppServer?.cdnUrl,
+                        homepage,
+                        "images/clear.active.react.svg"
+                      )}
                       color="#A3A9AE"
                       isClickable
                       onClick={this.clearUploadPanel}
@@ -106,7 +112,11 @@ class UploadPanelComponent extends React.Component {
                   ) : (
                     <IconButton
                       size="20"
-                      iconName="images/button.cancel.react.svg"
+                      iconName={combineUrl(
+                        window.AppServer?.cdnUrl,
+                        homepage,
+                        "images/button.cancel.react.svg"
+                      )}
                       color={"#A3A9AE"}
                       isClickable
                       onClick={uploaded ? cancelConversion : cancelUpload}

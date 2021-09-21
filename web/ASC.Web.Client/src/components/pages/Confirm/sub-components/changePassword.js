@@ -1,7 +1,6 @@
 import React from "react";
 import { withRouter } from "react-router";
 import { withTranslation } from "react-i18next";
-import axios from "axios";
 import PropTypes from "prop-types";
 import styled from "styled-components";
 import Button from "@appserver/components/button";
@@ -14,6 +13,8 @@ import { createPasswordHash, tryRedirectTo } from "@appserver/common/utils";
 import { PasswordLimitSpecialCharacters } from "@appserver/common/constants";
 import { inject, observer } from "mobx-react";
 import withLoader from "../withLoader";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import { homepage } from "../../../../../package.json";
 
 const BodyStyle = styled.form`
   margin: 70px auto 0 auto;
@@ -130,7 +131,11 @@ class Form extends React.PureComponent {
         <div className="password-header">
           <img
             className="password-logo"
-            src="images/dark_general.png"
+            src={combineUrl(
+              window.AppServer?.cdnUrl,
+              homepage,
+              "images/dark_general.png"
+            )}
             alt="Logo"
           />
           <Heading className="password-title" color="#116d9d">

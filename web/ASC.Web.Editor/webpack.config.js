@@ -207,6 +207,12 @@ module.exports = (env, argv) => {
 
       htmlConfig.publicPath = publicPath;
 
+      config.module.generator = {
+        asset: {
+          publicPath: publicPath,
+        },
+      };
+
       config.output = { ...config.output, publicPath };
 
       mfConfig.remotes.studio = `studio@${combineUrl(

@@ -245,6 +245,18 @@ module.exports = (env, argv) => {
 
       htmlConfig.publicPath = publicPath;
 
+      config.module.generator = {
+        asset: {
+          publicPath: publicPath,
+        },
+      };
+
+      config.module.generator = {
+        asset: {
+          publicPath: publicPath,
+        },
+      };
+
       config.output = {
         ...config.output,
         publicPath,

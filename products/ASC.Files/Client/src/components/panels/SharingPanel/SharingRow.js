@@ -9,7 +9,7 @@ import LinkRow from "./linkRow";
 import AccessComboBox from "./AccessComboBox";
 import { getAccessIcon } from "../../../helpers/files-helpers";
 import { ReactSVG } from "react-svg";
-import { objectToGetParams } from "@appserver/common/utils";
+import { objectToGetParams, combineUrl } from "@appserver/common/utils";
 
 class SharingRow extends React.Component {
   constructor(props) {
@@ -263,7 +263,10 @@ class SharingRow extends React.Component {
                     !shareLink &&
                     !isLocked && (
                       <IconButton
-                        iconName="/static/images/remove.react.svg"
+                        iconName={combineUrl(
+                          window.AppServer?.cdnUrl,
+                          "/static/images/remove.react.svg"
+                        )}
                         id={id}
                         {...onRemoveUserProp}
                         className="sharing_panel-remove-icon"

@@ -1,8 +1,8 @@
 import { action, makeObservable, observable } from "mobx";
 import Filter from "@appserver/common/api/people/filter";
 import config from "../../package.json";
-import { combineUrl } from "@appserver/common/utils";
-import { AppServerConfig } from "@appserver/common/constants";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 
 class FilterStore {
   filter = Filter.getDefault();

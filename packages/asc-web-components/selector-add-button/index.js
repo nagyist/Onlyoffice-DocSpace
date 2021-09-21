@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 
 import StyledButton from "./styled-selector-add-button";
 import IconButton from "../icon-button";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 const SelectorAddButton = (props) => {
   const { isDisabled, title, className, id, style } = props;
@@ -23,7 +24,10 @@ const SelectorAddButton = (props) => {
       <IconButton
         color="#979797"
         size={14}
-        iconName="/static/images/actions.header.touch.react.svg"
+        iconName={combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/actions.header.touch.react.svg"
+        )}
         isFill={true}
         isDisabled={isDisabled}
         isClickable={!isDisabled}

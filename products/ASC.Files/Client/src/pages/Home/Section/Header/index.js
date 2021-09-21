@@ -5,7 +5,7 @@ import { withRouter } from "react-router";
 import toastr from "studio/toastr";
 import Loaders from "@appserver/common/components/Loaders";
 import Headline from "@appserver/common/components/Headline";
-import { FilterType, FileAction } from "@appserver/common/constants";
+import { FileAction } from "@appserver/common/constants";
 import { withTranslation } from "react-i18next";
 import { isMobile } from "react-device-detect";
 import ContextMenuButton from "@appserver/components/context-menu-button";
@@ -15,6 +15,7 @@ import IconButton from "@appserver/components/icon-button";
 import { tablet, desktop } from "@appserver/components/utils/device";
 import { Consumer } from "@appserver/components/utils/context";
 import { inject, observer } from "mobx-react";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 const StyledContainer = styled.div`
   .header-container {
@@ -390,7 +391,10 @@ class SectionHeaderContent extends React.Component {
                   <>
                     {!isRootFolder && (
                       <IconButton
-                        iconName="/static/images/arrow.path.react.svg"
+                        iconName={combineUrl(
+                          window.AppServer?.cdnUrl,
+                          "/static/images/arrow.path.react.svg"
+                        )}
                         size="17"
                         color="#A3A9AE"
                         hoverColor="#657077"

@@ -3,17 +3,15 @@ import { withRouter } from "react-router";
 import { withTranslation } from "react-i18next";
 import styled from "styled-components";
 
-import OwnerSettings from "./sub-components/owner";
+// import OwnerSettings from "./sub-components/owner";
 // import ModulesSettings from "./sub-components/modules";
 
 import { setDocumentTitle } from "../../../../../helpers/utils";
 import Link from "@appserver/components/link";
 import Text from "@appserver/components/text";
-import toastr from "@appserver/components/toast/toastr";
 import { inject } from "mobx-react";
-import isEmpty from "lodash/isEmpty";
 import { combineUrl, showLoader, hideLoader } from "@appserver/common/utils";
-import { AppServerConfig } from "@appserver/common/constants";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 import commonIconsStyles from "@appserver/components/utils/common-icons-style";
 import ArrowRightIcon from "@appserver/studio/public/images/arrow.right.react.svg";
 

@@ -20,6 +20,7 @@ import CustomScrollbarsVirtualList from "@appserver/components/scrollbar/custom-
 import HelpButton from "@appserver/components/help-button";
 
 import StyledSelector from "./StyledSelector";
+import combineUrl from "../../../utils/combineUrl";
 
 const convertGroups = (items) => {
   if (!items) return [];
@@ -319,7 +320,10 @@ const Selector = (props) => {
             <HelpButton
               id={`info-${option.key}`}
               className="option-info"
-              iconName="/static/images/info.react.svg"
+              iconName={combineUrl(
+                window.AppServer?.cdnUrl,
+                "/static/images/info.react.svg"
+              )}
               color="#D8D8D8"
               getContent={getOptionTooltipContent}
               place="top"
@@ -348,7 +352,10 @@ const Selector = (props) => {
             <HelpButton
               id={`info-${option.key}`}
               className="option-info"
-              iconName="/static/images/info.react.svg"
+              iconName={combineUrl(
+                window.AppServer?.cdnUrl,
+                "/static/images/info.react.svg"
+              )}
               color="#D8D8D8"
               getContent={getOptionTooltipContent}
               place="top"

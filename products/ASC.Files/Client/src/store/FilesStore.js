@@ -10,7 +10,7 @@ import {
 import history from "@appserver/common/history";
 import { loopTreeFolders } from "../helpers/files-helpers";
 import config from "../../package.json";
-import { combineUrl } from "@appserver/common/utils";
+import combineUrl from "@appserver/common/utils/combineUrl";
 import { updateTempContent } from "@appserver/common/utils";
 import { thumbnailStatuses } from "../helpers/constants";
 import { isMobile } from "react-device-detect";

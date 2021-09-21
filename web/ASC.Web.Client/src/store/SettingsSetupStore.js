@@ -2,8 +2,8 @@ import api from "@appserver/common/api";
 import { makeAutoObservable } from "mobx";
 const { Filter } = api;
 import SelectionStore from "./SelectionStore";
-import { combineUrl } from "@appserver/common/utils";
-import { AppServerConfig } from "@appserver/common/constants";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 import config from "../../package.json";
 
 class SettingsSetupStore {

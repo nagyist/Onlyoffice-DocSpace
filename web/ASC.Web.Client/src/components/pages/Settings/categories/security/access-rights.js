@@ -13,7 +13,7 @@ import toastr from "@appserver/components/toast/toastr";
 import { inject } from "mobx-react";
 import isEmpty from "lodash/isEmpty";
 import { combineUrl, showLoader, hideLoader } from "@appserver/common/utils";
-import { AppServerConfig } from "@appserver/common/constants";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 import commonIconsStyles from "@appserver/components/utils/common-icons-style";
 import ArrowRightIcon from "@appserver/studio/public/images/arrow.right.react.svg";
 import Loader from "@appserver/components/loader";

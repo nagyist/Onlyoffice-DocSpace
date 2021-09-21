@@ -4,6 +4,7 @@ import { withTranslation } from "react-i18next";
 import EmptyContainer from "./EmptyContainer";
 import Link from "@appserver/components/link";
 import Box from "@appserver/components/box";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 const EmptyFolderContainer = ({
   t,
@@ -73,7 +74,10 @@ const EmptyFolderContainer = ({
   return (
     <EmptyContainer
       headerText={t("EmptyFolderHeader")}
-      imageSrc="/static/images/empty_screen.png"
+      imageSrc={combineUrl(
+        window.AppServer?.cdnUrl,
+        "/static/images/empty_screen.png"
+      )}
       buttons={buttons}
     />
   );

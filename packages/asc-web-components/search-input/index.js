@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-
+import combineUrl from "@appserver/common/utils/combineUrl";
 import InputBlock from "../input-block";
 import StyledSearchInput from "./styled-search-input";
 
@@ -81,8 +81,14 @@ class SearchInput extends React.Component {
           isDisabled={this.props.isDisabled}
           iconName={
             !!this.state.inputValue || this.props.showClearButton
-              ? "/static/images/cross.react.svg"
-              : "/static/images/search.react.svg"
+              ? combineUrl(
+                  window.AppServer?.cdnUrl,
+                  "/static/images/cross.react.svg"
+                )
+              : combineUrl(
+                  window.AppServer?.cdnUrl,
+                  "/static/images/search.react.svg"
+                )
           }
           isIconFill={true}
           iconSize={clearButtonSize}

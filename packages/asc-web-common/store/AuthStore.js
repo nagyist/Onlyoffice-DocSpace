@@ -142,7 +142,10 @@ class AuthStore {
       id: "settings",
       title: "Settings",
       link: "/settings",
-      iconUrl: "/static/images/settings.react.svg",
+      iconUrl: combineUrl(
+        window.AppServer?.cdnUrl,
+        "/static/images/settings.react.svg"
+      ),
     });
 
     settingsModuleWrapper.onClick = this.onClick;

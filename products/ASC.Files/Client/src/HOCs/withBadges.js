@@ -6,7 +6,7 @@ import {
   AppServerConfig,
 } from "@appserver/common/constants";
 import toastr from "studio/toastr";
-import { combineUrl } from "@appserver/common/utils";
+import combineUrl from "@appserver/common/utils/combineUrl";
 import { getFileConversationProgress } from "@appserver/common/api/files";
 
 import Badges from "../components/Badges";

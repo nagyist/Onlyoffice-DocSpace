@@ -20,7 +20,7 @@ import { I18nextProvider, useTranslation } from "react-i18next";
 import i18n from "./i18n";
 import AppLoader from "@appserver/common/components/AppLoader";
 import System from "./components/System";
-import { AppServerConfig } from "@appserver/common/constants";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 import Snackbar from "@appserver/components/snackbar";
 import moment from "moment";
 

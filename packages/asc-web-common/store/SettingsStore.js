@@ -36,7 +36,10 @@ class SettingsStore {
   enabledJoin = false;
   urlLicense = "https://gnu.org/licenses/gpl-3.0.html";
   urlSupport = "https://helpdesk.onlyoffice.com/";
-  logoUrl = combineUrl(proxyURL, "/static/images/nav.logo.opened.react.svg");
+  logoUrl = combineUrl(
+    window.AppServer?.cdnUrl || proxyURL,
+    "/static/images/nav.logo.opened.react.svg"
+  );
   customNames = {
     id: "Common",
     userCaption: "User",

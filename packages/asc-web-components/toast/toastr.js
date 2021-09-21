@@ -1,7 +1,7 @@
 import React from "react";
 import { toast } from "react-toastify";
 import styled from "styled-components";
-
+import combineUrl from "@appserver/common/utils/combineUrl";
 import { CheckToastIcon, DangerToastIcon, InfoToastIcon } from "./svg";
 import IconButton from "../icon-button";
 import Text from "../text";
@@ -41,7 +41,10 @@ const CloseButton = ({ closeToast }) => (
     <IconButton
       className="closeButton"
       onClick={closeToast}
-      iconName="/static/images/cross.react.svg"
+      iconName={combineUrl(
+        window.AppServer?.cdnUrl,
+        "/static/images/cross.react.svg"
+      )}
       size={12}
       color="#333333"
     />

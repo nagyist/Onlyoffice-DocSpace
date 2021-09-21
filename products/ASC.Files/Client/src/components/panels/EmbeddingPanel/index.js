@@ -8,6 +8,7 @@ import Text from "@appserver/components/text";
 import Link from "@appserver/components/link";
 import TextInput from "@appserver/components/text-input";
 import Textarea from "@appserver/components/textarea";
+import combineUrl from "@appserver/common/utils/combineUrl";
 import toastr from "studio/toastr";
 import { withTranslation, I18nextProvider } from "react-i18next";
 import {
@@ -129,7 +130,10 @@ class EmbeddingPanelComponent extends React.Component {
             <StyledHeaderContent>
               <IconButton
                 size="16"
-                iconName="/static/images/arrow.path.react.svg"
+                iconName={combineUrl(
+                  window.AppServer?.cdnUrl,
+                  "/static/images/arrow.path.react.svg"
+                )}
                 onClick={this.onArrowClick}
                 color="#A3A9AE"
               />
@@ -197,7 +201,10 @@ class EmbeddingPanelComponent extends React.Component {
                   <IconButton
                     className="embedding-panel_copy-icon"
                     size="16"
-                    iconName="/static/images/copy.react.svg"
+                    iconName={combineUrl(
+                      window.AppServer?.cdnUrl,
+                      "/static/images/copy.react.svg"
+                    )}
                     color="#333"
                     onClick={this.onCopyLink}
                   />

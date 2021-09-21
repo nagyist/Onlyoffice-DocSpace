@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Badge from "@appserver/components/badge";
 import IconButton from "@appserver/components/icon-button";
 import {
@@ -6,6 +6,7 @@ import {
   StyledFileActionsConvertEditDocIcon,
   StyledFileActionsLockedIcon,
 } from "./Icons";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 const Badges = ({
   t,
@@ -47,7 +48,10 @@ const Badges = ({
       {canConvert && !isTrashFolder && (
         <IconButton
           onClick={setConvertDialogVisible}
-          iconName="/static/images/refresh.react.svg"
+          iconName={combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/refresh.react.svg"
+          )}
           className="badge icons-group can-convert"
           size="small"
           isfill={true}
@@ -65,7 +69,10 @@ const Badges = ({
         !canConvert && (
           <IconButton
             onClick={onFilesClick}
-            iconName="/static/images/access.edit.react.svg"
+            iconName={combineUrl(
+              window.AppServer?.cdnUrl,
+              "/static/images/access.edit.react.svg"
+            )}
             className="badge icons-group"
             size="small"
             isfill={true}

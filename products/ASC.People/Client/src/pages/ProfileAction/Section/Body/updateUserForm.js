@@ -48,8 +48,8 @@ import {
   toEmployeeWrapper,
 } from "../../../../helpers/people-helpers";
 import config from "../../../../../package.json";
-import { combineUrl } from "@appserver/common/utils";
-import { AppServerConfig } from "@appserver/common/constants";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 
 const dialogsDataset = {
   changeEmail: "changeEmail",

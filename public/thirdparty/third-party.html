@@ -64,7 +64,8 @@
 
       function renderError(error) {
         var container = document.getElementById("container");
-        container.innerHTML = `<img src="/static/images/clouds.png" /><p class="text">${error}</p>`;
+        var imageSrc = `${window.AppServer?.cdnUrl}static/images/clouds.png`;
+        container.innerHTML = `<img src="${imageSrc}" /><p class="text">${error}</p>`;
       }
 
       const urlParams = getObjectByLocation(window.location);

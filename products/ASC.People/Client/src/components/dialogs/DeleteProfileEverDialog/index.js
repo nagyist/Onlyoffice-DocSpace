@@ -13,8 +13,8 @@ import toastr from "studio/toastr";
 import ModalDialogContainer from "../ModalDialogContainer";
 import { inject, observer } from "mobx-react";
 import config from "../../../../package.json";
-import { combineUrl } from "@appserver/common/utils";
-import { AppServerConfig } from "@appserver/common/constants";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 
 const { deleteUser } = api.people; //TODO: Move to action
 const { Filter } = api;

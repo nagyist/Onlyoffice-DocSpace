@@ -10,7 +10,7 @@ import { FileAction, AppServerConfig } from "@appserver/common/constants";
 import { encryptionUploadDialog } from "../../../helpers/desktop";
 import { inject, observer } from "mobx-react";
 import config from "../../../../package.json";
-import { combineUrl } from "@appserver/common/utils";
+import combineUrl from "@appserver/common/utils/combineUrl";
 import withLoader from "../../../HOCs/withLoader";
 
 class ArticleMainButtonContent extends React.Component {

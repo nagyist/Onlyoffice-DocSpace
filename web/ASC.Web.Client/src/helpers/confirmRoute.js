@@ -7,7 +7,7 @@ import PageLayout from "@appserver/common/components/PageLayout";
 import { checkConfirmLink } from "@appserver/common/api/user"; //TODO: Move AuthStore
 import { combineUrl, getObjectByLocation } from "@appserver/common/utils";
 import { inject, observer } from "mobx-react";
-import { AppServerConfig } from "@appserver/common/constants";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 
 class ConfirmRoute extends React.Component {
   constructor(props) {

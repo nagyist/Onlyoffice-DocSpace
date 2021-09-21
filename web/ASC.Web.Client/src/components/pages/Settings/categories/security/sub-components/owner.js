@@ -12,8 +12,8 @@ import HelpButton from "@appserver/components/help-button";
 import PeopleSelector from "@appserver/people/src/components/PeopleSelector";
 import isEmpty from "lodash/isEmpty";
 import { inject } from "mobx-react";
-import { combineUrl } from "@appserver/common/utils";
-import { AppServerConfig } from "@appserver/common/constants";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 
 const StyledWrapper = styled.div`
   .portal-owner-description {

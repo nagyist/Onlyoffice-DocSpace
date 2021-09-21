@@ -9,7 +9,7 @@ import {
   FileAction,
   ShareAccessRights,
 } from "@appserver/common/constants";
-import { combineUrl } from "@appserver/common/utils";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 import config from "../../package.json";
 import EditingWrapperComponent from "../components/EditingWrapperComponent";

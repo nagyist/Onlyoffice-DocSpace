@@ -28,6 +28,7 @@ import i18n from "./i18n";
 import { I18nextProvider } from "react-i18next";
 import { isMobile } from "react-device-detect";
 import Loaders from "@appserver/common/components/Loaders";
+import combineUrl from "@appserver/common/utils/combineUrl";
 import withLoader from "../../../HOCs/withLoader";
 
 const SharingBodyStyle = { height: `calc(100vh - 156px)` };
@@ -441,7 +442,10 @@ class SharingPanelComponent extends React.Component {
               {uploadPanelVisible && (
                 <IconButton
                   size="16"
-                  iconName="/static/images/arrow.path.react.svg"
+                  iconName={combineUrl(
+                    window.AppServer?.cdnUrl,
+                    "/static/images/arrow.path.react.svg"
+                  )}
                   onClick={this.onClose}
                   color="A3A9AE"
                 />
@@ -457,7 +461,10 @@ class SharingPanelComponent extends React.Component {
                   >
                     <IconButton
                       size="17"
-                      iconName="/static/images/actions.header.touch.react.svg"
+                      iconName={combineUrl(
+                        window.AppServer?.cdnUrl,
+                        "/static/images/actions.header.touch.react.svg"
+                      )}
                       className="sharing_panel-plus-icon"
                       {...onPlusClickProp}
                       color="A3A9AE"
@@ -475,12 +482,12 @@ class SharingPanelComponent extends React.Component {
                         label={t("LinkText")}
                         onClick={this.onShowUsersPanel}
                       />
-                    {!isEncrypted && (
-                      <DropDownItem
-                        label={t("AddGroupsForSharingButton")}
-                        onClick={this.onShowGroupsPanel}
-                      />
-                    )}
+                      {!isEncrypted && (
+                        <DropDownItem
+                          label={t("AddGroupsForSharingButton")}
+                          onClick={this.onShowGroupsPanel}
+                        />
+                      )}
                     </DropDown>
                   </div>
 

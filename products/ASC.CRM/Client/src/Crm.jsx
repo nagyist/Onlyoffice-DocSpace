@@ -11,7 +11,7 @@ import config from "../package.json";
 import i18n from "./i18n";
 import { I18nextProvider } from "react-i18next";
 import Home from "./pages/Home";
-import { AppServerConfig } from "@appserver/common/constants";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 
 const { proxyURL } = AppServerConfig;
 const homepage = config.homepage;

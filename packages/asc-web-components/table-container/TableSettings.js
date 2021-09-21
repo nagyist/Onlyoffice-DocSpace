@@ -4,6 +4,7 @@ import IconButton from "../icon-button";
 import DropDown from "../drop-down";
 import { StyledTableSettings } from "./StyledTableContainer";
 import Checkbox from "../checkbox";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 const TableSettings = ({ columns }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -32,7 +33,10 @@ const TableSettings = ({ columns }) => {
         hoverColor="#657077"
         size={12}
         isFill
-        iconName="/static/images/settings.react.svg"
+        iconName={combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/settings.react.svg"
+        )}
         onClick={onClick}
       />
       <DropDown

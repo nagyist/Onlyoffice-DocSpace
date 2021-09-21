@@ -8,6 +8,7 @@ import {
   StyledSelectedTextBox,
   StyledSelectedItem,
 } from "./styled-selected-item";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 const SelectedItem = (props) => {
   const { isDisabled, text, onClose } = props;
@@ -29,7 +30,10 @@ const SelectedItem = (props) => {
         <IconButton
           color="#979797"
           size={10}
-          iconName="/static/images/cross.react.svg"
+          iconName={combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/cross.react.svg"
+          )}
           isFill={true}
           isDisabled={isDisabled}
         />

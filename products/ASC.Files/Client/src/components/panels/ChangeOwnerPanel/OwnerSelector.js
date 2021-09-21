@@ -4,6 +4,7 @@ import Aside from "@appserver/components/aside";
 import Backdrop from "@appserver/components/backdrop";
 import Heading from "@appserver/components/heading";
 import IconButton from "@appserver/components/icon-button";
+import combineUrl from "@appserver/common/utils/combineUrl";
 import {
   StyledAddUsersPanelPanel,
   StyledContent,
@@ -36,7 +37,10 @@ const OwnerSelector = (props) => {
           <StyledHeaderContent>
             <IconButton
               size="16"
-              iconName="/static/images/arrow.path.react.svg"
+              iconName={combineUrl(
+                window.AppServer?.cdnUrl,
+                "/static/images/arrow.path.react.svg"
+              )}
               onClick={onClosePanel}
               color="#A3A9AE"
             />

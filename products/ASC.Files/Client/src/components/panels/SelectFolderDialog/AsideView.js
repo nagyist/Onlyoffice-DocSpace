@@ -5,6 +5,7 @@ import FolderTreeBody from "../../FolderTreeBody";
 import { StyledAsidePanel, StyledSelectFolderPanel } from "../StyledPanels";
 import Button from "@appserver/components/button";
 import ModalDialog from "@appserver/components/modal-dialog";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 const DISPLAY_TYPE = "aside";
 const SelectFolderDialogAsideView = ({
@@ -47,7 +48,10 @@ const SelectFolderDialogAsideView = ({
                 <IconButton
                   className="select-folder-dialog_header-icon"
                   size="16"
-                  iconName="/static/images/arrow.path.react.svg"
+                  iconName={combineUrl(
+                    window.AppServer?.cdnUrl,
+                    "/static/images/arrow.path.react.svg"
+                  )}
                   onClick={onClose}
                   color="#A3A9AE"
                 />

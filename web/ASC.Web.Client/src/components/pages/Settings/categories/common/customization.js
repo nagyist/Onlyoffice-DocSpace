@@ -10,7 +10,7 @@ import { setDocumentTitle } from "../../../../../helpers/utils";
 import commonIconsStyles from "@appserver/components/utils/common-icons-style";
 import { showLoader, hideLoader, combineUrl } from "@appserver/common/utils";
 import { inject, observer } from "mobx-react";
-import { AppServerConfig } from "@appserver/common/constants";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 import withCultureNames from "@appserver/common/hoc/withCultureNames";
 
 const mapTimezonesToArray = (timezones) => {

@@ -1,9 +1,9 @@
 import React from "react";
-import styled, { css } from "styled-components";
-import { withRouter } from "react-router";
+import styled from "styled-components";
 import Headline from "@appserver/common/components/Headline";
 import IconButton from "@appserver/components/icon-button";
 import { desktop } from "@appserver/components/utils/device";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 const StyledContainer = styled.div`
   display: grid;
@@ -34,7 +34,10 @@ const SectionHeaderContent = (props) => {
   return (
     <StyledContainer>
       <IconButton
-        iconName="/static/images/arrow.path.react.svg"
+        iconName={combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/arrow.path.react.svg"
+        )}
         size="17"
         color="#A3A9AE"
         hoverColor="#657077"

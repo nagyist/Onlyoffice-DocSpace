@@ -5,7 +5,7 @@ import Loader from "@appserver/components/loader";
 import PageLayout from "@appserver/common/components/PageLayout";
 import { combineUrl, tryRedirectTo } from "@appserver/common/utils";
 import { inject, observer } from "mobx-react";
-import { AppServerConfig } from "@appserver/common/constants";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 
 class ActivateEmail extends React.PureComponent {
   componentDidMount() {

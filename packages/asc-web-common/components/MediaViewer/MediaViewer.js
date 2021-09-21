@@ -13,6 +13,7 @@ import equal from "fast-deep-equal/react";
 import Hammer from "hammerjs";
 import IconButton from "@appserver/components/icon-button";
 import commonIconsStyles from "@appserver/components/utils/common-icons-style";
+import combineUrl from "../../utils/combineUrl";
 
 const StyledVideoViewer = styled(VideoViewer)`
   z-index: 301;
@@ -522,7 +523,10 @@ class MediaViewer extends React.Component {
             >
               <IconButton
                 color="#fff"
-                iconName="/static/images/cross.react.svg"
+                iconName={combineUrl(
+                  window.AppServer?.cdnUrl,
+                  "/static/images/cross.react.svg"
+                )}
                 size={25}
               />
             </ControlBtn>

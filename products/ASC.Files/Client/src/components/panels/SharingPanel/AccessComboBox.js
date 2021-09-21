@@ -1,6 +1,7 @@
 import React from "react";
 import ComboBox from "@appserver/components/combobox";
 import { ShareAccessRights } from "@appserver/common/constants";
+import combineUrl from "@appserver/common/utils/combineUrl";
 import DropDownItem from "@appserver/components/drop-down-item";
 import { getAccessIcon } from "../../../helpers/files-helpers";
 import { ReactSVG } from "react-svg";
@@ -32,7 +33,10 @@ const AccessComboBox = (props) => {
       {accessOptions.includes("FullAccess") && (
         <DropDownItem
           label={t("Common:FullAccess")}
-          icon="/static/images/access.edit.react.svg"
+          icon={combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/access.edit.react.svg"
+          )}
           data-id={itemId}
           data-access={FullAccess}
           onClick={onAccessChange}
@@ -42,7 +46,10 @@ const AccessComboBox = (props) => {
       {accessOptions.includes("FilterEditing") && (
         <DropDownItem
           label={t("CustomFilter")}
-          icon="/static/images/custom.filter.react.svg"
+          icon={combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/custom.filter.react.svg"
+          )}
           data-id={itemId}
           data-access={CustomFilter}
           onClick={onAccessChange}
@@ -52,7 +59,10 @@ const AccessComboBox = (props) => {
       {accessOptions.includes("Review") && (
         <DropDownItem
           label={t("Common:Review")}
-          icon="/static/images/access.review.react.svg"
+          icon={combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/access.review.react.svg"
+          )}
           data-id={itemId}
           data-access={Review}
           onClick={onAccessChange}
@@ -62,7 +72,10 @@ const AccessComboBox = (props) => {
       {accessOptions.includes("FormFilling") && (
         <DropDownItem
           label={t("FormFilling")}
-          icon="/static/images/access.form.react.svg"
+          icon={combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/access.form.react.svg"
+          )}
           data-id={itemId}
           data-access={FormFilling}
           onClick={onAccessChange}
@@ -72,7 +85,10 @@ const AccessComboBox = (props) => {
       {accessOptions.includes("Comment") && (
         <DropDownItem
           label={t("Comment")}
-          icon="/static/images/access.comment.react.svg"
+          icon={combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/access.comment.react.svg"
+          )}
           data-id={itemId}
           data-access={Comment}
           onClick={onAccessChange}
@@ -82,7 +98,10 @@ const AccessComboBox = (props) => {
       {accessOptions.includes("ReadOnly") && (
         <DropDownItem
           label={t("ReadOnly")}
-          icon="/static/images/eye.react.svg"
+          icon={combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/eye.react.svg"
+          )}
           data-id={itemId}
           data-access={ReadOnly}
           onClick={onAccessChange}
@@ -92,7 +111,10 @@ const AccessComboBox = (props) => {
       {accessOptions.includes("DenyAccess") && (
         <DropDownItem
           label={t("DenyAccess")}
-          icon="/static/images/access.none.react.svg"
+          icon={combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/access.none.react.svg"
+          )}
           data-id={itemId}
           data-access={DenyAccess}
           onClick={onAccessChange}

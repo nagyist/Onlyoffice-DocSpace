@@ -3,7 +3,7 @@ import styled from "styled-components";
 import { withTranslation } from "react-i18next";
 import Text from "@appserver/components/text";
 import IconButton from "@appserver/components/icon-button";
-
+import combineUrl from "@appserver/common/utils/combineUrl";
 import withLoader from "../../../HOCs/withLoader";
 
 const StyledDownloadAppList = styled.div`
@@ -37,7 +37,10 @@ const DownloadAppListContainer = ({ t }) => {
         <IconButton
           onClick={() => window.open(windowsLink)}
           className="icon-button"
-          iconName="/static/images/windows.react.svg"
+          iconName={combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/windows.react.svg"
+          )}
           size="25"
           isfill={true}
           color="#A3A9AE"
@@ -46,7 +49,10 @@ const DownloadAppListContainer = ({ t }) => {
         <IconButton
           onClick={() => window.open(macLink)}
           className="icon-button"
-          iconName="/static/images/macOS.react.svg"
+          iconName={combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/macOS.react.svg"
+          )}
           size="25"
           isfill={true}
           color="#A3A9AE"
@@ -55,7 +61,10 @@ const DownloadAppListContainer = ({ t }) => {
         <IconButton
           onClick={() => window.open(linuxLink)}
           className="icon-button"
-          iconName="/static/images/linux.react.svg"
+          iconName={combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/linux.react.svg"
+          )}
           size="25"
           isfill={true}
           color="#A3A9AE"
@@ -64,7 +73,10 @@ const DownloadAppListContainer = ({ t }) => {
         <IconButton
           onClick={() => window.open(androidLink)}
           className="icon-button"
-          iconName="/static/images/android.react.svg"
+          iconName={combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/android.react.svg"
+          )}
           size="25"
           isfill={true}
           color="#A3A9AE"
@@ -73,7 +85,10 @@ const DownloadAppListContainer = ({ t }) => {
         <IconButton
           onClick={() => window.open(iosLink)}
           className="icon-button"
-          iconName="/static/images/iOS.react.svg"
+          iconName={combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/iOS.react.svg"
+          )}
           size="25"
           isfill={true}
           color="#A3A9AE"

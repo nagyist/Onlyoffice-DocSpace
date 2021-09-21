@@ -21,8 +21,8 @@ import {
   StyledFooter,
 } from "../StyledPanels";
 import { inject, observer } from "mobx-react";
-import { combineUrl } from "@appserver/common/utils";
-import { AppServerConfig } from "@appserver/common/constants";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 import config from "../../../../package.json";
 import Loaders from "@appserver/common/components/Loaders";
 import withLoader from "../../../HOCs/withLoader";

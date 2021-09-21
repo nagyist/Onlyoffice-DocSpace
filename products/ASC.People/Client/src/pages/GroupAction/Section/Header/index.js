@@ -6,7 +6,7 @@ import Headline from "@appserver/common/components/Headline";
 import { withTranslation } from "react-i18next";
 import styled from "styled-components";
 import { inject, observer } from "mobx-react";
-
+import combineUrl from "@appserver/common/utils/combineUrl";
 import withLoader from "../../../../HOCs/withLoader";
 import Loaders from "@appserver/common/components/Loaders";
 
@@ -47,7 +47,10 @@ class SectionHeaderContent extends React.Component {
     return (
       <Wrapper>
         <IconButton
-          iconName="/static/images/arrow.path.react.svg"
+          iconName={combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/arrow.path.react.svg"
+          )}
           size="17"
           color="#A3A9AE"
           hoverColor="#657077"

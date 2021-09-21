@@ -271,7 +271,10 @@ class ConnectClouds extends React.Component {
           <EmptyFolderContainer
             headerText={t("ConnectAccounts")}
             subheadingText={t("ConnectAccountsSubTitle")}
-            imageSrc="/static/images/empty_screen.png"
+            imageSrc={combineUrl(
+              window.AppServer?.cdnUrl,
+              "/static/images/empty_screen.png"
+            )}
             buttons={
               <div className="empty-folder_container-links empty-connect_container-links">
                 <img

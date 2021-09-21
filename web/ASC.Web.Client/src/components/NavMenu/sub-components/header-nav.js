@@ -8,7 +8,7 @@ import { tablet } from "@appserver/components/utils/device";
 import { combineUrl, deleteCookie } from "@appserver/common/utils";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router";
-import { AppServerConfig } from "@appserver/common/constants";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 import config from "../../../../package.json";
 import { isDesktop } from "react-device-detect";
 import AboutDialog from "../../pages/About/AboutDialog";

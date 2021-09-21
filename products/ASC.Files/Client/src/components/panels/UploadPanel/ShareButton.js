@@ -1,6 +1,7 @@
 import React from "react";
 import IconButton from "@appserver/components/icon-button";
 import { inject, observer } from "mobx-react";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 const ShareButton = (props) => {
   //console.log("Share button render");
@@ -21,7 +22,10 @@ const ShareButton = (props) => {
 
   return (
     <IconButton
-      iconName="/static/images/catalog.shared.react.svg"
+      iconName={combineUrl(
+        window.AppServer?.cdnUrl,
+        "/static/images/catalog.shared.react.svg"
+      )}
       className="upload_panel-icon"
       color={color}
       isClickable

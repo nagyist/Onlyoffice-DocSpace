@@ -15,7 +15,7 @@ import Profile from "./pages/Profile";
 import ProfileAction from "./pages/ProfileAction";
 import GroupAction from "./pages/GroupAction";
 import Filter from "@appserver/common/api/people/filter";
-import { AppServerConfig } from "@appserver/common/constants";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 
 const { proxyURL } = AppServerConfig;
 const homepage = config.homepage;

@@ -4,6 +4,7 @@ import Text from "../text";
 import IconButton from "../icon-button";
 import globalColors from "../utils/globalColors";
 import { StyledTableHeaderCell } from "./StyledTableContainer";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 const TableHeaderCell = ({
   column,
@@ -49,7 +50,10 @@ const TableHeaderCell = ({
 
           <IconButton
             onClick={column.onIconClick ? onIconClick : onClick}
-            iconName="/static/images/folder arrow.react.svg"
+            iconName={combineUrl(
+              window.AppServer?.cdnUrl,
+              "/static/images/folder arrow.react.svg"
+            )}
             className="header-container-text-icon"
             size="small"
           />

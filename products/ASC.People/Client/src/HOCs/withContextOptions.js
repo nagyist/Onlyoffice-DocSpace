@@ -1,6 +1,6 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
-import { combineUrl } from "@appserver/common/utils";
+import combineUrl from "@appserver/common/utils/combineUrl";
 import { AppServerConfig, EmployeeStatus } from "@appserver/common/constants";
 import { resendUserInvites } from "@appserver/common/api/people"; //TODO: Move to store action
 import config from "../../package.json";

@@ -1,10 +1,9 @@
 import React from "react";
 import PropTypes from "prop-types";
-
-import { Icons } from "../icons";
 import isEmpty from "lodash/isEmpty";
 import StyledOuter from "./styled-icon-button";
 import { ReactSVG } from "react-svg";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 class IconButton extends React.PureComponent {
   constructor(props) {
@@ -131,7 +130,6 @@ class IconButton extends React.PureComponent {
       className,
       size,
       isDisabled,
-      isFill,
       isClickable,
       onClick,
       id,
@@ -215,7 +213,10 @@ IconButton.propTypes = {
 IconButton.defaultProps = {
   size: 25,
   isFill: true,
-  iconName: "/static/images/a-z.sorting.react.svg",
+  iconName: combineUrl(
+    window.AppServer?.cdnUrl,
+    "/static/images/a-z.sorting.react.svg"
+  ),
   isDisabled: false,
   isClickable: false,
   dataTip: "",

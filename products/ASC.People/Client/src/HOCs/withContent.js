@@ -5,8 +5,8 @@ import LinkWithDropdown from "@appserver/components/link-with-dropdown";
 import Avatar from "@appserver/components/avatar";
 
 import config from "../../package.json";
-import { combineUrl } from "@appserver/common/utils";
-import { AppServerConfig } from "@appserver/common/constants";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 
 export default function withContent(WrappedContent) {
   const WithContent = (props) => {

@@ -1,3 +1,5 @@
+import combineUrl from "../utils/combineUrl";
+
 export const LANGUAGE = "language";
 export const ARTICLE_PINNED_KEY = "asc_article_pinned_key";
 
@@ -111,20 +113,32 @@ export const ConflictResolveType = Object.freeze({
 export const providersData = Object.freeze({
   Google: {
     label: "Google",
-    icon: "/static/images/share.google.react.svg",
+    icon: combineUrl(
+      window.AppServer?.cdnUrl,
+      "/static/images/share.google.react.svg"
+    ),
   },
   Facebook: {
     label: "Facebook",
-    icon: "/static/images/share.facebook.react.svg",
+    icon: combineUrl(
+      window.AppServer?.cdnUrl,
+      "/static/images/share.facebook.react.svg"
+    ),
   },
   Twitter: {
     label: "Twitter",
-    icon: "/static/images/share.twitter.react.svg",
+    icon: combineUrl(
+      window.AppServer?.cdnUrl,
+      "/static/images/share.twitter.react.svg"
+    ),
     iconOptions: { color: "#2AA3EF" },
   },
   LinkedIn: {
     label: "LinkedIn",
-    icon: "/static/images/share.linkedin.react.svg",
+    icon: combineUrl(
+      window.AppServer?.cdnUrl,
+      "/static/images/share.linkedin.react.svg"
+    ),
   },
 });
 

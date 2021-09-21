@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-
+import combineUrl from "../../../utils/combineUrl";
 import IconButton from "@appserver/components/icon-button";
 
 const CloseButton = (props) => {
@@ -13,7 +13,10 @@ const CloseButton = (props) => {
         color={"#A3A9AE"}
         clickColor={"#A3A9AE"}
         size={10}
-        iconName="/static/images/cross.react.svg"
+        iconName={combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/cross.react.svg"
+        )}
         isFill={true}
         isDisabled={isDisabled}
         onClick={!isDisabled ? onClick : undefined}

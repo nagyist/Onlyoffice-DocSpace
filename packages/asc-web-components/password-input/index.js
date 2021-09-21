@@ -18,6 +18,7 @@ import {
   StyledTooltipContainer,
   StyledTooltipItem,
 } from "./styled-password-input";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 class PasswordInput extends React.Component {
   constructor(props) {
@@ -243,7 +244,7 @@ class PasswordInput extends React.Component {
     return !equal(this.props, nextProps) || !equal(this.state, nextState);
   }
 
-  componentDidUpdate(prevProps, prevState) {
+  componentDidUpdate(prevProps) {
     if (
       prevProps.clipActionResource !== this.props.clipActionResource &&
       this.state.copyLabel !== this.props.clipCopiedResource
@@ -363,8 +364,11 @@ class PasswordInput extends React.Component {
     const { type, progressColor, progressWidth, inputValue } = this.state;
     const iconName =
       type === "password"
-        ? "/static/images/eye.off.react.svg"
-        : "/static/images/eye.react.svg";
+        ? combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/eye.off.react.svg"
+          )
+        : combineUrl(window.AppServer?.cdnUrl, "/static/images/eye.react.svg");
 
     return (
       <>
@@ -426,7 +430,7 @@ class PasswordInput extends React.Component {
       showCopyLink,
     } = this.props;
 
-    const { copyLabel, disableCopyAction, type } = this.state;
+    const { copyLabel, disableCopyAction } = this.state;
 
     return (
       <StyledInput
@@ -554,6 +558,7 @@ PasswordInput.propTypes = {
   simpleView: PropTypes.bool,
   /** Sets the link to copy the password visible  */
   showCopyLink: PropTypes.bool,
+  theme: PropTypes.object,
 };
 
 PasswordInput.defaultProps = {

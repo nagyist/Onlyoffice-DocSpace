@@ -13,6 +13,7 @@ import Backdrop from "@appserver/components/backdrop";
 import Button from "@appserver/components/button";
 import Loaders from "@appserver/common/components/Loaders";
 import Loader from "@appserver/components/loader";
+import combineUrl from "@appserver/common/utils/combineUrl";
 import EmptyContainer from "../../EmptyContainer/EmptyContainer";
 const DISPLAY_TYPE = "aside";
 const SelectFileDialogAsideView = ({
@@ -120,7 +121,10 @@ const SelectFileDialogAsideView = ({
                   <div className="select-file-dialog_empty-container">
                     <EmptyContainer
                       headerText={t("Home:EmptyFolderHeader")}
-                      imageSrc="/static/images/empty_screen.png"
+                      imageSrc={combineUrl(
+                        window.AppServer?.cdnUrl,
+                        "/static/images/empty_screen.png"
+                      )}
                     />
                   </div>
                 )}

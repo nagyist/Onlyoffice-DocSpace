@@ -5,7 +5,7 @@ import { inject, observer } from "mobx-react";
 import Loader from "@appserver/components/loader";
 import PageLayout from "@appserver/common/components/PageLayout";
 import { combineUrl, tryRedirectTo } from "@appserver/common/utils";
-import { AppServerConfig } from "@appserver/common/constants";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 
 class ChangeEmail extends React.PureComponent {
   componentDidMount() {

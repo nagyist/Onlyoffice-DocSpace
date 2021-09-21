@@ -10,6 +10,7 @@ import LoadErrorIcon from "../../../../public/images/load.error.react.svg";
 import IconButton from "@appserver/components/icon-button";
 import { inject, observer } from "mobx-react";
 import { withTranslation } from "react-i18next";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 const StyledFileRow = styled(Row)`
   margin: 0 16px;
@@ -170,7 +171,10 @@ const FileRow = (props) => {
                     percent={item.convertProgress}
                   />
                   <IconButton
-                    iconName="/static/images/refresh.react.svg"
+                    iconName={combineUrl(
+                      window.AppServer?.cdnUrl,
+                      "/static/images/refresh.react.svg"
+                    )}
                     className="convert_icon"
                     size="medium"
                     isfill={true}

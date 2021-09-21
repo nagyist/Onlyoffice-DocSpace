@@ -21,7 +21,7 @@ import VersionHistory from "./pages/VersionHistory";
 import PrivateRoomsPage from "./pages/PrivateRoomsPage";
 import ErrorBoundary from "@appserver/common/components/ErrorBoundary";
 import Panels from "./components/FilesPanels";
-import { AppServerConfig } from "@appserver/common/constants";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 
 const { proxyURL } = AppServerConfig;
 const homepage = config.homepage;

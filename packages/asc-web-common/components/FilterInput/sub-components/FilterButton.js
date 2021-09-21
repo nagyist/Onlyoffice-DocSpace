@@ -1,6 +1,7 @@
 import React from "react";
 import ContextMenuButton from "@appserver/components/context-menu-button";
 import PropTypes from "prop-types";
+import combineUrl from "../../../utils/combineUrl";
 
 class FilterButton extends React.PureComponent {
   render() {
@@ -19,8 +20,14 @@ class FilterButton extends React.PureComponent {
         className="filter-button"
         directionY="bottom"
         getData={getData}
-        iconName="/static/images/rectangle.filter.react.svg"
-        iconOpenName="/static/images/rectangle.filter.click.react.svg"
+        iconName={combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/rectangle.filter.react.svg"
+        )}
+        iconOpenName={combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/rectangle.filter.click.react.svg"
+        )}
         id={id}
         isDisabled={isDisabled}
         size={iconSize}

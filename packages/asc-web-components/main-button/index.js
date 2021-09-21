@@ -9,6 +9,7 @@ import {
   StyledDropDown,
   GroupMainButton,
 } from "./styled-main-button";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 class MainButton extends React.PureComponent {
   constructor(props) {
@@ -131,7 +132,10 @@ MainButton.defaultProps = {
   text: "Button",
   isDisabled: false,
   isDropdown: true,
-  iconName: "/static/images/people.react.svg",
+  iconName: combineUrl(
+    window.AppServer?.cdnUrl,
+    "/static/images/people.react.svg"
+  ),
 };
 
 export default MainButton;

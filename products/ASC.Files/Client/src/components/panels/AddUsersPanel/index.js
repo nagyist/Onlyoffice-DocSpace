@@ -15,6 +15,7 @@ import {
 } from "../StyledPanels";
 import AccessComboBox from "../SharingPanel/AccessComboBox";
 import Loaders from "@appserver/common/components/Loaders";
+import combineUrl from "@appserver/common/utils/combineUrl";
 import withLoader from "../../../HOCs/withLoader";
 
 class AddUsersPanelComponent extends React.Component {
@@ -141,7 +142,10 @@ class AddUsersPanelComponent extends React.Component {
             <StyledHeaderContent>
               <IconButton
                 size="16"
-                iconName="/static/images/arrow.path.react.svg"
+                iconName={combineUrl(
+                  window.AppServer?.cdnUrl,
+                  "/static/images/arrow.path.react.svg"
+                )}
                 onClick={this.onArrowClick}
                 color="#A3A9AE"
               />

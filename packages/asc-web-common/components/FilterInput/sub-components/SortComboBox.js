@@ -9,6 +9,7 @@ import DropDownItem from "@appserver/components/drop-down-item";
 import RadioButtonGroup from "@appserver/components/radio-button-group";
 
 import { StyledIconButton } from "../StyledFilterInput";
+import combineUrl from "../../../utils/combineUrl";
 
 class SortComboBox extends React.Component {
   constructor(props) {
@@ -160,7 +161,10 @@ class SortComboBox extends React.Component {
         <StyledIconButton sortDirection={!!sortDirection}>
           <IconButton
             color={"#A3A9AE"}
-            iconName="/static/images/z-a.sorting.react.svg"
+            iconName={combineUrl(
+              window.AppServer?.cdnUrl,
+              "/static/images/z-a.sorting.react.svg"
+            )}
             isDisabled={isDisabled}
             isFill={true}
             onClick={this.onToggleAction}

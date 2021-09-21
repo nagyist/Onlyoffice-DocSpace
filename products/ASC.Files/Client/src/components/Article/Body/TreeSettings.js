@@ -10,8 +10,8 @@ import ExpanderDownIcon from "../../../../../../../public/images/expander-down.r
 import ExpanderRightIcon from "../../../../../../../public/images/expander-right.react.svg";
 import commonIconsStyles from "@appserver/components/utils/common-icons-style";
 import config from "../../../../package.json";
-import { combineUrl } from "@appserver/common/utils";
-import { AppServerConfig } from "@appserver/common/constants";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 import Loaders from "@appserver/common/components/Loaders";
 import withLoader from "../../../HOCs/withLoader";
 

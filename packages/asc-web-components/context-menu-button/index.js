@@ -17,6 +17,7 @@ import {
   StyledContent,
   StyledOuter,
 } from "./styled-context-menu-button";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 class ContextMenuButton extends React.Component {
   constructor(props) {
@@ -306,13 +307,17 @@ ContextMenuButton.propTypes = {
   /** Set the display type */
   displayType: PropTypes.string,
   isNew: PropTypes.bool,
+  onClick: PropTypes.func,
 };
 
 ContextMenuButton.defaultProps = {
   opened: false,
   data: [],
   title: "",
-  iconName: "/static/images/vertical-dots.react.svg",
+  iconName: combineUrl(
+    window.AppServer?.cdnUrl,
+    "/static/images/vertical-dots.react.svg"
+  ),
   size: 16,
   isDisabled: false,
   directionX: "left",

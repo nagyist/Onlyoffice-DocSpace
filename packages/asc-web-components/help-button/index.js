@@ -11,6 +11,7 @@ import Backdrop from "../backdrop";
 import Heading from "../heading";
 import throttle from "lodash/throttle";
 import { Content, HeaderContent, Body } from "./styled-help-button";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 class HelpButton extends React.Component {
   constructor(props) {
@@ -227,7 +228,10 @@ HelpButton.propTypes = {
 };
 
 HelpButton.defaultProps = {
-  iconName: "/static/images/question.react.svg",
+  iconName: combineUrl(
+    window.AppServer?.cdnUrl,
+    "/static/images/question.react.svg"
+  ),
   place: "top",
   offsetRight: 120,
   offsetLeft: 0,

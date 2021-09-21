@@ -1,3 +1,4 @@
+import combineUrl from "@appserver/common/utils/combineUrl";
 /**
  * Array for generation current settings tree.
  */
@@ -5,7 +6,10 @@
 export const settingsTree = [
   {
     key: "0",
-    icon: "/static/images/settings.react.svg",
+    icon: combineUrl(
+      window.AppServer?.cdnUrl,
+      "/static/images/settings.react.svg"
+    ),
     link: "common",
     tKey: "ManagementCategoryCommon",
     isHeader: true,
@@ -111,7 +115,10 @@ export const settingsTreeFull = [
   {
     title: "Common",
     key: "0",
-    icon: "/static/images/settings.react.svg",
+    icon: combineUrl(
+      window.AppServer?.cdnUrl,
+      "/static/images/settings.react.svg"
+    ),
     link: "common",
     children: [
       {
@@ -137,7 +144,10 @@ export const settingsTreeFull = [
   {
     title: "Security",
     key: "1",
-    icon: "/static/images/settings.react.svg",
+    icon: combineUrl(
+      window.AppServer?.cdnUrl,
+      "/static/images/settings.react.svg"
+    ),
     link: "security",
     children: [
       {
@@ -169,7 +179,10 @@ export const settingsTreeFull = [
   {
     title: "Data Management",
     key: "2",
-    icon: "/static/images/settings.react.svg",
+    icon: combineUrl(
+      window.AppServer?.cdnUrl,
+      "/static/images/settings.react.svg"
+    ),
     link: "data-management",
     children: [
       {
@@ -195,7 +208,10 @@ export const settingsTreeFull = [
   {
     title: "Integration",
     key: "3",
-    icon: "/static/images/settings.react.svg",
+    icon: combineUrl(
+      window.AppServer?.cdnUrl,
+      "/static/images/settings.react.svg"
+    ),
     link: "integration",
     children: [
       {
@@ -215,7 +231,10 @@ export const settingsTreeFull = [
   {
     title: "Statistics",
     key: "4",
-    icon: "/static/images/settings.react.svg",
+    icon: combineUrl(
+      window.AppServer?.cdnUrl,
+      "/static/images/settings.react.svg"
+    ),
     link: "statistics",
   },
 ];

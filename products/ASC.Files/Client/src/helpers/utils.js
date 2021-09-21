@@ -1,5 +1,5 @@
 import authStore from "@appserver/common/store/AuthStore";
-import { AppServerConfig } from "@appserver/common/constants";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 import config from "../../package.json";
 import { combineUrl, toUrlParams } from "@appserver/common/utils";
 import { addFileToRecentlyViewed } from "@appserver/common/api/files";

@@ -2,6 +2,7 @@ import React from "react";
 import Text from "@appserver/components/text";
 import IconButton from "@appserver/components/icon-button";
 import { inject, observer } from "mobx-react";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 const SharedButton = ({
   t,
@@ -34,7 +35,10 @@ const SharedButton = ({
         color={color}
         hoverColor="#657077"
         size={18}
-        iconName="/static/images/catalog.shared.react.svg"
+        iconName={combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/catalog.shared.react.svg"
+        )}
       />
       {t("Share")}
     </Text>

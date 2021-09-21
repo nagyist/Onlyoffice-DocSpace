@@ -5,8 +5,8 @@ import { withTranslation } from "react-i18next";
 
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router";
-import { combineUrl } from "@appserver/common/utils";
-import { AppServerConfig } from "@appserver/common/constants";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 import config from "../../../../package.json";
 import withLoader from "../../../HOCs/withLoader";
 import { useCallback } from "react";

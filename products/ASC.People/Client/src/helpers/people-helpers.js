@@ -4,6 +4,7 @@ import {
   EmployeeStatus,
 } from "@appserver/common/constants";
 import { isAdmin } from "@appserver/common/utils";
+import combineUrl from "@appserver/common/utils/combineUrl";
 import { id } from "../../package.json";
 //const { isAdmin } = utils;
 
@@ -40,7 +41,10 @@ export const getUserContactsPattern = () => {
     contact: [
       {
         type: "mail",
-        icon: "/static/images/mail.react.svg",
+        icon: combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/mail.react.svg"
+        ),
         link: "mailto:{0}",
       },
       {

@@ -12,12 +12,12 @@ import Headline from "@appserver/common/components/Headline";
 import toastr from "studio/toastr";
 import Loaders from "@appserver/common/components/Loaders";
 import withLoader from "../../../../HOCs/withLoader";
-import { AppServerConfig } from "@appserver/common/constants";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 import { withTranslation } from "react-i18next";
 import { isMobile } from "react-device-detect";
 import { inject, observer } from "mobx-react";
 import config from "../../../../../package.json";
-import { combineUrl } from "@appserver/common/utils";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 const StyledContainer = styled.div`
   .group-button-menu-container {
@@ -313,7 +313,10 @@ const SectionHeaderContent = (props) => {
                       className="action-button"
                       directionX="right"
                       title={t("Common:Actions")}
-                      iconName="/static/images/vertical-dots.react.svg"
+                      iconName={combineUrl(
+                        window.AppServer?.cdnUrl,
+                        "/static/images/vertical-dots.react.svg"
+                      )}
                       size={17}
                       color="#A3A9AE"
                       getData={getContextOptionsGroup}
@@ -336,7 +339,10 @@ const SectionHeaderContent = (props) => {
                         className="action-button"
                         directionX="right"
                         title={t("Common:Actions")}
-                        iconName="/static/images/actions.header.touch.react.svg"
+                        iconName={combineUrl(
+                          window.AppServer?.cdnUrl,
+                          "/static/images/actions.header.touch.react.svg"
+                        )}
                         size={17}
                         color="#A3A9AE"
                         hoverColor="#657077"

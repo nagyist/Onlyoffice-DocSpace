@@ -26,7 +26,7 @@ import {
   toEmployeeWrapper,
 } from "../../../../helpers/people-helpers";
 import config from "../../../../../package.json";
-import { combineUrl } from "@appserver/common/utils";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 import Loaders from "@appserver/common/components/Loaders";
 import withLoader from "../../../../HOCs/withLoader";
@@ -447,7 +447,10 @@ class SectionHeaderContent extends React.PureComponent {
       >
         {!personal && (
           <IconButton
-            iconName="/static/images/arrow.path.react.svg"
+            iconName={combineUrl(
+              window.AppServer?.cdnUrl,
+              "/static/images/arrow.path.react.svg"
+            )}
             color="#A3A9AE"
             size="17"
             hoverColor="#657077"
@@ -465,7 +468,10 @@ class SectionHeaderContent extends React.PureComponent {
             className="action-button"
             directionX="right"
             title={t("Common:Actions")}
-            iconName="/static/images/vertical-dots.react.svg"
+            iconName={combineUrl(
+              window.AppServer?.cdnUrl,
+              "/static/images/vertical-dots.react.svg"
+            )}
             size={17}
             color="#A3A9AE"
             getData={contextOptions}

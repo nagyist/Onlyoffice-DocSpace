@@ -2,8 +2,8 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import toastr from "@appserver/components/toast/toastr";
 import { checkProtocol } from "../helpers/files-helpers";
-import { AppServerConfig } from "@appserver/common/constants";
-import { combineUrl } from "@appserver/common/utils";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
+import combineUrl from "@appserver/common/utils/combineUrl";
 import config from "../../package.json";
 
 export default function withFileActions(WrappedFileItem) {

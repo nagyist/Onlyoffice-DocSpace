@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef } from "react";
 import Loader from "@appserver/components/loader";
 import Text from "@appserver/components/text";
+import combineUrl from "@appserver/common/utils/combineUrl";
 import { useTranslation, withTranslation } from "react-i18next";
 import CustomScrollbarsVirtualList from "@appserver/components/scrollbar/custom-scrollbars-virtual-list";
 import InfiniteLoader from "react-window-infinite-loader";
@@ -146,7 +147,10 @@ const FilesListBody = ({
         <div className="select-file-dialog_empty-container">
           <EmptyContainer
             headerText={t("Home:EmptyFolderHeader")}
-            imageSrc="/static/images/empty_screen.png"
+            imageSrc={combineUrl(
+              window.AppServer?.cdnUrl,
+              "/static/images/empty_screen.png"
+            )}
           />
         </div>
       )}

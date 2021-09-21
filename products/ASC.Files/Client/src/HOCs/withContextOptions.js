@@ -1,7 +1,7 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import copy from "copy-to-clipboard";
-import { combineUrl } from "@appserver/common/utils";
+import combineUrl from "@appserver/common/utils/combineUrl";
 import { FileAction, AppServerConfig } from "@appserver/common/constants";
 import toastr from "studio/toastr";
 import config from "../../package.json";
@@ -315,7 +315,10 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("SharingSettings"),
-              icon: "/static/images/catalog.shared.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                "/static/images/catalog.shared.react.svg"
+              ),
               onClick: this.onClickShare,
               disabled: !isShareable,
             };
@@ -323,14 +326,20 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("SendByEmail"),
-              icon: "/static/images/mail.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                "/static/images/mail.react.svg"
+              ),
               disabled: true,
             };
           case "owner-change":
             return {
               key: option,
               label: t("Translations:OwnerChange"),
-              icon: "/static/images/catalog.user.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                "/static/images/catalog.user.react.svg"
+              ),
               onClick: this.onOwnerChange,
               disabled: false,
             };
@@ -338,7 +347,10 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("LinkForPortalUsers"),
-              icon: "/static/images/invitation.link.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                "/static/images/invitation.link.react.svg"
+              ),
               onClick: this.onClickLinkForPortal,
               disabled: false,
             };
@@ -346,7 +358,10 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("Common:EditButton"),
-              icon: "/static/images/access.edit.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                "/static/images/access.edit.react.svg"
+              ),
               onClick: this.onClickLinkEdit,
               disabled: false,
             };
@@ -354,7 +369,10 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("Preview"),
-              icon: "/static/images/eye.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                "/static/images/eye.react.svg"
+              ),
               onClick: this.onPreviewClick,
               disabled: false,
             };
@@ -362,7 +380,10 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("Common:View"),
-              icon: "/static/images/eye.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                "/static/images/eye.react.svg"
+              ),
               onClick: this.onMediaFileClick,
               disabled: false,
             };
@@ -402,7 +423,10 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("Translations:Copy"),
-              icon: "/static/images/copy.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                "/static/images/copy.react.svg"
+              ),
               onClick: this.onCopyAction,
               disabled: false,
             };
@@ -410,7 +434,10 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("Duplicate"),
-              icon: "/static/images/copy.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                "/static/images/copy.react.svg"
+              ),
               onClick: this.onDuplicate,
               disabled: false,
             };
@@ -426,7 +453,10 @@ export default function withContextOptions(WrappedComponent) {
             return {
               key: option,
               label: t("Translations:ThirdPartyInfo"),
-              icon: "/static/images/access.edit.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                "/static/images/access.edit.react.svg"
+              ),
               onClick: this.onChangeThirdPartyInfo,
               disabled: false,
             };
@@ -436,7 +466,10 @@ export default function withContextOptions(WrappedComponent) {
               label: isRootThirdPartyFolder
                 ? t("Translations:DeleteThirdParty")
                 : t("Common:Delete"),
-              icon: "/static/images/catalog.trash.react.svg",
+              icon: combineUrl(
+                window.AppServer?.cdnUrl,
+                "/static/images/catalog.trash.react.svg"
+              ),
               onClick: this.onClickDelete,
               disabled: false,
             };

@@ -52,7 +52,10 @@ const RootFolderContainer = (props) => {
       case FolderType.USER:
         return {
           descriptionText: myDescription,
-          imageSrc: "/static/images/empty_screen.png",
+          imageSrc: combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/empty_screen.png"
+          ),
           buttons: commonButtons,
         };
       case FolderType.SHARE:

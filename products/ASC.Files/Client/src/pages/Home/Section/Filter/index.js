@@ -9,6 +9,7 @@ import FilterInput from "@appserver/common/components/FilterInput";
 import { withLayoutSize } from "@appserver/common/utils";
 import { isMobileOnly, isMobile } from "react-device-detect";
 import { inject, observer } from "mobx-react";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 const getFilterType = (filterValues) => {
   const filterType = result(
@@ -276,12 +277,18 @@ class SectionFilterContent extends React.Component {
       {
         value: "row",
         label: t("ViewList"),
-        icon: "/static/images/view-rows.react.svg",
+        icon: combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/view-rows.react.svg"
+        ),
       },
       {
         value: "tile",
         label: t("ViewTiles"),
-        icon: "/static/images/view-tiles.react.svg",
+        icon: combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/view-tiles.react.svg"
+        ),
         callback: createThumbnails,
       },
     ];

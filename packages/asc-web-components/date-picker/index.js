@@ -19,6 +19,7 @@ import {
   DropDownStyle,
   DateInputStyle,
 } from "./styled-date-picker";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 class DatePicker extends Component {
   constructor(props) {
@@ -332,7 +333,10 @@ class DatePicker extends Component {
           isDisabled={isDisabled}
           isReadOnly={isReadOnly}
           hasError={hasError}
-          iconName="/static/images/calendar.react.svg"
+          iconName={combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/calendar.react.svg"
+          )}
           iconColor="#A3A9AE"
           hoverColor="#A3A9AE"
           onIconClick={this.onClick}

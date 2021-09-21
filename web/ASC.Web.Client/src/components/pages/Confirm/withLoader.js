@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { observer, inject } from "mobx-react";
 import Loader from "@appserver/components/loader";
 import axios from "axios";
-import { combineUrl } from "@appserver/common/utils";
-import { AppServerConfig } from "@appserver/common/constants";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 
 let loadTimeout = null;
 export default function withLoader(WrappedComponent) {

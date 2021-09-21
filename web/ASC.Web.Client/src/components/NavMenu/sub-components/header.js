@@ -16,8 +16,8 @@ import Box from "@appserver/components/box";
 import Text from "@appserver/components/text";
 import { desktop, tablet } from "@appserver/components/utils/device";
 import i18n from "../i18n";
-import { combineUrl } from "@appserver/common/utils";
-import { AppServerConfig } from "@appserver/common/constants";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 import NoUserSelect from "@appserver/components/utils/commonStyles";
 
 const { proxyURL } = AppServerConfig;
@@ -199,7 +199,7 @@ const HeaderComponent = ({
               alt="logo"
               className="header-logo-icon"
               src={combineUrl(
-                AppServerConfig.proxyURL,
+                window.AppServer?.cdnUrl || AppServerConfig.proxyURL,
                 "/static/images/personal.logo.react.svg"
               )}
             />
@@ -207,7 +207,7 @@ const HeaderComponent = ({
             <img
               className="header-logo-icon mobile-short-logo"
               src={combineUrl(
-                AppServerConfig.proxyURL,
+                window.AppServer?.cdnUrl || AppServerConfig.proxyURL,
                 "/static/images/nav.logo.opened.react.svg"
               )}
             />

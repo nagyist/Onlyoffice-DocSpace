@@ -9,8 +9,8 @@ import toastr from "studio/toastr";
 import Loaders from "@appserver/common/components/Loaders";
 import { inject, observer } from "mobx-react";
 import config from "../../../../package.json";
-import { combineUrl } from "@appserver/common/utils";
-import { AppServerConfig } from "@appserver/common/constants";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 import withLoader from "../../../HOCs/withLoader";
 
 class ArticleMainButtonContent extends React.Component {
@@ -78,7 +78,7 @@ class ArticleMainButtonContent extends React.Component {
         >
           <DropDownItem
             icon={combineUrl(
-              AppServerConfig.proxyURL,
+              window.AppServer?.cdnUrl || AppServerConfig.proxyURL,
               homepage,
               "/images/add.employee.react.svg"
             )}
@@ -88,7 +88,7 @@ class ArticleMainButtonContent extends React.Component {
 
           <DropDownItem
             icon={combineUrl(
-              AppServerConfig.proxyURL,
+              window.AppServer?.cdnUrl || AppServerConfig.proxyURL,
               homepage,
               "/images/add.guest.react.svg"
             )}
@@ -97,7 +97,7 @@ class ArticleMainButtonContent extends React.Component {
           />
           <DropDownItem
             icon={combineUrl(
-              AppServerConfig.proxyURL,
+              window.AppServer?.cdnUrl || AppServerConfig.proxyURL,
               homepage,
               "/images/add.department.react.svg"
             )}
@@ -107,7 +107,7 @@ class ArticleMainButtonContent extends React.Component {
           <DropDownItem isSeparator />
           <DropDownItem
             icon={combineUrl(
-              AppServerConfig.proxyURL,
+              window.AppServer?.cdnUrl || AppServerConfig.proxyURL,
               "/static/images/invitation.link.react.svg"
             )}
             label={t("Translations:InviteLinkTitle")}
@@ -121,7 +121,7 @@ class ArticleMainButtonContent extends React.Component {
           {false && (
             <DropDownItem
               icon={combineUrl(
-                AppServerConfig.proxyURL,
+                window.AppServer?.cdnUrl || AppServerConfig.proxyURL,
                 homepage,
                 "/images/import.react.svg"
               )}

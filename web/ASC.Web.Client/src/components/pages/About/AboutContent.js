@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import styled from "styled-components";
 import { ReactSVG } from "react-svg";
 import { isDesktop } from "react-device-detect";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 const StyledAboutBody = styled.div`
   width: 100%;
@@ -43,12 +44,18 @@ const AboutContent = ({ personal, versionAppServer }) => {
       <div className="avatar">
         {personal ? (
           <ReactSVG
-            src="/images/logo_personal_about.svg"
+            src={combineUrl(
+              window.AppServer?.cdnUrl,
+              "/images/logo_personal_about.svg"
+            )}
             className="no-select"
           />
         ) : (
           <img
-            src="/images/dark_general.png"
+            src={combineUrl(
+              window.AppServer?.cdnUrl,
+              "/images/dark_general.png"
+            )}
             alt="Logo"
             className="no-select"
           />

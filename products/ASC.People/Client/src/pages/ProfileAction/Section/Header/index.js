@@ -7,8 +7,8 @@ import { useTranslation } from "react-i18next";
 import { inject, observer } from "mobx-react";
 
 import config from "../../../../../package.json";
-import { combineUrl } from "@appserver/common/utils";
-import { AppServerConfig } from "@appserver/common/constants";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 
 import Loaders from "@appserver/common/components/Loaders";
 import withLoader from "../../../../HOCs/withLoader";
@@ -107,7 +107,10 @@ const SectionHeaderContent = (props) => {
   return (
     <Wrapper>
       <IconButton
-        iconName="/static/images/arrow.path.react.svg"
+        iconName={combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/arrow.path.react.svg"
+        )}
         color="#A3A9AE"
         size="17"
         hoverColor="#657077"

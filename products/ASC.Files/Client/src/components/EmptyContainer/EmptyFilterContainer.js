@@ -5,6 +5,7 @@ import EmptyContainer from "./EmptyContainer";
 import FilesFilter from "@appserver/common/api/files/filter";
 import Link from "@appserver/components/link";
 import IconButton from "@appserver/components/icon-button";
+import combineUrl from "@appserver/common/utils/combineUrl";
 import toastr from "studio/toastr";
 
 const EmptyFilterContainer = ({
@@ -31,7 +32,10 @@ const EmptyFilterContainer = ({
         className="empty-folder_container-icon"
         size="12"
         onClick={onResetFilter}
-        iconName="/static/images/cross.react.svg"
+        iconName={combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/cross.react.svg"
+        )}
         isFill
         color="#657077"
       />

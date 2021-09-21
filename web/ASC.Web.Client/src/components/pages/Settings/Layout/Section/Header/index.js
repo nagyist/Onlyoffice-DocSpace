@@ -7,7 +7,6 @@ import Headline from "@appserver/common/components/Headline";
 import IconButton from "@appserver/components/icon-button";
 import GroupButtonsMenu from "@appserver/components/group-buttons-menu";
 import DropDownItem from "@appserver/components/drop-down-item";
-
 import { tablet, desktop } from "@appserver/components/utils/device";
 
 import {
@@ -16,8 +15,8 @@ import {
   getTKeyByKey,
   checkPropertyByLink,
 } from "../../../utils";
-import { combineUrl } from "@appserver/common/utils";
-import { AppServerConfig } from "@appserver/common/constants";
+import combineUrl from "@appserver/common/utils/combineUrl";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 import { isMobile } from "react-device-detect";
 
 const HeaderContainer = styled.div`
@@ -260,7 +259,10 @@ class SectionHeaderContent extends React.Component {
           <HeaderContainer>
             {!isCategoryOrHeader && arrayOfParams[0] && (
               <IconButton
-                iconName="/static/images/arrow.path.react.svg"
+                iconName={combineUrl(
+                  window.AppServer?.cdnUrl,
+                  "/static/images/arrow.path.react.svg"
+                )}
                 size="17"
                 color="#A3A9AE"
                 hoverColor="#657077"
@@ -275,7 +277,10 @@ class SectionHeaderContent extends React.Component {
             {addUsers && (
               <div className="action-wrapper">
                 <IconButton
-                  iconName="/static/images/actions.header.touch.react.svg"
+                  iconName={combineUrl(
+                    window.AppServer?.cdnUrl,
+                    "/static/images/actions.header.touch.react.svg"
+                  )}
                   size="17"
                   color="#A3A9AE"
                   hoverColor="#657077"

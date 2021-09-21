@@ -17,7 +17,7 @@ import commonIconsStyles from "@appserver/components/utils/common-icons-style";
 import { withRouter } from "react-router";
 import config from "../../../../package.json";
 import { clickBackdrop, combineUrl } from "@appserver/common/utils";
-import { AppServerConfig } from "@appserver/common/constants";
+import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 
 const StyledTreeMenu = styled(TreeMenu)`
   ${(props) =>

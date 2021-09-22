@@ -24,6 +24,13 @@ import AppServerConfig from "@appserver/common/constants/AppServerConfig";
 import Snackbar from "@appserver/components/snackbar";
 import moment from "moment";
 
+window.AppServer = {
+  ...(window.AppServer || {}),
+  cdnUrl: `${CDN_URL}`,
+  buildAt: `${BUILD_AT}`,
+  version: `${VERSION}`,
+};
+
 const { proxyURL } = AppServerConfig;
 const homepage = config.homepage;
 
@@ -152,13 +159,6 @@ const Shell = ({ items = [], page = "home", ...rest }) => {
 
   useEffect(() => {
     try {
-      window.AppServer = {
-        ...(window.AppServer || {}),
-        cdnUrl: `${CDN_URL}`,
-        buildAt: `${BUILD_AT}`,
-        version: `${VERSION}`,
-      };
-
       //TEMP object, will be removed!!!
       window.AppServer.studio = {
         HOME_URLS,

@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-
+import combineUrl from "@appserver/common/utils/combineUrl";
 import IconButton from "@appserver/components/icon-button";
 import TextInput from "@appserver/components/text-input";
 import StyledFileInput from "./StyledSimpleFileInput";
@@ -66,7 +66,10 @@ const SimpleFileInput = ({
       <div className="icon" onClick={!isDisabled ? onClickInput : null}>
         <IconButton
           className="icon-button"
-          iconName={"/static/images/catalog.folder.react.svg"}
+          iconName={combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/catalog.folder.react.svg"
+          )}
           color={"#A3A9AE"}
           isDisabled={isDisabled}
           size={iconSize}

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import equal from "fast-deep-equal/react";
-
+import combineUrl from "@appserver/common/utils/combineUrl";
 import IconButton from "../icon-button";
 import TextInput from "../text-input";
 import StyledFileInput from "./styled-file-input";
@@ -125,7 +125,10 @@ class FileInput extends Component {
         <div className="icon" onClick={this.onIconFileClick}>
           <IconButton
             className="icon-button"
-            iconName={"/static/images/catalog.folder.react.svg"}
+            iconName={combineUrl(
+              window.AppServer?.cdnUrl,
+              "/static/images/catalog.folder.react.svg"
+            )}
             color={"#A3A9AE"}
             size={iconSize}
             isDisabled={isDisabled}

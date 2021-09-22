@@ -9,7 +9,7 @@ import Text from "../../text";
 import Box from "../../box";
 import ContextMenuButton from "../../context-menu-button";
 import IconButton from "../../icon-button";
-
+import combineUrl from "@appserver/common/utils/combineUrl";
 import {
   isDesktop,
   //isTablet,
@@ -394,7 +394,10 @@ class AvatarEditorBody extends React.Component {
                           size="16"
                           isDisabled={false}
                           onClick={this.deleteImage}
-                          iconName={"/static/images/catalog.trash.react.svg"}
+                          iconName={combineUrl(
+                            window.AppServer?.cdnUrl,
+                            "/static/images/catalog.trash.react.svg"
+                          )}
                           isFill={true}
                           isClickable={true}
                           color="#FFFFFF"
@@ -407,7 +410,10 @@ class AvatarEditorBody extends React.Component {
                           size="16"
                           isDisabled={false}
                           onClick={this.onZoomMinusClick}
-                          iconName={"/static/images/zoom-minus.react.svg"}
+                          iconName={combineUrl(
+                            window.AppServer?.cdnUrl,
+                            "/static/images/zoom-minus.react.svg"
+                          )}
                           isFill={true}
                           isClickable={false}
                         />
@@ -426,7 +432,10 @@ class AvatarEditorBody extends React.Component {
                           className="zoom-container-svg_zoom-plus"
                           isDisabled={false}
                           onClick={this.onZoomPlusClick}
-                          iconName={"/static/images/zoom-plus.react.svg"}
+                          iconName={combineUrl(
+                            window.AppServer?.cdnUrl,
+                            "/static/images/zoom-plus.react.svg"
+                          )}
                           isFill={true}
                           isClickable={false}
                         />

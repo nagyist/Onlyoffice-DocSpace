@@ -4,6 +4,7 @@ import equal from "fast-deep-equal/react";
 import ComboBox from "@appserver/components/combobox";
 import TextInput from "@appserver/components/text-input";
 import IconButton from "@appserver/components/icon-button";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 const Container = styled.div`
   display: flex;
@@ -61,7 +62,10 @@ class ContactField extends React.Component {
           className="remove_icon"
           size="16"
           onClick={removeButtonOnChange}
-          iconName={"/static/images/catalog.trash.react.svg"}
+          iconName={combineUrl(
+            window.AppServer?.cdnUrl,
+            "/static/images/catalog.trash.react.svg"
+          )}
           isFill={true}
           isClickable={true}
           color="#A3A9AE"

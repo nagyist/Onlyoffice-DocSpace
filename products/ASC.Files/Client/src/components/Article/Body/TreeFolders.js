@@ -3,7 +3,6 @@ import TreeMenu from "@appserver/components/tree-menu";
 import TreeNode from "@appserver/components/tree-menu/sub-components/tree-node";
 import styled from "styled-components";
 import { FolderType, ShareAccessRights } from "@appserver/common/constants";
-import toastr from "studio/toastr";
 
 import { onConvertFiles } from "../../../helpers/files-converter";
 import { ReactSVG } from "react-svg";
@@ -12,6 +11,7 @@ import ExpanderRightIcon from "../../../../../../../public/images/expander-right
 import commonIconsStyles from "@appserver/components/utils/common-icons-style";
 import withLoader from "../../../HOCs/withLoader";
 import Loaders from "@appserver/common/components/Loaders";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 import { observer, inject } from "mobx-react";
 import { runInAction } from "mobx";
@@ -74,67 +74,124 @@ class TreeFolders extends React.Component {
   };
 
   getFolderIcon = (item) => {
-    let iconUrl = "images/catalog.folder.react.svg";
+    let iconUrl = combineUrl(
+      window.AppServer?.cdnUrl,
+      "/static/images/catalog.folder.react.svg"
+    );
 
     switch (item.rootFolderType) {
       case FolderType.USER:
-        iconUrl = "/static/images/catalog.user.react.svg";
+        iconUrl = combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/catalog.user.react.svg"
+        );
         break;
       case FolderType.SHARE:
-        iconUrl = "/static/images/catalog.shared.react.svg";
+        iconUrl = combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/catalog.shared.react.svg"
+        );
         break;
       case FolderType.COMMON:
-        iconUrl = "/static/images/catalog.portfolio.react.svg";
+        iconUrl = combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/catalog.portfolio.react.svg"
+        );
         break;
       case FolderType.Favorites:
-        iconUrl = "/static/images/catalog.favorites.react.svg";
+        iconUrl = combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/catalog.favorites.react.svg"
+        );
         break;
       case FolderType.Recent:
-        iconUrl = "/static/images/catalog.recent.react.svg";
+        iconUrl = combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/catalog.recent.react.svg"
+        );
         break;
       case FolderType.Privacy:
-        iconUrl = "/static/images/catalog.private.react.svg";
+        iconUrl = combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/catalog.private.react.svg"
+        );
         break;
       case FolderType.TRASH:
-        iconUrl = "/static/images/catalog.trash.react.svg";
+        iconUrl = combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/catalog.trash.react.svg"
+        );
         break;
       default:
         break;
     }
 
     if (item.parentId !== 0)
-      iconUrl = "/static/images/catalog.folder.react.svg";
+      iconUrl = combineUrl(
+        window.AppServer?.cdnUrl,
+        "/static/images/catalog.folder.react.svg"
+      );
 
     switch (item.providerKey) {
       case "GoogleDrive":
-        iconUrl = "/static/images/cloud.services.google.drive.react.svg";
+        iconUrl = combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/cloud.services.google.drive.react.svg"
+        );
         break;
       case "Box":
-        iconUrl = "/static/images/cloud.services.box.react.svg";
+        iconUrl = combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/cloud.services.box.react.svg"
+        );
         break;
       case "DropboxV2":
-        iconUrl = "/static/images/cloud.services.dropbox.react.svg";
+        iconUrl = combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/cloud.services.dropbox.react.svg"
+        );
         break;
       case "OneDrive":
-        iconUrl = "/static/images/cloud.services.onedrive.react.svg";
+        iconUrl = combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/cloud.services.onedrive.react.svg"
+        );
         break;
       case "SharePoint":
-        iconUrl = "/static/images/cloud.services.onedrive.react.svg";
+        iconUrl = combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/cloud.services.onedrive.react.svg"
+        );
         break;
       case "kDrive":
-        iconUrl = "/static/images/catalog.folder.react.svg";
+        iconUrl = combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/catalog.folder.react.svg"
+        );
         break;
       case "Yandex":
-        iconUrl = "/static/images/catalog.folder.react.svg";
+        iconUrl = combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/catalog.folder.react.svg"
+        );
         break;
       case "NextCloud":
-        iconUrl = "/static/images/cloud.services.nextcloud.react.svg";
+        iconUrl = combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/cloud.services.nextcloud.react.svg"
+        );
         break;
       case "OwnCloud":
-        iconUrl = "/static/images/catalog.folder.react.svg";
+        iconUrl = combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/catalog.folder.react.svg"
+        );
         break;
       case "WebDav":
-        iconUrl = "/static/images/catalog.folder.react.svg";
+        iconUrl = combineUrl(
+          window.AppServer?.cdnUrl,
+          "/static/images/catalog.folder.react.svg"
+        );
         break;
       default:
         break;

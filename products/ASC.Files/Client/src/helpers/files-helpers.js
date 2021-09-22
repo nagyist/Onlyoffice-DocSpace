@@ -1,5 +1,6 @@
 import { runInAction } from "mobx";
 import { EDITOR_PROTOCOL } from "./constants";
+import combineUrl from "@appserver/common/utils/combineUrl";
 
 export const presentInArray = (array, search, caseInsensitive = false) => {
   let pattern = caseInsensitive ? search.toLowerCase() : search;
@@ -10,21 +11,45 @@ export const presentInArray = (array, search, caseInsensitive = false) => {
 export const getAccessIcon = (access) => {
   switch (access) {
     case 1:
-      return "/static/images/access.edit.react.svg";
+      return combineUrl(
+        window.AppServer?.cdnUrl,
+        "/static/images/access.edit.react.svg"
+      );
     case 2:
-      return "/static/images/eye.react.svg";
+      return combineUrl(
+        window.AppServer?.cdnUrl,
+        "/static/images/eye.react.svg"
+      );
     case 3:
-      return "/static/images/access.none.react.svg";
+      return combineUrl(
+        window.AppServer?.cdnUrl,
+        "/static/images/access.none.react.svg"
+      );
     case 4:
-      return "images/catalog.question.react.svg";
+      return combineUrl(
+        window.AppServer?.cdnUrl,
+        "/static/images/catalog.question.react.svg"
+      );
     case 5:
-      return "/static/images/access.review.react.svg";
+      return combineUrl(
+        window.AppServer?.cdnUrl,
+        "/static/images/access.review.react.svg"
+      );
     case 6:
-      return "/static/images/access.comment.react.svg";
+      return combineUrl(
+        window.AppServer?.cdnUrl,
+        combineUrl(window.AppServer?.cdnUrl)
+      );
     case 7:
-      return "/static/images/access.form.react.svg";
+      return combineUrl(
+        window.AppServer?.cdnUrl,
+        "/static/images/access.form.react.svg"
+      );
     case 8:
-      return "/static/images/custom.filter.react.svg";
+      return combineUrl(
+        window.AppServer?.cdnUrl,
+        "/static/images/custom.filter.react.svg"
+      );
     default:
       return;
   }

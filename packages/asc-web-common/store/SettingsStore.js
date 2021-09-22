@@ -60,6 +60,8 @@ class SettingsStore {
   isTabletView = false;
   isArticlePinned =
     localStorage.getItem(ARTICLE_PINNED_KEY) === "true" || false;
+  isArticleVisible = false;
+  isBackdropVisible = false;
 
   isArticleVisibleOnUnpin = false;
 
@@ -105,6 +107,19 @@ class SettingsStore {
     return `https://helpcenter.onlyoffice.com/${lang}/administration/configuration.aspx#CustomizingPortal_block`;
   }
 
+  setIsArticleVisible = (visible) => {
+    this.isArticleVisible = this.isArticlePinned ? true : visible;
+  };
+
+  setIsBackdropVisible = (visible) => {
+    this.isBackdropVisible = visible;
+  };
+
+  hideArticle = () => {
+    this.setIsArticleVisible(false);
+    this.setIsBackdropVisible(false);
+  };
+
   setValue = (key, value) => {
     this[key] = value;
   };
@@ -134,6 +149,12 @@ class SettingsStore {
           if (!language || language == "undefined") {
             localStorage.setItem(LANGUAGE, newSettings[key]);
           }
+        }
+        if (key === "personal") {
+          window.AppServer = {
+            ...window.AppServer,
+            personal: newSettings[key],
+          };
         }
       } else if (key === "passwordHash") {
         this.setValue("hashSettings", newSettings[key]);
@@ -305,7 +326,8 @@ class SettingsStore {
   };
 
   get firebaseHelper() {
-    return new FirebaseHelper(this.firebase);
+    window.firebaseHelper = new FirebaseHelper(this.firebase);
+    return window.firebaseHelper;
   }
 }
 

@@ -208,13 +208,16 @@ namespace ASC.Files.Helpers
             return FileStorageService.TrackEditFile(fileId, tabId, docKeyForTrack, doc, isFinish);
         }
 
-        public Configuration<T> OpenEdit(T fileId, int version, string doc)
+        public Configuration<T> OpenEdit(T fileId, int version, string doc, bool view)
         {
-            DocumentServiceHelper.GetParams(fileId, version, doc, true, true, true, out var configuration);
+            DocumentServiceHelper.GetParams(fileId, version, doc, true, !view, true, out var configuration);
             configuration.EditorType = EditorType.External;
-            configuration.EditorConfig.CallbackUrl = DocumentServiceTracker.GetCallbackUrl(configuration.Document.Info.File.ID.ToString());
+            if (configuration.EditorConfig.ModeWrite)
+            {
+                configuration.EditorConfig.CallbackUrl = DocumentServiceTracker.GetCallbackUrl(configuration.Document.Info.GetFile().ID.ToString());
+            }
 
-            if (configuration.Document.Info.File.RootFolderType == FolderType.Privacy && PrivacyRoomSettings.GetEnabled(SettingsManager))
+            if (configuration.Document.Info.GetFile().RootFolderType == FolderType.Privacy && PrivacyRoomSettings.GetEnabled(SettingsManager))
             {
                 var keyPair = EncryptionKeyPairHelper.GetKeyPair();
                 if (keyPair != null)
@@ -227,7 +230,7 @@ namespace ASC.Files.Helpers
                 }
             }
 
-            if (!configuration.Document.Info.File.Encrypted && !configuration.Document.Info.File.ProviderEntry) EntryManager.MarkAsRecent(configuration.Document.Info.File);
+            if (!configuration.Document.Info.GetFile().Encrypted && !configuration.Document.Info.GetFile().ProviderEntry) EntryManager.MarkAsRecent(configuration.Document.Info.GetFile());
 
             configuration.Token = DocumentServiceHelper.GetSignature(configuration);
             return configuration;
@@ -370,17 +373,17 @@ namespace ASC.Files.Helpers
                 .Select(FileOperationWraperHelper.Get);
         }
 
-        public IEnumerable<ConversationResult<T>> StartConversion(T fileId)
+        public IEnumerable<ConversationResult<T>> StartConversion(T fileId, bool sync = false)
         {
-            return CheckConversion(fileId, true);
+            return CheckConversion(fileId, true, sync);
         }
 
-        public IEnumerable<ConversationResult<T>> CheckConversion(T fileId, bool start)
+        public IEnumerable<ConversationResult<T>> CheckConversion(T fileId, bool start, bool sync = false)
         {
             return FileStorageService.CheckConversion(new List<List<string>>
             {
                 new List<string> { fileId.ToString(), "0", start.ToString() }
-            })
+            }, sync)
             .Select(r =>
             {
                 var o = new ConversationResult<T>
@@ -514,6 +517,11 @@ namespace ASC.Files.Helpers
         {
             var result = FileStorageService.LockFile(fileId, lockFile);
             return FileWrapperHelper.Get(result);
+        }
+
+        public DocumentService.FileLink GetPresignedUri(T fileId)
+        {
+            return FileStorageService.GetPresignedUri(fileId);
         }
 
         public List<EditHistoryWrapper> GetEditHistory(T fileId, string doc = null)

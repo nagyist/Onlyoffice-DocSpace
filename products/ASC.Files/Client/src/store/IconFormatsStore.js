@@ -236,7 +236,7 @@ class IconFormatsStore {
     sound = false,
     html = false
   ) => {
-    const folderPath = `images/icons/${size}`;
+    const folderPath = `/static/images/icons/${size}`;
 
     if (archive) return `${folderPath}/file_archive.svg`;
 
@@ -269,8 +269,12 @@ class IconFormatsStore {
         return `${folderPath}/fb2.svg`;
       case ".flv":
         return `${folderPath}/flv.svg`;
+      case ".fodt":
+        return `${folderPath}/fodt.svg`;
       case ".iaf":
         return `${folderPath}/iaf.svg`;
+      case ".ics":
+        return `${folderPath}/ics.svg`;
       case ".m2ts":
         return `${folderPath}/m2ts.svg`;
       case ".mht":
@@ -319,6 +323,8 @@ class IconFormatsStore {
         return `${folderPath}/webm.svg`;
       case ".xls":
         return `${folderPath}/xls.svg`;
+      case ".xlsm":
+        return `${folderPath}/xlsm.svg`;
       case ".xlsx":
         return `${folderPath}/xlsx.svg`;
       case ".xps":
@@ -331,7 +337,7 @@ class IconFormatsStore {
   };
 
   getIconSrc = (ext, size = 24) => {
-    const folderPath = `images/icons/${size}`;
+    const folderPath = `/static/images/icons/${size}`;
 
     if (presentInArray(this.archive, ext, true))
       return `${folderPath}/file_archive.svg`;
@@ -367,8 +373,12 @@ class IconFormatsStore {
         return `${folderPath}/fb2.svg`;
       case ".flv":
         return `${folderPath}/flv.svg`;
+      case ".fodt":
+        return `${folderPath}/fodt.svg`;
       case ".iaf":
         return `${folderPath}/iaf.svg`;
+      case ".ics":
+        return `${folderPath}/ics.svg`;
       case ".m2ts":
         return `${folderPath}/m2ts.svg`;
       case ".mht":
@@ -417,6 +427,8 @@ class IconFormatsStore {
         return `${folderPath}/webm.svg`;
       case ".xls":
         return `${folderPath}/xls.svg`;
+      case ".xlsm":
+        return `${folderPath}/xlsm.svg`;
       case ".xlsx":
         return `${folderPath}/xlsx.svg`;
       case ".xps":

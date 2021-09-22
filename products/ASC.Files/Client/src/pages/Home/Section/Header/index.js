@@ -216,7 +216,6 @@ class SectionHeaderContent extends React.Component {
       .downloadAction(this.props.t("Translations:ArchivingData"))
       .catch((err) => toastr.error(err));
 
-  downloadAsAction = () => this.props.setDownloadDialogVisible(true);
   renameAction = () => console.log("renameAction click");
   onOpenSharingPanel = () => this.props.setSharingPanelVisible(true);
 
@@ -226,9 +225,10 @@ class SectionHeaderContent extends React.Component {
       deleteAction,
       confirmDelete,
       setDeleteDialogVisible,
+      isThirdPartySelection,
     } = this.props;
 
-    if (confirmDelete) {
+    if (confirmDelete || isThirdPartySelection) {
       setDeleteDialogVisible(true);
     } else {
       const translations = {
@@ -311,21 +311,13 @@ class SectionHeaderContent extends React.Component {
   };
 
   getMenuItems = () => {
-    const {
-      t,
-      selectionCount,
-      isAccessedSelected,
-      isWebEditSelected,
-      isViewedSelected,
-      deleteDialogVisible,
-      isRecycleBin,
-      isThirdPartySelection,
-      isPrivacy,
-      isFavoritesFolder,
-      isRecentFolder,
-      isShareFolder,
-      personal,
-    } = this.props;
+    const { t, getHeaderMenu, cbMenuItems, getCheckboxItemLabel } = this.props;
+
+    const headerMenu = getHeaderMenu(t);
+    const children = cbMenuItems.map((key, index) => {
+      const label = getCheckboxItemLabel(t, key);
+      return <DropDownItem key={key} label={label} data-index={index} />;
+    });
 
     let menu = [
       {
@@ -334,127 +326,12 @@ class SectionHeaderContent extends React.Component {
         isSeparator: true,
         isSelect: true,
         fontWeight: "bold",
-        children: [
-          <DropDownItem key="all" label={t("All")} data-index={0} />,
-          <DropDownItem
-            key={FilterType.FoldersOnly}
-            label={t("Translations:Folders")}
-            data-index={1}
-          />,
-          <DropDownItem
-            key={FilterType.DocumentsOnly}
-            label={t("Common:Documents")}
-            data-index={2}
-          />,
-          <DropDownItem
-            key={FilterType.PresentationsOnly}
-            label={t("Translations:Presentations")}
-            data-index={3}
-          />,
-          <DropDownItem
-            key={FilterType.SpreadsheetsOnly}
-            label={t("Translations:Spreadsheets")}
-            data-index={4}
-          />,
-          <DropDownItem
-            key={FilterType.ImagesOnly}
-            label={t("Images")}
-            data-index={5}
-          />,
-          <DropDownItem
-            key={FilterType.MediaOnly}
-            label={t("Media")}
-            data-index={6}
-          />,
-          <DropDownItem
-            key={FilterType.ArchiveOnly}
-            label={t("Archives")}
-            data-index={7}
-          />,
-          <DropDownItem
-            key={FilterType.FilesOnly}
-            label={t("AllFiles")}
-            data-index={8}
-          />,
-        ],
+        children,
         onSelect: this.onSelect,
-      },
-      {
-        label: t("Share"),
-        disabled:
-          isFavoritesFolder ||
-          isRecentFolder ||
-          !isAccessedSelected ||
-          selectionCount > 1,
-        onClick: this.onOpenSharingPanel,
-      },
-      {
-        label: t("Common:Download"),
-        disabled: !selectionCount,
-        onClick: this.downloadAction,
-      },
-      {
-        label: t("Translations:DownloadAs"),
-        disabled: !selectionCount || !isWebEditSelected,
-        onClick: this.downloadAsAction,
-      },
-      {
-        label: t("MoveTo"),
-        disabled:
-          isFavoritesFolder ||
-          isRecentFolder ||
-          !isAccessedSelected ||
-          !selectionCount ||
-          isThirdPartySelection,
-        onClick: this.onMoveAction,
-      },
-      {
-        label: t("Translations:Copy"),
-        disabled: !selectionCount,
-        onClick: this.onCopyAction,
-      },
-      {
-        label: t("Common:Delete"),
-        disabled:
-          !selectionCount || !deleteDialogVisible || isThirdPartySelection,
-        onClick: this.onDeleteAction,
       },
     ];
 
-    if (isRecycleBin) {
-      menu.push({
-        label: t("EmptyRecycleBin"),
-        onClick: this.onEmptyTrashAction,
-      });
-
-      menu.splice(4, 2, {
-        label: t("Translations:Restore"),
-        onClick: this.onMoveAction,
-      });
-
-      menu.splice(1, 1);
-    }
-
-    if (isPrivacy) {
-      menu.splice(1, 1);
-      menu.splice(2, 1);
-      menu.splice(3, 1);
-    }
-
-    if (isShareFolder) {
-      menu.splice(4, 1);
-    }
-
-    if (isRecentFolder || isFavoritesFolder) {
-      menu.splice(1, 1);
-    }
-
-    if (
-      (personal && !isWebEditSelected && !isViewedSelected) ||
-      selectionCount > 1
-    ) {
-      menu.splice(1, 1);
-    }
+    menu = [...menu, ...headerMenu];
 
     return menu;
   };
@@ -474,6 +351,7 @@ class SectionHeaderContent extends React.Component {
       isDesktop,
       isTabletView,
       personal,
+      viewAs,
     } = this.props;
 
     const menuItems = this.getMenuItems();
@@ -489,7 +367,7 @@ class SectionHeaderContent extends React.Component {
             isDesktop={isDesktop}
             isTabletView={isTabletView}
           >
-            {isHeaderVisible ? (
+            {isHeaderVisible && viewAs !== "table" ? (
               <div className="group-button-menu-container">
                 <GroupButtonsMenu
                   checked={isHeaderChecked}
@@ -586,7 +464,6 @@ export default inject(
     auth,
     filesStore,
     dialogsStore,
-    treeFoldersStore,
     selectedFolderStore,
     filesActionsStore,
     settingsStore,
@@ -595,37 +472,26 @@ export default inject(
       setSelected,
       fileActionStore,
       fetchFiles,
-      selection,
       filter,
       canCreate,
       isHeaderVisible,
       isHeaderIndeterminate,
       isHeaderChecked,
-      userAccess,
-      isAccessedSelected,
       isThirdPartySelection,
-      isWebEditSelected,
       setIsLoading,
-      isViewedSelected,
+      viewAs,
+      cbMenuItems,
+      getCheckboxItemLabel,
     } = filesStore;
-    const {
-      isRecycleBinFolder,
-      isPrivacyFolder,
-      isFavoritesFolder,
-      isRecentFolder,
-      isShareFolder,
-    } = treeFoldersStore;
     const { setAction } = fileActionStore;
     const {
       setSharingPanelVisible,
       setMoveToPanelVisible,
       setCopyPanelVisible,
-      setEmptyTrashDialogVisible,
-      setDownloadDialogVisible,
       setDeleteDialogVisible,
     } = dialogsStore;
 
-    const { deleteAction, downloadAction } = filesActionsStore;
+    const { deleteAction, downloadAction, getHeaderMenu } = filesActionsStore;
 
     return {
       isDesktop: auth.settingsStore.isDesktopClient,
@@ -633,25 +499,17 @@ export default inject(
       title: selectedFolderStore.title,
       parentId: selectedFolderStore.parentId,
       currentFolderId: selectedFolderStore.id,
-      isRecycleBin: isRecycleBinFolder,
-      isPrivacy: isPrivacyFolder,
-      isFavoritesFolder,
-      isRecentFolder,
-      isShareFolder,
       filter,
       canCreate,
-      selectionCount: selection.length,
       isHeaderVisible,
       isHeaderIndeterminate,
       isHeaderChecked,
-      deleteDialogVisible: userAccess,
-      isAccessedSelected,
       isThirdPartySelection,
-      isWebEditSelected,
-      isViewedSelected,
       isTabletView: auth.settingsStore.isTabletView,
       confirmDelete: settingsStore.confirmDelete,
       personal: auth.settingsStore.personal,
+      viewAs,
+      cbMenuItems,
 
       setSelected,
       setAction,
@@ -660,11 +518,11 @@ export default inject(
       setSharingPanelVisible,
       setMoveToPanelVisible,
       setCopyPanelVisible,
-      setEmptyTrashDialogVisible,
       deleteAction,
       setDeleteDialogVisible,
-      setDownloadDialogVisible,
       downloadAction,
+      getHeaderMenu,
+      getCheckboxItemLabel,
     };
   }
 )(

@@ -12,6 +12,8 @@ import SharedButton from "../../../../../components/SharedButton";
 import ItemIcon from "../../../../../components/ItemIcon";
 
 const StyledSimpleFilesRow = styled(Row)`
+  background: ${(props) => props.checked && "#f8f9f9"};
+  cursor: ${(props) => props.checked && `url(images/cursor.palm.svg), auto`};
   margin-top: -2px;
   ${(props) =>
     !props.contextOptions &&
@@ -67,14 +69,19 @@ const SimpleFilesRow = (props) => {
     contextOptionsProps,
     checkedProps,
     onFilesClick,
-    onMouseUp,
+    onMouseClick,
     isEdit,
     showShare,
   } = props;
 
   const sharedButton =
     item.canShare && showShare ? (
-      <SharedButton t={t} id={item.id} isFolder={item.isFolder} />
+      <SharedButton
+        t={t}
+        id={item.id}
+        shared={item.shared}
+        isFolder={item.isFolder}
+      />
     ) : null;
 
   const element = (
@@ -90,7 +97,6 @@ const SimpleFilesRow = (props) => {
         onDrop={onDrop}
         onMouseDown={onMouseDown}
         dragging={dragging && isDragging}
-        {...contextOptionsProps}
       >
         <StyledSimpleFilesRow
           key={item.id}
@@ -102,7 +108,7 @@ const SimpleFilesRow = (props) => {
           onSelect={onContentFileSelect}
           rowContextClick={fileContextClick}
           isPrivacy={isPrivacy}
-          onMouseUp={onMouseUp}
+          onClick={onMouseClick}
           onDoubleClick={onFilesClick}
           checked={checkedProps}
           {...contextOptionsProps}

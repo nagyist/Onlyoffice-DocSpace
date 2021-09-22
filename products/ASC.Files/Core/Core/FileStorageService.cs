@@ -317,7 +317,7 @@ namespace ASC.Web.Files.Services.WCFService
                 || parent.FolderType == FolderType.SHARE
                 || parent.RootFolderType == FolderType.Privacy;
 
-            entries = entries.Where(x => x.FileEntryType == FileEntryType.Folder || 
+            entries = entries.Where(x => x.FileEntryType == FileEntryType.Folder ||
             (x is File<string> f1 && !FileConverter.IsConverting(f1) ||
              x is File<int> f2 && !FileConverter.IsConverting(f2)));
 
@@ -586,7 +586,7 @@ namespace ASC.Web.Files.Services.WCFService
             {
                 fileWrapper.Title = UserControlsCommonResource.NewDocument + ".docx";
             }
-            
+
             var externalExt = false;
 
             var fileExt = !enableExternalExt ? FileUtility.GetInternalExtension(fileWrapper.Title) : FileUtility.GetFileExtension(fileWrapper.Title);
@@ -1426,6 +1426,7 @@ namespace ASC.Web.Files.Services.WCFService
             var folderDao = DaoFactory.GetFolderDao<TFrom>();
             var fileDao = DaoFactory.GetFileDao<TFrom>();
             var destFolderDao = DaoFactory.GetFolderDao<TTo>();
+            var destFileDao = DaoFactory.GetFileDao<TTo>();
 
             var toFolder = destFolderDao.GetFolder(destFolderId);
             ErrorIf(toFolder == null, FilesCommonResource.ErrorMassage_FolderNotFound);
@@ -1436,7 +1437,7 @@ namespace ASC.Web.Files.Services.WCFService
                 var file = fileDao.GetFile(id);
                 if (file != null
                     && !file.Encrypted
-                    && fileDao.IsExist(file.Title, toFolder.ID))
+                    && destFileDao.IsExist(file.Title, toFolder.ID))
                 {
                     checkedFiles.Add(id);
                 }
@@ -1516,10 +1517,11 @@ namespace ASC.Web.Files.Services.WCFService
             return FileOperationsManager.Delete(AuthContext.CurrentAccount.ID, TenantManager.GetCurrentTenant(), foldersId, filesId, false, true, false, GetHttpHeaders());
         }
 
-        public List<FileOperationResult> CheckConversion(List<List<string>> filesInfoJSON)
+        public List<FileOperationResult> CheckConversion(List<List<string>> filesInfoJSON, bool sync = false)
         {
             if (filesInfoJSON == null || filesInfoJSON.Count == 0) return new List<FileOperationResult>();
 
+            var results = new List<FileOperationResult>();
             var fileDao = GetFileDao();
             var files = new List<KeyValuePair<File<T>, bool>>();
             foreach (var fileInfo in filesInfoJSON)
@@ -1547,7 +1549,14 @@ namespace ASC.Web.Files.Services.WCFService
                 {
                     try
                     {
-                        FileConverter.ExecAsync(file, false, fileInfo.Count > 3 ? fileInfo[3] : null);
+                        if (sync)
+                        {
+                            results.Add(FileConverter.ExecSync(file, fileInfo.Count > 3 ? fileInfo[3] : null));
+                        }
+                        else
+                        {
+                            FileConverter.ExecAsync(file, false, fileInfo.Count > 3 ? fileInfo[3] : null);
+                        }
                     }
                     catch (Exception e)
                     {
@@ -1558,9 +1567,14 @@ namespace ASC.Web.Files.Services.WCFService
                 files.Add(new KeyValuePair<File<T>, bool>(file, false));
             }
 
-            var results = FileConverter.GetStatus(files).ToList();
-
-            return new List<FileOperationResult>(results);
+            if (sync)
+            {
+                return results;
+            }
+            else
+            {
+                return FileConverter.GetStatus(files).ToList();
+            }
         }
 
         public void ReassignStorage(Guid userFromId, Guid userToId)
@@ -2277,7 +2291,7 @@ namespace ASC.Web.Files.Services.WCFService
                     BaseUrl = BaseCommonLinkUtility.GetFullAbsolutePath("")
                 };
 
-                foreach(var f in fileIds.Where(r=> r.ValueKind == JsonValueKind.Number))
+                foreach (var f in fileIds.Where(r => r.ValueKind == JsonValueKind.Number))
                 {
                     req.Files.Add(f.GetInt32());
                 }

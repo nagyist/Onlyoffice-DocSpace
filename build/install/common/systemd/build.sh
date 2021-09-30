@@ -60,6 +60,10 @@ SERVICE_NAME=(
 	crm
 	calendar
 	mail
+	mail-aggregator
+	mail-storagecleaner
+	mail-watchdog
+	mail-imapsync
 	ssoauth
 	)
 
@@ -164,6 +168,26 @@ reassign_values (){
 		WORK_DIR="${BASE_DIR}/products/ASC.Mail/server/"
 		EXEC_FILE="ASC.Mail.dll"
 	;;
+	mail-aggregator )
+		SERVICE_PORT="5025"
+		WORK_DIR="${BASE_DIR}/services/ASC.Mail.Aggregator.CollectionService/"
+		EXEC_FILE="ASC.Mail.Aggregator.CollectionService.dll"
+	;;
+	mail-storagecleaner )
+		SERVICE_PORT="5032"
+		WORK_DIR="${BASE_DIR}/services/ASC.Mail.StorageCleaner.Service/"
+		EXEC_FILE="ASC.Mail.StorageCleaner.Service.dll"
+	;;
+	mail-watchdog )
+		SERVICE_PORT="5031"
+		WORK_DIR="${BASE_DIR}/services/ASC.Mail.Watchdog.Service/"
+		EXEC_FILE="ASC.Mail.Watchdog.Service.dll"
+	;;
+	mail-imapsync )
+		SERVICE_PORT="5026"
+		WORK_DIR="${BASE_DIR}/services/ASC.Mail.ImapSync/"
+		EXEC_FILE="ASC.Mail.ImapSync.dll"
+	;;
 	ssoauth )
 		SERVICE_PORT="9833"
 		WORK_DIR="${BASE_DIR}/services/ASC.SsoAuth.Svc/"
@@ -172,7 +196,7 @@ reassign_values (){
   esac
   SERVICE_NAME="$1"
   EXEC_START="${DOTNET_RUN} ${WORK_DIR}${EXEC_FILE} --urls=${APP_URLS}:${SERVICE_PORT} --pathToConf=${PATH_TO_CONF} \
-  --'\$STORAGE_ROOT'=${STORAGE_ROOT} --log:dir=${LOG_DIR} --log:name=${SERVICE_NAME}${CORE}${ENVIRONMENT}"
+  --pathToNlogConf=${PATH_TO_CONF} --'\$STORAGE_ROOT'=${STORAGE_ROOT} --log:dir=${LOG_DIR} --log:name=${SERVICE_NAME}${CORE}${ENVIRONMENT}"
   CORE=""
 }
 

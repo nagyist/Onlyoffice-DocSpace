@@ -174,7 +174,9 @@ install_json() {
 		-e "this.socket={ 'path': '../ASC.Socket.IO/' }" -e "this.ssoauth={ 'path': '../ASC.SsoAuth/' }" >/dev/null 2>&1
 		$JSON $APP_DIR/appsettings.json -e "this.core.products.subfolder='server'" >/dev/null 2>&1
 		$JSON $APP_DIR/appsettings.services.json -e "this.core={ 'products': { 'folder': '../../products', 'subfolder': 'server'} }" >/dev/null 2>&1
-		
+		cp -rf $APP_DIR/storage.json $APP_DIR/storage.$ENVIRONMENT.json #Fix configuration file 'storage.production.json' was not found and is not optional.
+		cp -rf $APP_DIR/mail.json $APP_DIR/mail.$ENVIRONMENT.json #Fix configuration file 'mail.production.json' was not found and is not optional.
+		cp -rf $APP_DIR/elastic.json $APP_DIR/elastic.$ENVIRONMENT.json #Fix configuration file 'elastic.production.json' was not found and is not optional.
 	fi
 }
 
@@ -189,7 +191,8 @@ restart_services() {
 	${PRODUCT}-socket ${PRODUCT}-studio-notify ${PRODUCT}-notify ${PRODUCT}-people-server ${PRODUCT}-files \
 	${PRODUCT}-files-services ${PRODUCT}-studio ${PRODUCT}-backup ${PRODUCT}-storage-encryption \
 	${PRODUCT}-storage-migration ${PRODUCT}-projects-server ${PRODUCT}-telegram-service ${PRODUCT}-crm \
-	${PRODUCT}-calendar ${PRODUCT}-mail elasticsearch kafka zookeeper
+	${PRODUCT}-calendar ${PRODUCT}-mail ${PRODUCT}-mail-aggregator ${PRODUCT}-mail-storagecleaner \
+	${PRODUCT}-mail-watchdog ${PRODUCT}-mail-imapSync elasticsearch kafka zookeeper
 	do
 		systemctl enable $SVC.service >/dev/null 2>&1
 		systemctl restart $SVC.service
@@ -242,7 +245,7 @@ establish_mysql_conn(){
 
     #Save db settings in .json
 	$JSON_USERCONF "this.ConnectionStrings={'default': {'connectionString': \
-	\"Server=$DB_HOST;Port=$DB_PORT;Database=$DB_NAME;User ID=$DB_USER;Password=$DB_PWD;Pooling=true;Character Set=utf8;AutoEnlist=false;SSL Mode=none\"}}" >/dev/null 2>&1
+	\"Server=$DB_HOST;Port=$DB_PORT;Database=$DB_NAME;User ID=$DB_USER;Password=$DB_PWD;Pooling=true;Character Set=utf8;AutoEnlist=false;SSL Mode=none;ConnectionReset=false\"}}" >/dev/null 2>&1
 
 	echo "OK"
 }
@@ -532,7 +535,7 @@ setup_elasticsearch() {
 	echo -n "Configuring elasticsearch... "
 
 	#Save elasticsearch parameters in .json
-	$JSON $APP_DIR/elastic.json -e "this.elastic={'Scheme': \"${ELK_SHEME}\",'Host': \"${ELK_HOST}\",'Port': \"${ELK_PORT}\",'Threads': \"1\" }" >/dev/null 2>&1
+	$JSON $APP_DIR/elastic.$ENVIRONMENT.json -e "this.elastic={'Scheme': \"${ELK_SHEME}\",'Host': \"${ELK_HOST}\",'Port': \"${ELK_PORT}\",'Threads': \"1\" }" >/dev/null 2>&1
 
 	change_elasticsearch_config
 	

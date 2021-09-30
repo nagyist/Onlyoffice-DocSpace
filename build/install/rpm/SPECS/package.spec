@@ -167,6 +167,14 @@ Requires:       dotnet-sdk-5.0
 AutoReqProv:    no
 %description    mail
 
+%package        mail-services
+Summary:        mail-services
+Group:          Applications/Internet
+Requires:       %name-common
+Requires:       dotnet-sdk-5.0
+AutoReqProv:    no
+%description    mail-services
+
 %package        ssoauth
 Summary:        ssoauth
 Group:          Applications/Internet

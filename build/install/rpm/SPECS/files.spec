@@ -309,6 +309,18 @@
 %dir %{buildpath}/products/
 %dir %{buildpath}/products/ASC.Mail/
 
+%files mail-services
+%defattr(-, onlyoffice, onlyoffice, -)
+%{buildpath}/services/ASC.Mail.Aggregator.CollectionService/
+%{buildpath}/services/ASC.Mail.StorageCleaner.Service/
+%{buildpath}/services/ASC.Mail.Watchdog.Service/
+%{buildpath}/services/ASC.Mail.ImapSync/
+/lib/systemd/system/%{product}-mail-aggregator.service
+/lib/systemd/system/%{product}-mail-storagecleaner.service
+/lib/systemd/system/%{product}-mail-watchdog.service
+/lib/systemd/system/%{product}-mail-imapsync.service
+%dir %{buildpath}/services/
+
 %files ssoauth
 %defattr(-, onlyoffice, onlyoffice, -)
 %{buildpath}/services/ASC.SsoAuth/

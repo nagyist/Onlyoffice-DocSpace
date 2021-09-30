@@ -17,6 +17,7 @@ Depends: appserver-api-system,
          appserver-files,
          appserver-files-services,    
          appserver-mail,
+         appserver-mail-services,
          appserver-storage-migration,
          appserver-notify,
          appserver-people-server,
@@ -106,6 +107,15 @@ Depends: appserver-common,
 Description: Description
 
 Package: appserver-mail
+Architecture: any
+Depends: appserver-common,
+ appserver-configuration,
+ dotnet-sdk-5.0,
+ ${misc:Depends},
+ ${shlibs:Depends}
+Description: Description
+
+Package: appserver-mail-services
 Architecture: any
 Depends: appserver-common,
  appserver-configuration,

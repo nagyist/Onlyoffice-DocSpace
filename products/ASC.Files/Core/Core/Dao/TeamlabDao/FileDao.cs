@@ -374,7 +374,7 @@ namespace ASC.Files.Core.Data
                 throw FileSizeComment.GetFileSizeException(maxChunkedUploadSize);
             }
 
-            if (CoreBaseSettings.Personal && SetupInfo.IsVisibleSettings("PersonalMaxSpace"))
+            if (checkQuota && CoreBaseSettings.Personal && SetupInfo.IsVisibleSettings("PersonalMaxSpace"))
             {
                 var personalMaxSpace = CoreConfiguration.PersonalMaxSpace(SettingsManager);
                 if (personalMaxSpace - GlobalSpace.GetUserUsedSpace(file.ID == default ? AuthContext.CurrentAccount.ID : file.CreateBy) < file.ContentLength)
@@ -1459,7 +1459,7 @@ namespace ASC.Files.Core.Data
 
         internal protected DbFile InitDocument(DbFile dbFile)
         {
-            if (!FactoryIndexer.CanIndexByContent())
+            if (!FactoryIndexer.CanIndexByContent(dbFile))
             {
                 dbFile.Document = new Document
                 {
@@ -1493,7 +1493,7 @@ namespace ASC.Files.Core.Data
 
         internal protected async Task<DbFile> InitDocumentAsync(DbFile dbFile)
         {
-            if (!FactoryIndexer.CanIndexByContent())
+            if (!FactoryIndexer.CanIndexByContent(dbFile))
             {
                 dbFile.Document = new Document
                 {

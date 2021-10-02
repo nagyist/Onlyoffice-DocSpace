@@ -535,6 +535,12 @@ namespace ASC.Files.Helpers
             return FileStorageService.GetEditDiffUrl(fileId, version, doc);
         }
 
+        public List<EditHistoryWrapper> RestoreVersion(T fileId, int version = 0, string url = null, string doc = null)
+        {
+            var result = FileStorageService.RestoreVersion(fileId, version, url, doc);
+            return result.Select(r => new EditHistoryWrapper(r, ApiDateTimeHelper, EmployeeWraperHelper)).ToList();
+        }
+
         public string UpdateComment(T fileId, int version, string comment)
         {
             return FileStorageService.UpdateComment(fileId, version, comment);

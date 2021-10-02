@@ -17,6 +17,7 @@ namespace ASC.Files.Core.Model
         public ApiDateTime Created { get; set; }
         public string ChangesHistory { get; set; }
         public List<EditHistoryChangesWrapper> Changes { get; set; }
+        public string ServerVersion { get; set; }
 
         public EditHistoryWrapper(EditHistory editHistory, ApiDateTimeHelper apiDateTimeHelper, EmployeeWraperHelper employeeWraperHelper)
         {
@@ -28,6 +29,7 @@ namespace ASC.Files.Core.Model
             ChangesHistory = editHistory.ChangesString;
             Created = apiDateTimeHelper.Get(editHistory.ModifiedOn);
             User = employeeWraperHelper.Get(editHistory.ModifiedBy);
+            ServerVersion = editHistory.ServerVersion;
         }
     }
 

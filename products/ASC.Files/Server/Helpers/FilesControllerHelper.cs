@@ -20,8 +20,8 @@ using ASC.FederatedLogin.Helpers;
 using ASC.Files.Core;
 using ASC.Files.Core.Model;
 using ASC.Files.Model;
-using ASC.Web.Api.Models;
 using ASC.Web.Core.Files;
+using ASC.Web.Core.Users;
 using ASC.Web.Files.Classes;
 using ASC.Web.Files.Core.Entries;
 using ASC.Web.Files.Services.DocumentService;
@@ -66,7 +66,8 @@ namespace ASC.Files.Helpers
         private SettingsManager SettingsManager { get; }
         private EncryptionKeyPairHelper EncryptionKeyPairHelper { get; }
         private ApiDateTimeHelper ApiDateTimeHelper { get; }
-        private EmployeeWraperHelper EmployeeWraperHelper { get; }
+        private UserManager UserManager { get; }
+        private DisplayUserSettingsHelper DisplayUserSettingsHelper { get; }
         private ILog Logger { get; set; }
 
         /// <summary>
@@ -95,7 +96,8 @@ namespace ASC.Files.Helpers
             SettingsManager settingsManager,
             EncryptionKeyPairHelper encryptionKeyPairHelper,
             ApiDateTimeHelper apiDateTimeHelper,
-            EmployeeWraperHelper employeeWraperHelper)
+            UserManager userManager,
+            DisplayUserSettingsHelper displayUserSettingsHelper)
         {
             ApiContext = context;
             FileStorageService = fileStorageService;
@@ -117,7 +119,8 @@ namespace ASC.Files.Helpers
             SettingsManager = settingsManager;
             EncryptionKeyPairHelper = encryptionKeyPairHelper;
             ApiDateTimeHelper = apiDateTimeHelper;
-            EmployeeWraperHelper = employeeWraperHelper;
+            UserManager = userManager;
+            DisplayUserSettingsHelper = displayUserSettingsHelper;
             Logger = optionMonitor.Get("ASC.Files");
         }
 
@@ -527,7 +530,7 @@ namespace ASC.Files.Helpers
         public List<EditHistoryWrapper> GetEditHistory(T fileId, string doc = null)
         {
             var result = FileStorageService.GetEditHistory(fileId, doc);
-            return result.Select(r => new EditHistoryWrapper(r, ApiDateTimeHelper, EmployeeWraperHelper)).ToList();
+            return result.Select(r => new EditHistoryWrapper(r, ApiDateTimeHelper, UserManager, DisplayUserSettingsHelper)).ToList();
         }
 
         public EditHistoryData GetEditDiffUrl(T fileId, int version = 0, string doc = null)
@@ -538,7 +541,7 @@ namespace ASC.Files.Helpers
         public List<EditHistoryWrapper> RestoreVersion(T fileId, int version = 0, string url = null, string doc = null)
         {
             var result = FileStorageService.RestoreVersion(fileId, version, url, doc);
-            return result.Select(r => new EditHistoryWrapper(r, ApiDateTimeHelper, EmployeeWraperHelper)).ToList();
+            return result.Select(r => new EditHistoryWrapper(r, ApiDateTimeHelper, UserManager, DisplayUserSettingsHelper)).ToList();
         }
 
         public string UpdateComment(T fileId, int version, string comment)

@@ -74,6 +74,8 @@ let personal;
 let config;
 const url = window.location.href;
 const filesUrl = url.substring(0, url.indexOf("/doceditor"));
+const doc = url.indexOf("doc=") !== -1 ? url.split("doc=")[1] : null;
+
 
 toast.configure();
 
@@ -514,7 +516,7 @@ const Editor = () => {
     console.log("version", version);
 
     try {
-      const versionDifference = await getEditDiff(fileId, version);
+      const versionDifference = await getEditDiff(fileId, version, doc);
       const changesUrl = versionDifference.changesUrl;
       const previous = versionDifference.previous;
       const token = versionDifference.token;
@@ -583,7 +585,7 @@ const Editor = () => {
   };
   const onSDKRequestHistory = async () => {
     try {
-      const fileHistory = await getEditHistory(fileId);
+      const fileHistory = await getEditHistory(fileId, doc);
       const historyLength = fileHistory.length;
 
       docEditor.refreshHistory({
@@ -603,7 +605,8 @@ const Editor = () => {
     try {
       const updateVersions = await restoreDocumentsVersion(
         fileId,
-        restoreVersion
+        restoreVersion,
+        doc
       );
       const historyLength = updateVersions.length;
       console.log("restore", updateVersions);

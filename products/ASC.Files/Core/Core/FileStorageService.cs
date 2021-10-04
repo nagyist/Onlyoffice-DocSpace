@@ -1056,20 +1056,23 @@ namespace ASC.Web.Files.Services.WCFService
                 Key = DocumentServiceHelper.GetDocKey(file),
                 Url = DocumentServiceConnector.ReplaceCommunityAdress(PathProvider.GetFileStreamUrl(file, doc)),
                 Version = version,
+                FileType = GetFileExtensionWithoutDot(FileUtility.GetFileExtension(file.Title))
             };
 
             if (fileDao.ContainChanges(file.ID, file.Version))
             {
                 string previouseKey;
                 string sourceFileUrl;
+                string previousFileExt;
+
                 if (file.Version > 1)
                 {
                     var previousFileStable = fileDao.GetFileStable(file.ID, file.Version - 1);
                     ErrorIf(previousFileStable == null, FilesCommonResource.ErrorMassage_FileNotFound);
 
                     sourceFileUrl = PathProvider.GetFileStreamUrl(previousFileStable, doc);
-
                     previouseKey = DocumentServiceHelper.GetDocKey(previousFileStable);
+                    previousFileExt = FileUtility.GetFileExtension(previousFileStable.Title);
                 }
                 else
                 {
@@ -1090,12 +1093,14 @@ namespace ASC.Web.Files.Services.WCFService
                     sourceFileUrl = BaseCommonLinkUtility.GetFullAbsolutePath(sourceFileUrl);
 
                     previouseKey = DocumentServiceConnector.GenerateRevisionId(Guid.NewGuid().ToString());
+                    previousFileExt = fileExt;
                 }
 
                 result.Previous = new EditHistoryUrl
                 {
                     Key = previouseKey,
                     Url = DocumentServiceConnector.ReplaceCommunityAdress(sourceFileUrl),
+                    FileType = GetFileExtensionWithoutDot(previousFileExt)
                 };
                 result.ChangesUrl = PathProvider.GetFileChangesUrl(file, doc);
             }
@@ -1103,6 +1108,11 @@ namespace ASC.Web.Files.Services.WCFService
             result.Token = DocumentServiceHelper.GetSignature(result);
 
             return result;
+
+            string GetFileExtensionWithoutDot(string ext)
+            {
+                return ext.Substring(ext.IndexOf('.') + 1);
+            }
         }
 
         public List<EditHistory> RestoreVersion(T fileId, int version, string url = null, string doc = null)

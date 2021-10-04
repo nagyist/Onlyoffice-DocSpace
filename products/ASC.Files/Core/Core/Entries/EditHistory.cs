@@ -209,6 +209,8 @@ namespace ASC.Files.Core
         public string Url { get; set; }
 
         public int Version { get; set; }
+
+        public string FileType { get; set; }
     }
 
     [DebuggerDisplay("{Key} - {Url}")]
@@ -217,5 +219,7 @@ namespace ASC.Files.Core
         public string Key { get; set; }
 
         public string Url { get; set; }
+
+        public string FileType { get; set; }
     }
 }

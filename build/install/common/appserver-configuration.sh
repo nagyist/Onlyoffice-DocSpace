@@ -192,7 +192,7 @@ restart_services() {
 	${PRODUCT}-files-services ${PRODUCT}-studio ${PRODUCT}-backup ${PRODUCT}-storage-encryption \
 	${PRODUCT}-storage-migration ${PRODUCT}-projects-server ${PRODUCT}-telegram-service ${PRODUCT}-crm \
 	${PRODUCT}-calendar ${PRODUCT}-mail ${PRODUCT}-mail-aggregator ${PRODUCT}-mail-storagecleaner \
-	${PRODUCT}-mail-watchdog ${PRODUCT}-mail-imapSync elasticsearch kafka zookeeper
+	${PRODUCT}-mail-watchdog ${PRODUCT}-mail-imapsync elasticsearch kafka zookeeper
 	do
 		systemctl enable $SVC.service >/dev/null 2>&1
 		systemctl restart $SVC.service

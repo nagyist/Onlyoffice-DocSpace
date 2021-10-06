@@ -167,13 +167,37 @@ Requires:       dotnet-sdk-5.0
 AutoReqProv:    no
 %description    mail
 
-%package        mail-services
-Summary:        mail-services
+%package        mail-aggregator
+Summary:        mail-aggregator
 Group:          Applications/Internet
 Requires:       %name-common
 Requires:       dotnet-sdk-5.0
 AutoReqProv:    no
-%description    mail-services
+%description    mail-aggregator
+
+%package        mail-storagecleaner
+Summary:        mail-storagecleaner
+Group:          Applications/Internet
+Requires:       %name-common
+Requires:       dotnet-sdk-5.0
+AutoReqProv:    no
+%description    mail-storagecleaner
+
+%package        mail-watchdog
+Summary:        mail-watchdog
+Group:          Applications/Internet
+Requires:       %name-common
+Requires:       dotnet-sdk-5.0
+AutoReqProv:    no
+%description    mail-watchdog
+
+%package        mail-imapsync
+Summary:        mail-imapsync
+Group:          Applications/Internet
+Requires:       %name-common
+Requires:       dotnet-sdk-5.0
+AutoReqProv:    no
+%description    mail-imapsync
 
 %package        ssoauth
 Summary:        ssoauth

@@ -309,15 +309,27 @@
 %dir %{buildpath}/products/
 %dir %{buildpath}/products/ASC.Mail/
 
-%files mail-services
+%files mail-aggregator
 %defattr(-, onlyoffice, onlyoffice, -)
 %{buildpath}/services/ASC.Mail.Aggregator.CollectionService/
-%{buildpath}/services/ASC.Mail.StorageCleaner.Service/
-%{buildpath}/services/ASC.Mail.Watchdog.Service/
-%{buildpath}/services/ASC.Mail.ImapSync/
 /lib/systemd/system/%{product}-mail-aggregator.service
+%dir %{buildpath}/services/
+
+%files mail-storagecleaner
+%defattr(-, onlyoffice, onlyoffice, -)
+%{buildpath}/services/ASC.Mail.StorageCleaner.Service/
 /lib/systemd/system/%{product}-mail-storagecleaner.service
+%dir %{buildpath}/services/
+
+%files mail-watchdog
+%defattr(-, onlyoffice, onlyoffice, -)
+%{buildpath}/services/ASC.Mail.Watchdog.Service/
 /lib/systemd/system/%{product}-mail-watchdog.service
+%dir %{buildpath}/services/
+
+%files mail-imapsync
+%defattr(-, onlyoffice, onlyoffice, -)
+%{buildpath}/services/ASC.Mail.ImapSync/
 /lib/systemd/system/%{product}-mail-imapsync.service
 %dir %{buildpath}/services/
 

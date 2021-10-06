@@ -29,7 +29,10 @@ Requires:       %name-storage-migration
 Requires:       %name-files
 Requires:       %name-files-services
 Requires:       %name-mail
-Requires:       %name-mail-services
+Requires:       %name-mail-aggregator
+Requires:       %name-mail-storagecleaner
+Requires:       %name-mail-watchdog
+Requires:       %name-mail-imapsync
 Requires:       %name-notify
 Requires:       %name-people-server
 Requires:       %name-projects-server

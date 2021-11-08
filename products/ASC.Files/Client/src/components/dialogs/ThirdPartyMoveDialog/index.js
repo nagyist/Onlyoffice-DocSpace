@@ -23,11 +23,13 @@ const PureThirdPartyMoveContainer = ({
   setDestFolderId,
   checkOperationConflict,
   setThirdPartyMoveDialogVisible,
+  setBufferSelection,
 }) => {
   const zIndex = 310;
   const deleteAfter = false; // TODO: get from settings
 
   const onClose = () => {
+    setBufferSelection(null);
     setDestFolderId(false);
     setThirdPartyMoveDialogVisible(false);
   };
@@ -108,8 +110,12 @@ export default inject(({ filesStore, dialogsStore, filesActionsStore }) => {
     destFolderId,
     setDestFolderId,
   } = dialogsStore;
-  const { selection } = filesStore;
+  const { bufferSelection, setBufferSelection } = filesStore;
   const { checkOperationConflict } = filesActionsStore;
+
+  const selection = filesStore.selection.length
+    ? filesStore.selection
+    : [bufferSelection];
 
   return {
     visible,
@@ -119,6 +125,7 @@ export default inject(({ filesStore, dialogsStore, filesActionsStore }) => {
     provider: selection[0].providerKey,
     checkOperationConflict,
     selection,
+    setBufferSelection,
   };
 })(
   withTranslation(["ThirdPartyMoveDialog", "Common", "Translations"])(

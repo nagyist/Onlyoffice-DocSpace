@@ -18,6 +18,7 @@ using ASC.Core;
 using ASC.Core.Common.Settings;
 using ASC.FederatedLogin.Helpers;
 using ASC.Files.Core;
+using ASC.Files.Core.Model;
 using ASC.Files.Model;
 using ASC.Web.Core.Files;
 using ASC.Web.Files.Classes;
@@ -359,13 +360,19 @@ namespace ASC.Files.Helpers
 
         public FileWrapper<T> UpdateFile(T fileId, string title, int lastVersion)
         {
+            File<T> newFile = null;
             if (!string.IsNullOrEmpty(title))
-                FileStorageService.FileRename(fileId, title);
+            {
+                newFile = FileStorageService.FileRename(fileId, title);
+            }
 
             if (lastVersion > 0)
-                FileStorageService.UpdateToVersion(fileId, lastVersion);
+            {
+                var pair = FileStorageService.UpdateToVersion(fileId, lastVersion);
+                newFile = pair.Key;
+            }
 
-            return GetFileInfo(fileId);
+            return newFile != null ? FileWrapperHelper.Get(newFile) : GetFileInfo(fileId);
         }
 
         public IEnumerable<FileOperationWraper> DeleteFile(T fileId, bool deleteAfter, bool immediately)
@@ -459,7 +466,7 @@ namespace ASC.Files.Helpers
                 .ToList();
         }
 
-        public IEnumerable<FileOperationWraper> MarkAsRead(BaseBatchModel<JsonElement> model)
+        public IEnumerable<FileOperationWraper> MarkAsRead(BaseBatchModel model)
         {
             return FileStorageService.MarkAsRead(model.FolderIds.ToList(), model.FileIds.ToList()).Select(FileOperationWraperHelper.Get).ToList();
         }
@@ -680,6 +687,17 @@ namespace ASC.Files.Helpers
             }
 
             return wrapper;
+        }
+
+        internal IFormFile GetFileFromRequest(IModelWithFile model)
+        {
+            IEnumerable<IFormFile> files = HttpContextAccessor.HttpContext.Request.Form.Files;
+            if (files != null && files.Any())
+            {
+                return files.First();
+            }
+
+            return model.File;
         }
     }
 }

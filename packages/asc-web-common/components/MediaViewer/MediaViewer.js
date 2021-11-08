@@ -13,6 +13,7 @@ import equal from "fast-deep-equal/react";
 import Hammer from "hammerjs";
 import IconButton from "@appserver/components/icon-button";
 import commonIconsStyles from "@appserver/components/utils/common-icons-style";
+import { isDesktop } from "react-device-detect";
 
 const StyledVideoViewer = styled(VideoViewer)`
   z-index: 301;
@@ -104,7 +105,7 @@ class MediaViewer extends React.Component {
             document.getElementsByClassName("videoViewerOverlay")[0]
           );
         }
-        if (_this.hammer) {
+        if (_this.hammer && !isDesktop) {
           _this.hammer.on("swipeleft", _this.nextMedia);
           _this.hammer.on("swiperight", _this.prevMedia);
         }
@@ -125,6 +126,8 @@ class MediaViewer extends React.Component {
 
     const { playlistPos, fileUrl } = this.state;
     const src = playlist[playlistPos]?.src;
+    const title = playlist[playlistPos]?.title;
+    const ext = this.getFileExtension(title);
 
     if (visible !== prevProps.visible) {
       const newPlaylistPos =
@@ -138,7 +141,13 @@ class MediaViewer extends React.Component {
       });
     }
 
-    if (src && src !== fileUrl && playlistPos === prevState.playlistPos) {
+    if (
+      src &&
+      src !== fileUrl &&
+      playlistPos === prevState.playlistPos &&
+      ext !== ".tif" &&
+      ext !== ".tiff"
+    ) {
       this.setState({ fileUrl: src });
     }
 
@@ -147,10 +156,6 @@ class MediaViewer extends React.Component {
       visible === prevProps.visible &&
       playlistPos !== prevState.playlistPos
     ) {
-      const currentFile = playlist[playlistPos];
-      const { src, title } = currentFile;
-      const ext = this.getFileExtension(title);
-
       if (ext === ".tiff" || ext === ".tif") {
         this.getTiffDataURL(src);
       } else {
@@ -445,6 +450,7 @@ class MediaViewer extends React.Component {
       canDelete,
       canDownload,
       errorLabel,
+      previewFile,
     } = this.props;
 
     const currentFileId =
@@ -512,6 +518,7 @@ class MediaViewer extends React.Component {
                 color="#fff"
                 iconName="/static/images/cross.react.svg"
                 size={25}
+                isClickable
               />
             </ControlBtn>
           </div>
@@ -540,7 +547,7 @@ class MediaViewer extends React.Component {
         <div className="mediaViewerToolbox" ref={this.viewerToolbox}>
           {!isImage && (
             <span>
-              {canDelete(currentFileId) && (
+              {canDelete(currentFileId) && !previewFile && (
                 <ControlBtn onClick={this.onDelete}>
                   <div className="deleteBtnContainer">
                     <StyledMediaDeleteIcon size="scale" />
@@ -578,6 +585,7 @@ MediaViewer.propTypes = {
   onEmptyPlaylistError: PropTypes.func,
   deleteDialogVisible: PropTypes.bool,
   errorLabel: PropTypes.string,
+  previewFile: PropTypes.bool,
 };
 
 MediaViewer.defaultProps = {
@@ -590,6 +598,7 @@ MediaViewer.defaultProps = {
   canDownload: () => {
     return true;
   },
+  previewFile: false,
 };
 
 export default MediaViewer;

@@ -5,13 +5,14 @@ set -e
 package_manager="yum"
 package_sysname="onlyoffice";
 product="appserver"
-
+GIT_BRANCH="develop"
 package_services="";	
 RES_APP_INSTALLED="is already installed";
 RES_APP_CHECK_PORTS="uses ports"
 RES_CHECK_PORTS="please, make sure that the ports are free.";
 RES_INSTALL_SUCCESS="Thank you for installing ONLYOFFICE ${product^^}.";
 RES_QUESTIONS="In case you have any questions contact us via http://support.onlyoffice.com or visit our forum at http://dev.onlyoffice.org"
+RES_MARIADB="To continue the installation, you need to remove MariaDB"
 
 res_unsupported_version () {
 	RES_CHOICE="Please, enter Y or N"
@@ -27,6 +28,14 @@ while [ "$1" != "" ]; do
 		-u | --update )
 			if [ "$2" != "" ]; then
 				UPDATE=$2
+				shift
+			fi
+		;;
+		
+		-gb | --gitbranch )
+			if [ "$2" != "" ]; then
+				PARAMETERS="$PARAMETERS ${1}";
+				GIT_BRANCH=$2
 				shift
 			fi
 		;;
@@ -79,7 +88,7 @@ gpgkey=http://static.teamlab.info.s3.amazonaws.com/k8s
 END
 
 #DOWNLOAD_URL_PREFIX="https://download.onlyoffice.com/install-appserver/install-RedHat"
-DOWNLOAD_URL_PREFIX="https://raw.githubusercontent.com/ONLYOFFICE/${product}/develop/build/install/OneClickInstall/install-RedHat"
+DOWNLOAD_URL_PREFIX="https://raw.githubusercontent.com/ONLYOFFICE/${product}/${GIT_BRANCH}/build/install/OneClickInstall/install-RedHat"
 
 if [ "$LOCAL_SCRIPTS" = "true" ]; then
 	source install-RedHat/bootstrap.sh

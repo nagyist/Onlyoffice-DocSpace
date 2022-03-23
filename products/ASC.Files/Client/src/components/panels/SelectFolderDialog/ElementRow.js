@@ -6,9 +6,14 @@ const StyledWrapper = styled.div`
   display: grid;
   grid-template-columns: 32px 1fr;
   grid-gap: 8px;
-  margin-bottom: 20px;
   position: relative;
+  height: 48px;
+
   .element-row_text {
+    margin-top: auto;
+    margin-bottom: 16px;
+  }
+  .element-row_icon {
     margin: auto 0;
   }
   .element-row_clicked-area {
@@ -33,7 +38,7 @@ const ElementRow = (props) => {
   return (
     <StyledWrapper>
       <div onClick={onRowClick} class="element-row_clicked-area"></div>
-      <div>{element}</div>
+      <div className="element-row_icon">{element}</div>
       <div className="element-row_text">
         <Text fontSize="14px" fontWeight={600}>
           {item.title}

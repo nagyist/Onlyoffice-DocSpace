@@ -183,6 +183,13 @@ const StyledCatalogItemImg = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    ${(props) =>
+      props.dialogTree &&
+      `
+        border: 8px solid #ECEEF1;
+        background: #ECEEF1;
+        border-radius: 50%;
+    `}
   }
 
   svg {
@@ -234,7 +241,9 @@ const StyledCatalogItemSibling = styled.div`
   max-height: ${(props) => props.theme.catalogItem.container.height};
 
   background-color: ${(props) =>
-    props.isActive && props.theme.catalogItem.sibling.active.background};
+    !props.dialogTree &&
+    props.isActive &&
+    props.theme.catalogItem.sibling.active.background};
 
   &:hover {
     background-color: ${(props) =>
@@ -270,9 +279,14 @@ const StyledCatalogItemContainer = styled.div`
   box-sizing: border-box;
 
   padding: ${(props) =>
-    props.showText && props.theme.catalogItem.container.padding};
+    !props.dialogTree &&
+    props.showText &&
+    props.theme.catalogItem.container.padding};
+
   margin-bottom: ${(props) =>
     props.isEndOfBlock && props.theme.catalogItem.container.marginBottom};
+
+  ${(props) => props.dialogTree && `margin-bottom: 16px;`}
 
   cursor: pointer;
 

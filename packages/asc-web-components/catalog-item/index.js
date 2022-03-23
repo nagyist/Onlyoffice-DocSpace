@@ -34,6 +34,7 @@ const CatalogItem = (props) => {
     labelBadge,
     iconBadge,
     onClickBadge,
+    dialogTree,
   } = props;
 
   const onClickAction = () => {
@@ -56,15 +57,17 @@ const CatalogItem = (props) => {
       style={style}
       showText={showText}
       isEndOfBlock={isEndOfBlock}
+      dialogTree={dialogTree}
     >
       <StyledCatalogItemSibling
         isActive={isActive}
         isDragging={isDragging}
         onClick={onClickAction}
         onMouseUp={onMouseUpAction}
+        dialogTree={dialogTree}
       ></StyledCatalogItemSibling>
 
-      <StyledCatalogItemImg>
+      <StyledCatalogItemImg dialogTree={dialogTree}>
         <ReactSVG className="icon" src={icon} />
         {!showText && (
           <>
@@ -134,6 +137,8 @@ CatalogItem.propTypes = {
   iconBadge: PropTypes.string,
   /** Call function when user clicked on catalog item badge */
   onClickBadge: PropTypes.func,
+  /** Tells when the catalog item should display in dialog*/
+  dialogTree: PropTypes.bool,
 };
 
 CatalogItem.defaultProps = {
@@ -143,6 +148,7 @@ CatalogItem.defaultProps = {
   showInitial: false,
   isEndOfBlock: false,
   isDragging: false,
+  dialogTree: false,
 };
 
 export default React.memo(CatalogItem);

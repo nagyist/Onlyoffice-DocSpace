@@ -25,6 +25,8 @@ const Items = ({
   draggableItems,
 
   moveDragItems,
+
+  dialogTree = false,
 }) => {
   const isActive = React.useCallback(
     (item) => {
@@ -52,10 +54,14 @@ const Items = ({
 
     switch (item.rootFolderType) {
       case FolderType.USER:
-        iconUrl = "/static/images/catalog.user.react.svg";
+        iconUrl = `/static/images/${
+          dialogTree ? "user.react.svg" : "catalog.user.react.svg"
+        }`;
         break;
       case FolderType.SHARE:
-        iconUrl = "/static/images/catalog.shared.react.svg";
+        iconUrl = `/static/images/${
+          dialogTree ? "share.react.svg" : "catalog.shared.react.svg"
+        }`;
         break;
       case FolderType.COMMON:
         iconUrl = "/static/images/catalog.portfolio.react.svg";
@@ -190,6 +196,7 @@ const Items = ({
             showBadge={showBadge}
             labelBadge={showBadge ? item.newItems : null}
             onClickBadge={onBadgeClick}
+            dialogTree={dialogTree}
           />
         );
       });
@@ -220,13 +227,16 @@ Items.propTypes = {
 };
 
 export default inject(
-  ({
-    auth,
-    treeFoldersStore,
-    selectedFolderStore,
-    filesStore,
-    filesActionsStore,
-  }) => {
+  (
+    {
+      auth,
+      treeFoldersStore,
+      selectedFolderStore,
+      filesStore,
+      filesActionsStore,
+    },
+    { data, showText }
+  ) => {
     const { selection, dragging, setDragging, setStartDrag } = filesStore;
 
     const {
@@ -245,9 +255,9 @@ export default inject(
       commonId: commonFolderId,
       isPrivacy: isPrivacyFolder,
       currentId: id,
-      showText: auth.settingsStore.showText,
+      showText: showText || auth.settingsStore.showText,
       pathParts: selectedFolderStore.pathParts,
-      data: treeFolders,
+      data: data || treeFolders,
       selectedTreeNode,
       draggableItems: dragging ? selection : null,
       dragging,

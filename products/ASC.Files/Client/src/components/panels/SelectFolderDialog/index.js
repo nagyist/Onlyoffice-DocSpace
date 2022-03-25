@@ -21,7 +21,14 @@ const StyledHeader = styled.div`
     margin: auto 12px auto 0;
   }
 `;
-
+const StyledBody = styled.div`
+  height: 100%;
+  .content-body {
+    display: grid;
+    height: calc(100% - 32px);
+    grid-template-rows: max-content auto max-content;
+  }
+`;
 class SelectFolderDialog extends React.Component {
   constructor(props) {
     super(props);
@@ -199,6 +206,9 @@ class SelectFolderDialog extends React.Component {
         zIndex={310}
         onClose={onClose}
         displayType="aside"
+        removeScroll
+        contentHeight="100%"
+        contentPaddingBottom="0px"
       >
         <ModalDialog.Header>
           <StyledHeader>
@@ -223,7 +233,18 @@ class SelectFolderDialog extends React.Component {
           {isRootPage ? (
             <RootPage data={resultingFolderTree} onClick={this.onClick} />
           ) : (
-            <ElementsPage folderInfo={folderInfo} onClick={this.onClick} />
+            <StyledBody>
+              <div className="content-body">
+                <div></div>
+                <div className="selector-files-dialog_scroll-body">
+                  <ElementsPage
+                    folderInfo={folderInfo}
+                    onClick={this.onClick}
+                  />
+                </div>
+                <div></div>
+              </div>
+            </StyledBody>
           )}
         </ModalDialog.Body>
       </ModalDialog>

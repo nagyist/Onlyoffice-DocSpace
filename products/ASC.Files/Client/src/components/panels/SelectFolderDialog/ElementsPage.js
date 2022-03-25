@@ -1,28 +1,20 @@
-import React from "react";
-
-import Items from "../../Article/Body/Items";
+import React, { useCallback } from "react";
 import ElementRow from "./ElementRow";
-import { inject, observer, Provider as MobxProvider } from "mobx-react";
-class ElementsPage extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {};
-  }
+import { inject, observer } from "mobx-react";
+import { FixedSizeList as List } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
+import CustomScrollbarsVirtualList from "@appserver/components/scrollbar/custom-scrollbars-virtual-list";
 
-  componentDidMount() {}
+const ElementsPage = ({ folderInfo, getIcon, onClick }) => {
+  const { folders, files } = folderInfo;
 
-  componentWillUnmount() {}
+  const foldersAndFiles = [...folders, ...files];
 
- 
-  render() {
-    const { folderInfo, getIcon, onClick } = this.props;
-    const { folders, files } = folderInfo;
-
-    const foldersAndFiles = [...folders, ...files];
-    console.log("elemenets page", foldersAndFiles);
-    return (
-      <>
-        {foldersAndFiles.map((item, index) => (
+  const Item = useCallback(
+    ({ index, style }) => {
+      const item = foldersAndFiles[index];
+      return (
+        <div style={style}>
           <ElementRow
             onClick={onClick}
             key={`${item.id}_${index}`}
@@ -34,11 +26,31 @@ class ElementsPage extends React.Component {
               item.contentLength
             )}
           />
-        ))}
-      </>
-    );
-  }
-}
+        </div>
+      );
+    },
+    [foldersAndFiles]
+  );
+
+  console.log("elemenets page", foldersAndFiles.length);
+
+  return (
+    <AutoSizer>
+      {({ height, width }) => (
+        <List
+          height={height}
+          width={width}
+          itemSize={48}
+          itemCount={foldersAndFiles.length}
+          itemData={foldersAndFiles}
+          outerElementType={CustomScrollbarsVirtualList}
+        >
+          {Item}
+        </List>
+      )}
+    </AutoSizer>
+  );
+};
 
 export default inject(({ settingsStore }) => {
   const { getIcon } = settingsStore;

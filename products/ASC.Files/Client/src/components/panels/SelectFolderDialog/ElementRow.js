@@ -37,7 +37,7 @@ const ElementRow = (props) => {
   };
   return (
     <StyledWrapper>
-      <div onClick={onRowClick} class="element-row_clicked-area"></div>
+      <div onClick={onRowClick} className="element-row_clicked-area"></div>
       <div className="element-row_icon">{element}</div>
       <div className="element-row_text">
         <Text fontSize="14px" fontWeight={600}>

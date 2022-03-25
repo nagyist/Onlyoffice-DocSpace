@@ -30,6 +30,12 @@ const StyledHeader = styled.div`
     margin: auto 12px auto 0;
   }
 `;
+
+const StyledRootPage = styled.div`
+  .root-loader {
+    display: flex;
+  }
+`;
 const StyledBody = styled.div`
   height: 100%;
   .content-body {
@@ -73,6 +79,7 @@ class SelectFolderDialog extends React.Component {
     this.state = {
       resultingFolderTree: [],
       isDataLoading: false,
+      isInitialLoader: false,
       folderInfo: {
         pathParts: [],
         folders: [],
@@ -141,9 +148,15 @@ class SelectFolderDialog extends React.Component {
     let requestedTreeFolders, filteredTreeFolders;
 
     const treeFoldersLength = treeFolders.length;
+    this.timerId = setTimeout(() => {
+      this.setState({ isInitialLoader: true });
+    }, 1000);
 
     if (treeFoldersLength === 0) {
       requestedTreeFolders = await this.getRequestFolderTree();
+      clearTimeout(this.timerId);
+      this.timerId = null;
+
       console.log("requestedFolderTree", requestedTreeFolders);
     }
 
@@ -161,6 +174,7 @@ class SelectFolderDialog extends React.Component {
 
     this.setState({
       resultingFolderTree: filteredTreeFolders || foldersTree,
+      isInitialLoader: false,
     });
   }
 
@@ -255,7 +269,12 @@ class SelectFolderDialog extends React.Component {
       header: headerChild,
       onSave,
     } = this.props;
-    const { resultingFolderTree, folderInfo, isDataLoading } = this.state;
+    const {
+      resultingFolderTree,
+      folderInfo,
+      isDataLoading,
+      isInitialLoader,
+    } = this.state;
     const { title, id } = folderInfo;
 
     const isRootPage = id === "root";
@@ -292,7 +311,18 @@ class SelectFolderDialog extends React.Component {
 
         <ModalDialog.Body>
           {isRootPage && !isDataLoading ? (
-            <RootPage data={resultingFolderTree} onClick={this.onRowClick} />
+            <StyledRootPage>
+              {isInitialLoader ? (
+                <div className="root-loader" key="loader">
+                  <Loaders.RootFoldersTree />
+                </div>
+              ) : (
+                <RootPage
+                  data={resultingFolderTree}
+                  onClick={this.onRowClick}
+                />
+              )}
+            </StyledRootPage>
           ) : (
             <StyledBody footerChild={!!footerChild} headerChild={!!headerChild}>
               <div className="content-body">

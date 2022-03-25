@@ -323,13 +323,13 @@ class SelectFolderDialog extends React.Component {
                       size="small"
                       label={t("SaveHere")}
                       onClick={this.onButtonClick}
-                      //isDisabled={isLoadingData || !isAvailable || !canCreate}
+                      isDisabled={isDataLoading}
                     />
                     <Button
                       size="small"
                       label={t("Common:CancelButton")}
                       onClick={onClose}
-                      // isDisabled={isLoadingData || isLoading}
+                      isDisabled={isDataLoading}
                     />
                   </div>
                 </div>

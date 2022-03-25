@@ -160,6 +160,10 @@ var config = {
           AppServerConfig.proxyURL,
           "/products/people/remoteEntry.js"
         )}`,
+        files: `files@${combineUrl(
+          AppServerConfig.proxyURL,
+          "/products/files/remoteEntry.js"
+        )}`,
       },
       exposes: {
         "./app": "./src/Files.jsx",
@@ -168,6 +172,8 @@ var config = {
         "./SelectFileDialog": "./src/components/panels/SelectFileDialog",
         "./SelectFolderDialog":
           "./src/components/panels/SelectFolderDialog/SelectFolderDialogWrapper",
+        "./SelectFolderInput": "./src/components/panels/SelectFolderInput",
+        "./SelectFileInput": "./src/components/panels/SelectFileInput",
       },
       shared: {
         ...deps,

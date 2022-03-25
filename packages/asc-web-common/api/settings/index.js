@@ -410,6 +410,15 @@ export function validateTfaCode(code) {
   });
 }
 
+
+export function getBackupStorage() {
+  const options = {
+    method: "get",
+    url: "/settings/storage/backup",
+  };
+  return request(options);
+}
+
 export function getBuildVersion() {
   const options = {
     method: "get",

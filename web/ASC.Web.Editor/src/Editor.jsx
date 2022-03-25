@@ -907,11 +907,7 @@ const Editor = () => {
 
             {isFolderDialogVisible && (
               <SelectFolderDialog
-                resetTreeFolders
-                showButtons
                 isPanelVisible={isFolderDialogVisible}
-                isSetFolderImmediately
-                asideHeightContent="calc(100% - 50px)"
                 onClose={onCloseFolderDialog}
                 foldersType="exceptSortedByTags"
                 onSave={onClickSaveSelectFolder}
@@ -928,7 +924,6 @@ const Editor = () => {
                     />
                   </StyledSelectFolder>
                 }
-                headerName={i18n.t("FolderForSave")}
                 {...(extension !== "fb2" && {
                   footer: (
                     <StyledSelectFolder>

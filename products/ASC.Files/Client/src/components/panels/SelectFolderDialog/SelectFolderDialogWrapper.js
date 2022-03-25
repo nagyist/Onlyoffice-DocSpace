@@ -1,10 +1,10 @@
 import React from "react";
 import { Provider as MobxProvider } from "mobx-react";
-
+import { I18nextProvider } from "react-i18next";
 import stores from "../../../store/index";
 import store from "studio/store";
 import SelectFolderDialog from "./index";
-
+import i18n from "./i18n";
 const { auth: authStore } = store;
 
 const SelectFolderModalWrapper = (props) => <SelectFolderDialog {...props} />;
@@ -17,7 +17,9 @@ class SelectFolderModal extends React.Component {
   render() {
     return (
       <MobxProvider auth={authStore} {...stores}>
-        <SelectFolderModalWrapper {...this.props} />
+        <I18nextProvider i18n={i18n}>
+          <SelectFolderModalWrapper {...this.props} />
+        </I18nextProvider>
       </MobxProvider>
     );
   }

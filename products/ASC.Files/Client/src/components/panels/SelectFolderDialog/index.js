@@ -2,6 +2,7 @@ import React from "react";
 import { inject, observer } from "mobx-react";
 import { withTranslation } from "react-i18next";
 import { getFolder, getFoldersTree } from "@appserver/common/api/files";
+
 import ModalDialog from "@appserver/components/modal-dialog";
 import toastr from "studio/toastr";
 import {
@@ -12,6 +13,7 @@ import RootPage from "./RootPage";
 import ElementsPage from "./ElementsPage";
 import IconButton from "@appserver/components/icon-button";
 import styled from "styled-components";
+import Button from "@appserver/components/button";
 
 const StyledHeader = styled.div`
   .dialog-header {
@@ -27,6 +29,29 @@ const StyledBody = styled.div`
     display: grid;
     height: calc(100% - 32px);
     grid-template-rows: max-content auto max-content;
+    .select-dialog_header-child {
+      ${(props) => props.headerChild && `padding-bottom: 16px;`}
+    }
+  }
+
+  .select-dialog_footer {
+    border-top: 1px solid #eceef1;
+    padding-top: 16px;
+    .select-dialog_buttons {
+      display: flex;
+      padding: 0 16px 0 16px;
+
+      margin-left: -16px;
+      margin-right: -16px;
+      width: 100%;
+      box-sizing: border-box;
+      button:first-child {
+        margin-right: 10px;
+      }
+    }
+    .select-dialog_footer-child {
+      ${(props) => props.footerChild && `padding-bottom: 16px;`}
+    }
   }
 `;
 class SelectFolderDialog extends React.Component {
@@ -151,7 +176,7 @@ class SelectFolderDialog extends React.Component {
     }
   };
 
-  onClick = (id) => {
+  onRowClick = (id) => {
     console.log("on row click - id ", id);
     this.getSelectedFolderInfo(id);
   };
@@ -195,7 +220,14 @@ class SelectFolderDialog extends React.Component {
     }
   };
   render() {
-    const { isPanelVisible, onClose } = this.props;
+    const {
+      isPanelVisible,
+      onClose,
+      t,
+      footer: footerChild,
+      header: headerChild,
+      onSave,
+    } = this.props;
     const { resultingFolderTree, folderInfo } = this.state;
     const { title, id } = folderInfo;
     const isRootPage = id === "root";
@@ -224,25 +256,45 @@ class SelectFolderDialog extends React.Component {
                 {title}
               </div>
             ) : (
-              "Folder Selection"
+              t("SelectFolder")
             )}
           </StyledHeader>
         </ModalDialog.Header>
 
         <ModalDialog.Body>
           {isRootPage ? (
-            <RootPage data={resultingFolderTree} onClick={this.onClick} />
+            <RootPage data={resultingFolderTree} onClick={this.onRowClick} />
           ) : (
-            <StyledBody>
+            <StyledBody footerChild={!!footerChild} headerChild={!!headerChild}>
               <div className="content-body">
-                <div></div>
-                <div className="selector-files-dialog_scroll-body">
+                <div className="select-dialog_header-child">{headerChild}</div>
+                <div>
                   <ElementsPage
                     folderInfo={folderInfo}
-                    onClick={this.onClick}
+                    onClick={this.onRowClick}
                   />
                 </div>
-                <div></div>
+                <div className="select-dialog_footer">
+                  <div className="select-dialog_footer-child">
+                    {footerChild}
+                  </div>
+                  <div className="select-dialog_buttons">
+                    <Button
+                      //theme={theme}
+                      primary
+                      size="small"
+                      label={t("SaveHere")}
+                      onClick={onSave}
+                      //isDisabled={isLoadingData || !isAvailable || !canCreate}
+                    />
+                    <Button
+                      size="small"
+                      label={t("Common:CancelButton")}
+                      onClick={onClose}
+                      // isDisabled={isLoadingData || isLoading}
+                    />
+                  </div>
+                </div>
               </div>
             </StyledBody>
           )}
@@ -258,4 +310,4 @@ export default inject(({ treeFoldersStore }) => {
   return {
     treeFolders,
   };
-})(observer(withTranslation(["Common", "Translations"])(SelectFolderDialog)));
+})(observer(withTranslation(["SelectFolder", "Common"])(SelectFolderDialog)));

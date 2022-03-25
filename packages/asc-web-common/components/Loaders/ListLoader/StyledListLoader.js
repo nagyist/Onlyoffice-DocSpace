@@ -9,6 +9,11 @@ const StyledRow = styled.div`
   width: 100%;
   display: grid;
   grid-template-columns: 16px 32px 1fr 16px;
+
+  ${(props) =>
+    props.withoutFirstRectangle &&
+    props.withoutLastRectangle &&
+    "grid-template-columns: 32px 1fr;"}
   grid-template-rows: 1fr;
   grid-column-gap: 8px;
   margin-bottom: 16px;

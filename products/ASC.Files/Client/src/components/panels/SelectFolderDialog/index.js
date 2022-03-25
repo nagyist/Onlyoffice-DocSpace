@@ -19,6 +19,8 @@ import ElementsPage from "./ElementsPage";
 import IconButton from "@appserver/components/icon-button";
 import styled from "styled-components";
 import Button from "@appserver/components/button";
+import Loaders from "@appserver/common/components/Loaders";
+import { ConflictResolveDialog } from "../../dialogs";
 
 const StyledHeader = styled.div`
   .dialog-header {
@@ -39,6 +41,12 @@ const StyledBody = styled.div`
     }
   }
 
+  .loader {
+    overflow: hidden;
+    .list-loader-wrapper {
+      padding: 0;
+    }
+  }
   .select-dialog_footer {
     border-top: 1px solid #eceef1;
     padding-top: 16px;
@@ -64,6 +72,7 @@ class SelectFolderDialog extends React.Component {
     super(props);
     this.state = {
       resultingFolderTree: [],
+      isDataLoading: false,
       folderInfo: {
         pathParts: [],
         folders: [],
@@ -168,6 +177,7 @@ class SelectFolderDialog extends React.Component {
       this.deletedCurrentFolderIdFromPathParts(pathParts);
 
       this.setState({
+        isDataLoading: false,
         folderInfo: {
           folders: data.folders,
           files: [], //data.files,
@@ -178,12 +188,17 @@ class SelectFolderDialog extends React.Component {
       });
     } catch (e) {
       toastr.error(e);
+      this.setState({
+        isDataLoading: false,
+      });
     }
   };
 
   onRowClick = (id) => {
     console.log("on row click - id ", id);
-    this.getSelectedFolderInfo(id);
+    this.setState({ isDataLoading: true }, () => {
+      this.getSelectedFolderInfo(id);
+    });
   };
   onButtonClick = (e) => {
     const { folderInfo } = this.state;
@@ -240,10 +255,12 @@ class SelectFolderDialog extends React.Component {
       header: headerChild,
       onSave,
     } = this.props;
-    const { resultingFolderTree, folderInfo } = this.state;
+    const { resultingFolderTree, folderInfo, isDataLoading } = this.state;
     const { title, id } = folderInfo;
+
     const isRootPage = id === "root";
 
+    console.log("isDataLoading", isDataLoading);
     return (
       <ModalDialog
         visible={isPanelVisible}
@@ -274,18 +291,27 @@ class SelectFolderDialog extends React.Component {
         </ModalDialog.Header>
 
         <ModalDialog.Body>
-          {isRootPage ? (
+          {isRootPage && !isDataLoading ? (
             <RootPage data={resultingFolderTree} onClick={this.onRowClick} />
           ) : (
             <StyledBody footerChild={!!footerChild} headerChild={!!headerChild}>
               <div className="content-body">
                 <div className="select-dialog_header-child">{headerChild}</div>
-                <div>
-                  <ElementsPage
-                    folderInfo={folderInfo}
-                    onClick={this.onRowClick}
-                  />
-                </div>
+                {isDataLoading ? (
+                  <div className="loader" key="loader">
+                    <Loaders.ListLoader
+                      withoutFirstRectangle
+                      withoutLastRectangle
+                    />
+                  </div>
+                ) : (
+                  <div>
+                    <ElementsPage
+                      folderInfo={folderInfo}
+                      onClick={this.onRowClick}
+                    />
+                  </div>
+                )}
                 <div className="select-dialog_footer">
                   <div className="select-dialog_footer-child">
                     {footerChild}

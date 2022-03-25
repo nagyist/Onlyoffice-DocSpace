@@ -250,7 +250,7 @@ class SelectFolderDialog extends React.Component {
         zIndex={310}
         onClose={onClose}
         displayType="aside"
-        removeScroll
+        withoutBodyScroll
         contentHeight="100%"
         contentPaddingBottom="0px"
       >

@@ -6,7 +6,8 @@ import PropTypes from "prop-types";
 import stores from "../../../store/index";
 import SelectFolderDialog from "../SelectFolderDialog/index";
 import StyledComponent from "./StyledSelectFolderInput";
-import SimpleFileInput from "../../SimpleFileInput";
+import { getFolderPath } from "@appserver/common/api/files";
+import FileInput from "@appserver/components/file-input";
 
 let path = "";
 
@@ -23,7 +24,7 @@ class SelectFolderInputBody extends React.PureComponent {
   componentDidMount() {
     const { folderPath, setFirstLoad } = this.props;
 
-    if (folderPath.length !== 0) {
+    if (folderPath?.length !== 0) {
       this.setState({
         fullFolderPath: folderPath,
       });
@@ -68,84 +69,27 @@ class SelectFolderInputBody extends React.PureComponent {
     });
   };
   render() {
-    const {
-      name,
-      onClickInput,
-      isPanelVisible,
-      withoutProvider,
-      onClose,
-      isError,
-      isSavingProcess,
-      isDisabled,
-      onSelectFolder,
-      onSetLoadingData,
-      foldersType,
-      folderPath,
-      isNeedArrowIcon,
-      isSetFolderImmediately,
-      id,
-      selectedFolderId,
-      displayType,
-      dialogWithFiles,
-      modalHeightContent,
-      asideHeightContent,
-      zIndex,
-      showButtons,
-      header,
-      headerName,
-      footer,
-      selectionButtonPrimary,
-      fontSizeInput,
-      maxInputWidth,
-      isReset,
-      foldersList,
-      theme,
-    } = this.props;
     const { isLoading, baseFolderPath, fullFolderPath } = this.state;
-
+    const {
+      onClickInput,
+      hasError,
+      t,
+      placeholder,
+      maxInputWidth,
+      ...rest
+    } = this.props;
     return (
-      <StyledComponent maxInputWidth={maxInputWidth} theme={theme}>
-        <SimpleFileInput
-          theme={theme}
-          name={name}
+      <StyledComponent maxWidth={maxInputWidth}>
+        <FileInput
           className="select-folder_file-input"
-          textField={fullFolderPath || baseFolderPath}
-          isDisabled={isLoading || isSavingProcess || isDisabled}
-          isError={isError}
-          onClickInput={onClickInput}
-          fontSizeInput={fontSizeInput}
-          maxInputWidth={maxInputWidth}
+          value={fullFolderPath || baseFolderPath}
+          hasError={hasError}
+          onClick={onClickInput}
+          placeholder={placeholder}
+          simplifiedFileInput
         />
 
-        <SelectFolderDialog
-          theme={theme}
-          zIndex={zIndex}
-          isPanelVisible={isPanelVisible}
-          onClose={onClose}
-          folderPath={folderPath}
-          onSelectFolder={onSelectFolder}
-          onSetLoadingData={onSetLoadingData}
-          foldersType={foldersType}
-          withoutProvider={withoutProvider}
-          onSetFullPath={this.onSetFullPath}
-          onSetBaseFolderPath={this.onSetBaseFolderPath}
-          onSetLoadingInput={this.onSetLoadingInput}
-          isNeedArrowIcon={isNeedArrowIcon}
-          isSetFolderImmediately={isSetFolderImmediately}
-          id={id}
-          selectedFolderId={selectedFolderId}
-          displayType={displayType}
-          dialogWithFiles={dialogWithFiles}
-          modalHeightContent={modalHeightContent}
-          asideHeightContent={asideHeightContent}
-          showButtons={showButtons}
-          header={header}
-          headerName={headerName}
-          footer={footer}
-          selectionButtonPrimary={selectionButtonPrimary}
-          isReset={isReset}
-          foldersList={foldersList}
-        />
+        <SelectFolderDialog {...rest} />
       </StyledComponent>
     );
   }
@@ -153,21 +97,13 @@ class SelectFolderInputBody extends React.PureComponent {
 
 SelectFolderInputBody.propTypes = {
   onClickInput: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
-  onSelectFolder: PropTypes.func.isRequired,
-  onSetLoadingData: PropTypes.func,
-  isPanelVisible: PropTypes.bool.isRequired,
-  name: PropTypes.string,
-  withoutProvider: PropTypes.bool,
-  isError: PropTypes.bool,
-  isSavingProcess: PropTypes.bool,
+  hasError: PropTypes.bool,
+  placeholder: PropTypes.string,
 };
 
 SelectFolderInputBody.defaultProps = {
-  withoutProvider: false,
-  isDisabled: false,
-  isError: false,
-  folderPath: "",
+  hasError: false,
+  placeholder: "",
 };
 
 const SelectFolderInputBodyWrapper = inject(({ filesStore }) => {
@@ -177,21 +113,30 @@ const SelectFolderInputBodyWrapper = inject(({ filesStore }) => {
   };
 })(observer(SelectFolderInputBody));
 class SelectFolderInput extends React.Component {
-  static setFullFolderPath = (foldersArray) => {
-    path = "";
-    if (foldersArray.length > 1) {
-      for (let item of foldersArray) {
-        if (!path) {
-          path = path + `${item.title}`;
-        } else path = path + " " + "/" + " " + `${item.title}`;
+  static setFolderPath = async (folderId) => {
+    const foldersArray = await getFolderPath(folderId);
+
+    const convertFolderPath = (foldersArray) => {
+      path = "";
+      if (foldersArray.length > 1) {
+        for (let item of foldersArray) {
+          if (!path) {
+            path = path + `${item.title}`;
+          } else path = path + " " + "/" + " " + `${item.title}`;
+        }
+      } else {
+        for (let item of foldersArray) {
+          path = `${item.title}`;
+        }
       }
-    } else {
-      for (let item of foldersArray) {
-        path = `${item.title}`;
-      }
-    }
-    return path;
+      return path;
+    };
+
+    const convertFoldersArray = convertFolderPath(foldersArray);
+
+    return convertFoldersArray;
   };
+
   render() {
     return (
       <MobxProvider {...stores}>

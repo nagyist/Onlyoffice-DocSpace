@@ -1,11 +1,10 @@
 import React from "react";
 import { Provider as MobxProvider, inject, observer } from "mobx-react";
 import PropTypes from "prop-types";
-
+import FileInput from "@appserver/components/file-input";
 import stores from "../../../store/index";
 import SelectFileDialog from "../SelectFileDialog";
 import StyledComponent from "./StyledSelectFileInput";
-import SimpleFileInput from "../../SimpleFileInput";
 
 class SelectFileInputBody extends React.PureComponent {
   constructor(props) {
@@ -27,71 +26,28 @@ class SelectFileInputBody extends React.PureComponent {
   };
   render() {
     const {
-      name,
       onClickInput,
-      isPanelVisible,
-      withoutProvider,
-      onClose,
-      isError,
-      isDisabled,
-      foldersType,
-      withSubfolders,
-      onSelectFile,
-      folderId,
-      headerName,
-      isImageOnly,
-      isArchiveOnly,
-      isDocumentsOnly,
-      searchParam,
-      isPresentationOnly,
-      isTablesOnly,
-      isMediaOnly,
-      loadingLabel,
-      titleFilesList,
-      zIndex,
-      fontSizeInput,
+      hasError,
+      t,
+      placeholder,
       maxInputWidth,
-      foldersList,
+      ...rest
     } = this.props;
+
     const { fileName } = this.state;
 
     return (
       <StyledComponent maxInputWidth={maxInputWidth}>
-        <SimpleFileInput
-          name={name}
+        <FileInput
           className="select-file_file-input"
-          textField={fileName}
-          isDisabled={isDisabled}
-          isError={isError}
-          onClickInput={onClickInput}
-          fontSizeInput={fontSizeInput}
-          maxInputWidth={maxInputWidth}
+          hasError={hasError}
+          onClick={onClickInput}
+          placeholder={placeholder}
+          value={fileName}
+          simplifiedFileInput
         />
 
-        {isPanelVisible && (
-          <SelectFileDialog
-            zIndex={zIndex}
-            onClose={onClose}
-            isPanelVisible={isPanelVisible}
-            foldersType={foldersType}
-            onSetFileName={this.onSetFileName}
-            withoutProvider={withoutProvider}
-            withSubfolders={withSubfolders}
-            onSelectFile={onSelectFile}
-            folderId={folderId}
-            headerName={headerName}
-            searchParam={searchParam}
-            isImageOnly={isImageOnly}
-            isArchiveOnly={isArchiveOnly}
-            isDocumentsOnly={isDocumentsOnly}
-            isPresentation={isPresentationOnly}
-            isTables={isTablesOnly}
-            isMediaOnly={isMediaOnly}
-            loadingLabel={loadingLabel}
-            titleFilesList={titleFilesList}
-            foldersList={foldersList}
-          />
-        )}
+        <SelectFileDialog {...rest} />
       </StyledComponent>
     );
   }
@@ -99,13 +55,13 @@ class SelectFileInputBody extends React.PureComponent {
 
 SelectFileInputBody.propTypes = {
   onClickInput: PropTypes.func.isRequired,
-  onClose: PropTypes.func.isRequired,
+  hasError: PropTypes.bool,
+  placeholder: PropTypes.string,
 };
 
 SelectFileInputBody.defaultProps = {
-  withoutProvider: false,
-  isDisabled: false,
-  zIndex: 310,
+  hasError: false,
+  placeholder: "",
 };
 
 const SelectFileInputBodyWrapper = inject(({ filesStore }) => {

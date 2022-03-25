@@ -70,8 +70,23 @@ class FileInput extends Component {
       accept,
       id,
       onInput, // eslint-disable-line no-unused-vars
+      simplifiedFileInput,
+      onClick,
+      value,
       ...rest
     } = this.props;
+
+    const propsSet = simplifiedFileInput
+      ? {
+          onClick: onClick,
+          isReadOnly: true,
+        }
+      : {
+          onFocus: this.onIconFileClick,
+          onChange: this.onChangeHandler,
+        };
+
+    const inputValue = simplifiedFileInput ? value : fileName;
 
     return (
       <StyledFileInput
@@ -85,23 +100,24 @@ class FileInput extends Component {
         <TextInput
           className="text-input"
           placeholder={placeholder}
-          value={fileName}
+          value={inputValue}
           size={size}
           isDisabled={isDisabled}
           hasError={hasError}
           hasWarning={hasWarning}
           scale={scale}
-          onFocus={this.onIconFileClick}
-          onChange={this.onChangeHandler}
+          {...propsSet}
         />
-        <input
-          type="file"
-          id={id}
-          ref={this.inputRef}
-          style={{ display: "none" }}
-          accept={accept}
-          onInput={this.onInputFile}
-        />
+        {!simplifiedFileInput && (
+          <input
+            type="file"
+            id={id}
+            ref={this.inputRef}
+            style={{ display: "none" }}
+            accept={accept}
+            onInput={this.onInputFile}
+          />
+        )}
         <div className="icon" onClick={this.onIconFileClick}>
           <IconButton
             className="icon-button"
@@ -140,6 +156,8 @@ FileInput.propTypes = {
   onInput: PropTypes.func,
   /**Specifies files visible for upload */
   accept: PropTypes.string,
+  /** Indicates that the input should be simplified, i.e. with onClick action and without file selection */
+  simplifiedFileInput: PropTypes.bool,
 };
 
 FileInput.defaultProps = {
@@ -149,6 +167,7 @@ FileInput.defaultProps = {
   hasError: false,
   isDisabled: false,
   accept: "",
+  simplifiedFileInput: false,
 };
 
 export default FileInput;

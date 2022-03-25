@@ -185,6 +185,13 @@ class SelectFolderDialog extends React.Component {
     console.log("on row click - id ", id);
     this.getSelectedFolderInfo(id);
   };
+  onButtonClick = (e) => {
+    const { folderInfo } = this.state;
+    const { onSave, onClose } = this.props;
+    console.log("e", e);
+    onSave && onSave(e, folderInfo.id);
+    onClose();
+  };
   onArrowClickAction = async () => {
     const { folderInfo } = this.state;
     const { pathParts } = folderInfo;
@@ -289,7 +296,7 @@ class SelectFolderDialog extends React.Component {
                       primary
                       size="small"
                       label={t("SaveHere")}
-                      onClick={onSave}
+                      onClick={this.onButtonClick}
                       //isDisabled={isLoadingData || !isAvailable || !canCreate}
                     />
                     <Button

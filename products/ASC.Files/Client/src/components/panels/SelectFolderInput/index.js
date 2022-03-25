@@ -9,8 +9,6 @@ import StyledComponent from "./StyledSelectFolderInput";
 import { getFolderPath } from "@appserver/common/api/files";
 import FileInput from "@appserver/components/file-input";
 
-let path = "";
-
 class SelectFolderInputBody extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -18,7 +16,8 @@ class SelectFolderInputBody extends React.PureComponent {
     this.state = {
       isLoading: false,
       baseFolderPath: "",
-      fullFolderPath: "",
+      newFolderPath: "",
+      baseFolderId: null,
     };
   }
   componentDidMount() {
@@ -26,7 +25,7 @@ class SelectFolderInputBody extends React.PureComponent {
 
     if (folderPath?.length !== 0) {
       this.setState({
-        fullFolderPath: folderPath,
+        newFolderPath: folderPath,
       });
     }
 
@@ -34,32 +33,62 @@ class SelectFolderInputBody extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    const { isSuccessSave, isReset } = this.props;
-    const { fullFolderPath, baseFolderPath } = this.state;
+    const { isSuccessSave, isReset, id } = this.props;
+    const { newFolderPath, baseFolderPath } = this.state;
 
     if (isSuccessSave && isSuccessSave !== prevProps.isSuccessSave) {
-      fullFolderPath &&
+      newFolderPath &&
         this.setState({
-          baseFolderPath: fullFolderPath,
+          baseFolderPath: newFolderPath,
+          baseFolderId: id,
         });
     }
 
     if (isReset && isReset !== prevProps.isReset) {
       this.setState({
-        fullFolderPath: baseFolderPath,
+        newFolderPath: baseFolderPath,
       });
     }
   }
 
-  onSetFullPath = (pathName) => {
+  setFolderPath = async (folderId) => {
+    const foldersArray = await getFolderPath(folderId);
+
+    const convertFolderPath = (foldersArray) => {
+      let path = "";
+      if (foldersArray.length > 1) {
+        for (let item of foldersArray) {
+          if (!path) {
+            path = path + `${item.title}`;
+          } else path = path + " " + "/" + " " + `${item.title}`;
+        }
+      } else {
+        for (let item of foldersArray) {
+          path = `${item.title}`;
+        }
+      }
+      return path;
+    };
+
+    const convertFoldersArray = convertFolderPath(foldersArray);
+
+    return convertFoldersArray;
+  };
+
+  onSetNewFolderPath = async (folderId) => {
+    const convertFoldersArray = await this.setFolderPath(folderId);
+
     this.setState({
-      fullFolderPath: pathName,
+      newFolderPath: convertFoldersArray,
     });
   };
 
-  onSetBaseFolderPath = (pathName) => {
+  onSetBaseFolderPath = async (folderId) => {
+    const convertFoldersArray = await this.setFolderPath(folderId);
+
     this.setState({
-      baseFolderPath: pathName,
+      baseFolderPath: convertFoldersArray,
+      baseFolderId: folderId,
     });
   };
 
@@ -69,7 +98,7 @@ class SelectFolderInputBody extends React.PureComponent {
     });
   };
   render() {
-    const { isLoading, baseFolderPath, fullFolderPath } = this.state;
+    const { isLoading, baseFolderPath, newFolderPath } = this.state;
     const {
       onClickInput,
       hasError,
@@ -82,14 +111,18 @@ class SelectFolderInputBody extends React.PureComponent {
       <StyledComponent maxWidth={maxInputWidth}>
         <FileInput
           className="select-folder_file-input"
-          value={fullFolderPath || baseFolderPath}
+          value={newFolderPath || baseFolderPath}
           hasError={hasError}
           onClick={onClickInput}
           placeholder={placeholder}
           simplifiedFileInput
         />
 
-        <SelectFolderDialog {...rest} />
+        <SelectFolderDialog
+          {...rest}
+          onSetBaseFolderPath={this.onSetBaseFolderPath}
+          onSetNewFolderPath={this.onSetNewFolderPath}
+        />
       </StyledComponent>
     );
   }
@@ -113,30 +146,6 @@ const SelectFolderInputBodyWrapper = inject(({ filesStore }) => {
   };
 })(observer(SelectFolderInputBody));
 class SelectFolderInput extends React.Component {
-  static setFolderPath = async (folderId) => {
-    const foldersArray = await getFolderPath(folderId);
-
-    const convertFolderPath = (foldersArray) => {
-      path = "";
-      if (foldersArray.length > 1) {
-        for (let item of foldersArray) {
-          if (!path) {
-            path = path + `${item.title}`;
-          } else path = path + " " + "/" + " " + `${item.title}`;
-        }
-      } else {
-        for (let item of foldersArray) {
-          path = `${item.title}`;
-        }
-      }
-      return path;
-    };
-
-    const convertFoldersArray = convertFolderPath(foldersArray);
-
-    return convertFoldersArray;
-  };
-
   render() {
     return (
       <MobxProvider {...stores}>

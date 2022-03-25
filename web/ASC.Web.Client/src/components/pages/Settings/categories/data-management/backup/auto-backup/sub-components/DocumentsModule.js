@@ -25,9 +25,9 @@ class DocumentsModule extends React.PureComponent {
     });
   };
 
-  onSelectFolder = (selectedFolder) => {
+  onSelectFolder = (e, id) => {
     const { setSelectedFolder } = this.props;
-    setSelectedFolder(selectedFolder);
+    setSelectedFolder(`${id}`);
   };
 
   render() {

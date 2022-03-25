@@ -20,7 +20,7 @@ import IconButton from "@appserver/components/icon-button";
 import styled from "styled-components";
 import Button from "@appserver/components/button";
 import Loaders from "@appserver/common/components/Loaders";
-import { ConflictResolveDialog } from "../../dialogs";
+import SelectFolderInput from "../SelectFolderInput";
 
 const StyledHeader = styled.div`
   .dialog-header {
@@ -143,25 +143,36 @@ class SelectFolderDialog extends React.Component {
   };
 
   async componentDidMount() {
-    const { treeFolders, foldersType } = this.props;
+    const {
+      treeFolders,
+      foldersType,
+      id,
+      onSetBaseFolderPath,
+      onSelectFolder,
+    } = this.props;
 
-    let requestedTreeFolders, filteredTreeFolders;
+    let requestedTreeFolders, filteredTreeFolders, folderTitle;
 
     const treeFoldersLength = treeFolders.length;
-    this.timerId = setTimeout(() => {
+    let timerId = setTimeout(() => {
       this.setState({ isInitialLoader: true });
     }, 1000);
 
     if (treeFoldersLength === 0) {
       requestedTreeFolders = await this.getRequestFolderTree();
-      clearTimeout(this.timerId);
-      this.timerId = null;
+      clearTimeout(timerId);
+      timerId = null;
 
       console.log("requestedFolderTree", requestedTreeFolders);
     }
 
     const foldersTree =
       treeFoldersLength > 0 ? treeFolders : requestedTreeFolders;
+
+    if (foldersType === "common" && !id) {
+      onSetBaseFolderPath && onSetBaseFolderPath(foldersTree[0].id);
+      onSelectFolder && onSelectFolder(null, foldersTree[0].id);
+    }
 
     if (
       foldersType === "exceptSortedByTags" ||
@@ -180,14 +191,47 @@ class SelectFolderDialog extends React.Component {
 
   componentWillUnmount() {}
 
+  componentDidUpdate(prevProps) {
+    const { isReset } = this.props;
+    if (isReset && isReset !== prevProps.isReset) {
+      this.onResetInfo();
+    }
+  }
+
+  onResetInfo = async () => {
+    const { id, onSelectFolder, foldersType } = this.props;
+
+    if (!id) {
+      let requestedTreeFolders = await this.getRequestFolderTree();
+
+      if (foldersType === "common") {
+        onSelectFolder && onSelectFolder(requestedTreeFolders[0].id);
+        return;
+      }
+
+      if (foldersType === "third-party") {
+        onSelectFolder && onSelectFolder("");
+        return;
+      }
+      return;
+    }
+
+    onSelectFolder && onSelectFolder(id);
+  };
+
   deletedCurrentFolderIdFromPathParts = (pathParts) => {
     pathParts.splice(-1, 1);
   };
   getSelectedFolderInfo = async (id) => {
     try {
       const data = await getFolder(id);
+
+      clearTimeout(this.timerId);
+      this.timerId = null;
+
       console.log("data", data);
       const pathParts = [...data.pathParts];
+
       this.deletedCurrentFolderIdFromPathParts(pathParts);
 
       this.setState({
@@ -210,15 +254,19 @@ class SelectFolderDialog extends React.Component {
 
   onRowClick = (id) => {
     console.log("on row click - id ", id);
-    this.setState({ isDataLoading: true }, () => {
-      this.getSelectedFolderInfo(id);
-    });
+
+    this.timerId = setTimeout(() => {
+      this.setState({ isDataLoading: true });
+    }, 1000);
+
+    this.getSelectedFolderInfo(id);
   };
   onButtonClick = (e) => {
     const { folderInfo } = this.state;
-    const { onSave, onClose } = this.props;
+    const { onClose, onSelectFolder, onSetNewFolderPath } = this.props;
     console.log("e", e);
-    onSave && onSave(e, folderInfo.id);
+    onSetNewFolderPath && onSetNewFolderPath(folderInfo.id);
+    onSelectFolder && onSelectFolder(e, folderInfo.id);
     onClose();
   };
   onArrowClickAction = async () => {

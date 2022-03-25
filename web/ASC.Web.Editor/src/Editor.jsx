@@ -238,7 +238,6 @@ const Editor = () => {
           data: "backup-restore",
         });
         socketHelper.on("restore-backup", () => {
-         
           setPreparationPortalDialogVisible(true);
         });
       } catch (e) {
@@ -926,7 +925,7 @@ const Editor = () => {
                 isPanelVisible={isFolderDialogVisible}
                 onClose={onCloseFolderDialog}
                 foldersType="exceptSortedByTags"
-                onSave={onClickSaveSelectFolder}
+                onSelectFolder={onClickSaveSelectFolder}
                 header={
                   <StyledSelectFolder>
                     <Text className="editor-select-folder_text">
@@ -956,7 +955,9 @@ const Editor = () => {
             )}
 
             {preparationPortalDialogVisible && (
-              <PreparationPortalDialog visible={preparationPortalDialogVisible} />
+              <PreparationPortalDialog
+                visible={preparationPortalDialogVisible}
+              />
             )}
           </>
         ) : (

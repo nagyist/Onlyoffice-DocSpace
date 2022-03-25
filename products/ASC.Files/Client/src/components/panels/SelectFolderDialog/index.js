@@ -1,7 +1,12 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import { withTranslation } from "react-i18next";
-import { getFolder, getFoldersTree } from "@appserver/common/api/files";
+import {
+  getCommonFoldersTree,
+  getFolder,
+  getFoldersTree,
+  getThirdPartyFoldersTree,
+} from "@appserver/common/api/files";
 
 import ModalDialog from "@appserver/components/modal-dialog";
 import toastr from "studio/toastr";
@@ -94,7 +99,7 @@ class SelectFolderDialog extends React.Component {
         break;
       case "common":
         try {
-          return SelectFolderDialog.getCommonFolders();
+          return getCommonFoldersTree();
         } catch (err) {
           console.error(err);
         }
@@ -102,7 +107,7 @@ class SelectFolderDialog extends React.Component {
 
       case "third-party":
         try {
-          return SelectFolderDialog.getCommonThirdPartyList();
+          return getThirdPartyFoldersTree();
         } catch (err) {
           console.error(err);
         }

@@ -12,9 +12,12 @@ import FileInput from "@appserver/components/file-input";
 class SelectFolderInputBody extends React.PureComponent {
   constructor(props) {
     super(props);
+    const { id, foldersType } = this.props;
+
+    const isNeedLoader = id || foldersType === "common";
 
     this.state = {
-      isLoading: false,
+      isLoading: isNeedLoader,
       baseFolderPath: "",
       newFolderPath: "",
     };
@@ -50,10 +53,18 @@ class SelectFolderInputBody extends React.PureComponent {
   }
 
   onSetNewFolderPath = async (folderId) => {
+    let timerId = setTimeout(() => {
+      this.setState({ isLoading: true });
+    }, 500);
+
     const convertFoldersArray = await SelectFolderInput.setFolderPath(folderId);
+
+    clearTimeout(timerId);
+    timerId = null;
 
     this.setState({
       newFolderPath: convertFoldersArray,
+      isLoading: false,
     });
   };
 
@@ -62,12 +73,13 @@ class SelectFolderInputBody extends React.PureComponent {
 
     this.setState({
       baseFolderPath: convertFoldersArray,
+      isLoading: false,
     });
   };
 
-  onSetLoadingInput = (loading) => {
+  onSetLoadingInput = (isLoading) => {
     this.setState({
-      isLoading: loading,
+      isLoading,
     });
   };
   render() {
@@ -88,6 +100,7 @@ class SelectFolderInputBody extends React.PureComponent {
           hasError={hasError}
           onClick={onClickInput}
           placeholder={placeholder}
+          isDisabled={isLoading}
           simplifiedFileInput
         />
 

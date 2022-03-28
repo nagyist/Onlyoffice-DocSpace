@@ -194,33 +194,7 @@ class SelectFolderDialog extends React.Component {
 
   componentWillUnmount() {}
 
-  componentDidUpdate(prevProps) {
-    const { isReset } = this.props;
-    if (isReset && isReset !== prevProps.isReset) {
-      this.onResetInfo();
-    }
-  }
-
-  onResetInfo = async () => {
-    const { id, onSelectFolder, foldersType } = this.props;
-
-    if (!id) {
-      let requestedTreeFolders = await this.getRequestFolderTree();
-
-      if (foldersType === "common") {
-        onSelectFolder && onSelectFolder(requestedTreeFolders[0].id);
-        return;
-      }
-
-      if (foldersType === "third-party") {
-        onSelectFolder && onSelectFolder("");
-        return;
-      }
-      return;
-    }
-
-    onSelectFolder && onSelectFolder(id);
-  };
+  componentDidUpdate(prevProps) {}
 
   deletedCurrentFolderIdFromPathParts = (pathParts) => {
     pathParts.splice(-1, 1);

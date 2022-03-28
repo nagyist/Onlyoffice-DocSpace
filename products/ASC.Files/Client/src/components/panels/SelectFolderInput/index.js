@@ -17,7 +17,6 @@ class SelectFolderInputBody extends React.PureComponent {
       isLoading: false,
       baseFolderPath: "",
       newFolderPath: "",
-      baseFolderId: null,
     };
   }
   componentDidMount() {
@@ -33,14 +32,13 @@ class SelectFolderInputBody extends React.PureComponent {
   }
 
   componentDidUpdate(prevProps) {
-    const { isSuccessSave, isReset, id } = this.props;
+    const { isSuccessSave, isReset } = this.props;
     const { newFolderPath, baseFolderPath } = this.state;
 
     if (isSuccessSave && isSuccessSave !== prevProps.isSuccessSave) {
       newFolderPath &&
         this.setState({
           baseFolderPath: newFolderPath,
-          baseFolderId: id,
         });
     }
 
@@ -88,7 +86,6 @@ class SelectFolderInputBody extends React.PureComponent {
 
     this.setState({
       baseFolderPath: convertFoldersArray,
-      baseFolderId: folderId,
     });
   };
 

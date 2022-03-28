@@ -49,32 +49,8 @@ class SelectFolderInputBody extends React.PureComponent {
     }
   }
 
-  setFolderPath = async (folderId) => {
-    const foldersArray = await getFolderPath(folderId);
-
-    const convertFolderPath = (foldersArray) => {
-      let path = "";
-      if (foldersArray.length > 1) {
-        for (let item of foldersArray) {
-          if (!path) {
-            path = path + `${item.title}`;
-          } else path = path + " " + "/" + " " + `${item.title}`;
-        }
-      } else {
-        for (let item of foldersArray) {
-          path = `${item.title}`;
-        }
-      }
-      return path;
-    };
-
-    const convertFoldersArray = convertFolderPath(foldersArray);
-
-    return convertFoldersArray;
-  };
-
   onSetNewFolderPath = async (folderId) => {
-    const convertFoldersArray = await this.setFolderPath(folderId);
+    const convertFoldersArray = await SelectFolderInput.setFolderPath(folderId);
 
     this.setState({
       newFolderPath: convertFoldersArray,
@@ -82,7 +58,7 @@ class SelectFolderInputBody extends React.PureComponent {
   };
 
   onSetBaseFolderPath = async (folderId) => {
-    const convertFoldersArray = await this.setFolderPath(folderId);
+    const convertFoldersArray = await SelectFolderInput.setFolderPath(folderId);
 
     this.setState({
       baseFolderPath: convertFoldersArray,
@@ -143,6 +119,29 @@ const SelectFolderInputBodyWrapper = inject(({ filesStore }) => {
   };
 })(observer(SelectFolderInputBody));
 class SelectFolderInput extends React.Component {
+  static setFolderPath = async (folderId) => {
+    const foldersArray = await getFolderPath(folderId);
+
+    const convertFolderPath = (foldersArray) => {
+      let path = "";
+      if (foldersArray.length > 1) {
+        for (let item of foldersArray) {
+          if (!path) {
+            path = path + `${item.title}`;
+          } else path = path + " " + "/" + " " + `${item.title}`;
+        }
+      } else {
+        for (let item of foldersArray) {
+          path = `${item.title}`;
+        }
+      }
+      return path;
+    };
+
+    const convertFoldersArray = convertFolderPath(foldersArray);
+
+    return convertFoldersArray;
+  };
   render() {
     return (
       <MobxProvider {...stores}>

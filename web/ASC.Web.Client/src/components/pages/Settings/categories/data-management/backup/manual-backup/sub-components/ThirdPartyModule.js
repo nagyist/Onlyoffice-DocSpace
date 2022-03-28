@@ -108,7 +108,7 @@ class ThirdPartyModule extends React.Component {
             onClose={this.onClose}
             onClickInput={this.onClickInput}
             onSetLoadingData={this.onSetLoadingData}
-            isSavingProcess={isModuleDisabled}
+            isDisabled={isModuleDisabled}
             isPanelVisible={isPanelVisible}
             isError={isError}
             folderPath={folderPath}

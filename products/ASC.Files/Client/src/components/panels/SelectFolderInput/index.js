@@ -90,6 +90,7 @@ class SelectFolderInputBody extends React.PureComponent {
       t,
       placeholder,
       maxInputWidth,
+      isDisabled,
       ...rest
     } = this.props;
     return (
@@ -100,7 +101,7 @@ class SelectFolderInputBody extends React.PureComponent {
           hasError={hasError}
           onClick={onClickInput}
           placeholder={placeholder}
-          isDisabled={isLoading}
+          isDisabled={isDisabled || isLoading}
           simplifiedFileInput
         />
 
@@ -117,11 +118,13 @@ class SelectFolderInputBody extends React.PureComponent {
 SelectFolderInputBody.propTypes = {
   onClickInput: PropTypes.func.isRequired,
   hasError: PropTypes.bool,
+  isDisabled: PropTypes.bool,
   placeholder: PropTypes.string,
 };
 
 SelectFolderInputBody.defaultProps = {
   hasError: false,
+  isDisabled: false,
   placeholder: "",
 };
 

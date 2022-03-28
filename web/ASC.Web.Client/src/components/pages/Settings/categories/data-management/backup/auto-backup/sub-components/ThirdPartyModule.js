@@ -53,7 +53,7 @@ class ThirdPartyModule extends React.PureComponent {
             isPanelVisible={isPanelVisible}
             isError={isError}
             foldersType="third-party"
-            isSavingProcess={isLoadingData}
+            isDisabled={isLoadingData}
             id={passedId}
             isReset={isReset}
             isSuccessSave={isSuccessSave}

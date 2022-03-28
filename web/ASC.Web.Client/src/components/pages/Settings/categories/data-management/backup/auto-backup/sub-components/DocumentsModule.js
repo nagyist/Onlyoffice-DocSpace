@@ -52,7 +52,7 @@ class DocumentsModule extends React.PureComponent {
             isError={isError}
             foldersType="common"
             withoutProvider
-            isSavingProcess={isLoadingData}
+            isDisabled={isLoadingData}
             id={passedId}
             isReset={isReset}
             isSuccessSave={isSuccessSave}

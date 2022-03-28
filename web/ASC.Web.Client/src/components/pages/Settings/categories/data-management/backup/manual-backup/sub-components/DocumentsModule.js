@@ -81,7 +81,7 @@ class DocumentsModule extends React.Component {
             onClickInput={this.onClickInput}
             folderPath={folderPath}
             isPanelVisible={isPanelVisible}
-            isSavingProcess={isModuleDisabled}
+            isDisabled={isModuleDisabled}
             foldersType="common"
             withoutProvider
             fontSizeInput={"13px"}

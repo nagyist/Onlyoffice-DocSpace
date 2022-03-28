@@ -151,15 +151,23 @@ class SelectFolderDialog extends React.Component {
       onSelectFolder,
     } = this.props;
 
-    let requestedTreeFolders, filteredTreeFolders, folderTitle;
+    let requestedTreeFolders,
+      filteredTreeFolders,
+      folderTitle,
+      requests = [];
 
     const treeFoldersLength = treeFolders.length;
+
     let timerId = setTimeout(() => {
       this.setState({ isInitialLoader: true });
     }, 1000);
 
     if (treeFoldersLength === 0) {
-      requestedTreeFolders = await this.getRequestFolderTree();
+      requests.push(this.getRequestFolderTree());
+      if (id) requests.push(getFolder(id));
+
+      [requestedTreeFolders, this.folderInfo] = await Promise.all(requests);
+
       clearTimeout(timerId);
       timerId = null;
 
@@ -170,11 +178,13 @@ class SelectFolderDialog extends React.Component {
       treeFoldersLength > 0 ? treeFolders : requestedTreeFolders;
 
     if (foldersType === "common") {
-      id && this.getSelectedFolderInfo(id);
+      if (onSetBaseFolderPath) {
+        this.getSelectedFolderInfo(id ? id : foldersTree[0].id);
+      }
       const passedId = id ? id : foldersTree[0].id;
 
       onSetBaseFolderPath && onSetBaseFolderPath(passedId);
-      onSelectFolder && onSelectFolder(null, passedId);
+      onSelectFolder && onSelectFolder(passedId);
     }
 
     if (
@@ -201,7 +211,7 @@ class SelectFolderDialog extends React.Component {
   };
   getSelectedFolderInfo = async (id) => {
     try {
-      const data = await getFolder(id);
+      const data = this.folderInfo ? this.folderInfo : await getFolder(id);
 
       clearTimeout(this.timerId);
       this.timerId = null;
@@ -245,11 +255,11 @@ class SelectFolderDialog extends React.Component {
     if (id) {
       if (+id !== +folderInfo.id) {
         onSetNewFolderPath && onSetNewFolderPath(folderInfo.id);
-        onSelectFolder && onSelectFolder(e, folderInfo.id);
+        onSelectFolder && onSelectFolder(folderInfo.id);
       }
     } else {
       onSetNewFolderPath && onSetNewFolderPath(folderInfo.id);
-      onSelectFolder && onSelectFolder(e, folderInfo.id);
+      onSelectFolder && onSelectFolder(folderInfo.id);
     }
 
     onClose();
@@ -312,7 +322,7 @@ class SelectFolderDialog extends React.Component {
 
     const isRootPage = id === "root";
 
-    console.log("isDataLoading", isDataLoading);
+    console.log("this.state", this.state);
     return (
       <ModalDialog
         visible={isPanelVisible}

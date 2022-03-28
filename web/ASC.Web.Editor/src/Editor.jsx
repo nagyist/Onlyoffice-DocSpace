@@ -817,7 +817,7 @@ const Editor = () => {
       docEditor.showMessage(convertedInfo);
     }
   };
-  const onClickSaveSelectFolder = (e, folderId) => {
+  const onClickSaveSelectFolder = (folderId) => {
     const currentExst = titleSelectorFolder.split(".").pop();
 
     const title =

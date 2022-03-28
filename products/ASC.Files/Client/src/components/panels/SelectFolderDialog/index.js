@@ -20,7 +20,6 @@ import IconButton from "@appserver/components/icon-button";
 import styled from "styled-components";
 import Button from "@appserver/components/button";
 import Loaders from "@appserver/common/components/Loaders";
-import SelectFolderInput from "../SelectFolderInput";
 
 const StyledHeader = styled.div`
   .dialog-header {
@@ -73,7 +72,7 @@ const StyledBody = styled.div`
     }
   }
 `;
-class SelectFolderDialog extends React.Component {
+class SelectFolderDialog extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {

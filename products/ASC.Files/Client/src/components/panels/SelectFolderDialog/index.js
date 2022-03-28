@@ -170,14 +170,11 @@ class SelectFolderDialog extends React.Component {
       treeFoldersLength > 0 ? treeFolders : requestedTreeFolders;
 
     if (foldersType === "common") {
-      if (id) {
-        this.getSelectedFolderInfo(id);
-        onSetBaseFolderPath && onSetBaseFolderPath(id);
-        onSelectFolder && onSelectFolder(null, id);
-      } else {
-        onSetBaseFolderPath && onSetBaseFolderPath(foldersTree[0].id);
-        onSelectFolder && onSelectFolder(null, foldersTree[0].id);
-      }
+      id && this.getSelectedFolderInfo(id);
+      const passedId = id ? id : foldersTree[0].id;
+
+      onSetBaseFolderPath && onSetBaseFolderPath(passedId);
+      onSelectFolder && onSelectFolder(null, passedId);
     }
 
     if (

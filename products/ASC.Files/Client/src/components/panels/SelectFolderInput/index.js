@@ -15,7 +15,7 @@ class SelectFolderInputBody extends React.PureComponent {
     super(props);
     const { id, foldersType } = this.props;
 
-    const isNeedLoader = id || foldersType === "common";
+    const isNeedLoader = !!id || foldersType === "common";
 
     this.state = {
       isLoading: isNeedLoader,

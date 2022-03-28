@@ -169,9 +169,15 @@ class SelectFolderDialog extends React.Component {
     const foldersTree =
       treeFoldersLength > 0 ? treeFolders : requestedTreeFolders;
 
-    if (foldersType === "common" && !id) {
-      onSetBaseFolderPath && onSetBaseFolderPath(foldersTree[0].id);
-      onSelectFolder && onSelectFolder(null, foldersTree[0].id);
+    if (foldersType === "common") {
+      if (id) {
+        this.getSelectedFolderInfo(id);
+        onSetBaseFolderPath && onSetBaseFolderPath(id);
+        onSelectFolder && onSelectFolder(null, id);
+      } else {
+        onSetBaseFolderPath && onSetBaseFolderPath(foldersTree[0].id);
+        onSelectFolder && onSelectFolder(null, foldersTree[0].id);
+      }
     }
 
     if (
@@ -263,10 +269,18 @@ class SelectFolderDialog extends React.Component {
   };
   onButtonClick = (e) => {
     const { folderInfo } = this.state;
-    const { onClose, onSelectFolder, onSetNewFolderPath } = this.props;
-    console.log("e", e);
-    onSetNewFolderPath && onSetNewFolderPath(folderInfo.id);
-    onSelectFolder && onSelectFolder(e, folderInfo.id);
+    const { onClose, onSelectFolder, onSetNewFolderPath, id } = this.props;
+    console.log("e", id, folderInfo.id);
+    if (id) {
+      if (+id !== +folderInfo.id) {
+        onSetNewFolderPath && onSetNewFolderPath(folderInfo.id);
+        onSelectFolder && onSelectFolder(e, folderInfo.id);
+      }
+    } else {
+      onSetNewFolderPath && onSetNewFolderPath(folderInfo.id);
+      onSelectFolder && onSelectFolder(e, folderInfo.id);
+    }
+
     onClose();
   };
   onArrowClickAction = async () => {

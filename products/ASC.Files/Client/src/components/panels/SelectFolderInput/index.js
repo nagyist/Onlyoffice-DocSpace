@@ -8,6 +8,7 @@ import SelectFolderDialog from "../SelectFolderDialog/index";
 import StyledComponent from "./StyledSelectFolderInput";
 import { getFolderPath } from "@appserver/common/api/files";
 import FileInput from "@appserver/components/file-input";
+import toastr from "@appserver/components/toast/toastr";
 
 class SelectFolderInputBody extends React.PureComponent {
   constructor(props) {
@@ -57,24 +58,44 @@ class SelectFolderInputBody extends React.PureComponent {
       this.setState({ isLoading: true });
     }, 500);
 
-    const convertFoldersArray = await SelectFolderInput.setFolderPath(folderId);
+    try {
+      const convertFoldersArray = await SelectFolderInput.setFolderPath(
+        folderId
+      );
+      clearTimeout(timerId);
+      timerId = null;
 
-    clearTimeout(timerId);
-    timerId = null;
+      this.setState({
+        newFolderPath: convertFoldersArray,
+        isLoading: false,
+      });
+    } catch (e) {
+      toastr.error(e);
+      clearTimeout(timerId);
+      timerId = null;
 
-    this.setState({
-      newFolderPath: convertFoldersArray,
-      isLoading: false,
-    });
+      this.setState({
+        isLoading: false,
+      });
+    }
   };
 
   onSetBaseFolderPath = async (folderId) => {
-    const convertFoldersArray = await SelectFolderInput.setFolderPath(folderId);
+    try {
+      const convertFoldersArray = await SelectFolderInput.setFolderPath(
+        folderId
+      );
 
-    this.setState({
-      baseFolderPath: convertFoldersArray,
-      isLoading: false,
-    });
+      this.setState({
+        baseFolderPath: convertFoldersArray,
+        isLoading: false,
+      });
+    } catch (e) {
+      toastr.error(e);
+      this.setState({
+        isLoading: false,
+      });
+    }
   };
 
   onSetLoadingInput = (isLoading) => {

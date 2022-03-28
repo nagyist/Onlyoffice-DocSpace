@@ -24,13 +24,7 @@ class SelectFolderInputBody extends React.PureComponent {
     };
   }
   componentDidMount() {
-    const { folderPath, setFirstLoad } = this.props;
-
-    if (folderPath?.length !== 0) {
-      this.setState({
-        newFolderPath: folderPath,
-      });
-    }
+    const { setFirstLoad } = this.props;
 
     setFirstLoad(false);
   }

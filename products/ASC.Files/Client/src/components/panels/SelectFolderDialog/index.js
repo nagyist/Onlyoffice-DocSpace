@@ -241,7 +241,7 @@ class SelectFolderDialog extends React.Component {
 
   onRowClick = (id) => {
     console.log("on row click - id ", id);
-
+    this.folderInfo = null;
     this.timerId = setTimeout(() => {
       this.setState({ isDataLoading: true });
     }, 1000);

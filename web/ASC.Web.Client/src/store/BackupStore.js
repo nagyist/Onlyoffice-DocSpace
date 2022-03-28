@@ -281,9 +281,6 @@ class BackupStore {
   clearSessionStorage = () => {
     saveToSessionStorage("LocalCopyStorageType", "");
 
-    getFromSessionStorage("LocalCopyPath") &&
-      saveToSessionStorage("LocalCopyPath", "");
-
     getFromSessionStorage("LocalCopyFolder") &&
       saveToSessionStorage("LocalCopyFolder", "");
 

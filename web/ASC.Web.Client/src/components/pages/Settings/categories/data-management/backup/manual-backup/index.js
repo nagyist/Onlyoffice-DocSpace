@@ -9,7 +9,6 @@ import RadioButton from "@appserver/components/radio-button";
 import toastr from "@appserver/components/toast/toastr";
 import Loader from "@appserver/components/loader";
 import { BackupStorageType } from "@appserver/common/constants";
-import SelectFolderInput from "files/SelectFolderInput";
 import ThirdPartyModule from "./sub-components/ThirdPartyModule";
 import DocumentsModule from "./sub-components/DocumentsModule";
 import ThirdPartyStorageModule from "./sub-components/ThirdPartyStorageModule";
@@ -150,10 +149,6 @@ class ManualBackup extends React.Component {
 
     if (isCheckedDocuments || isCheckedThirdParty) {
       saveToSessionStorage("LocalCopyFolder", `${selectedFolder}`);
-
-      SelectFolderInput.setFolderPath(selectedFolder).then((folderPath) => {
-        saveToSessionStorage("LocalCopyPath", `${folderPath}`);
-      });
     } else {
       saveToSessionStorage("LocalCopyStorage", `${selectedStorageId}`);
       saveToSessionStorage(

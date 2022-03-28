@@ -12,7 +12,6 @@ class ThirdPartyModule extends React.Component {
   constructor(props) {
     super(props);
 
-    folderPath = getFromSessionStorage("LocalCopyPath");
     folder = getFromSessionStorage("LocalCopyFolder");
 
     this.state = {
@@ -21,7 +20,6 @@ class ThirdPartyModule extends React.Component {
       selectedFolder: folder || "",
       isPanelVisible: false,
       isError: false,
-      folderPath: folderPath || "",
     };
   }
 
@@ -111,7 +109,6 @@ class ThirdPartyModule extends React.Component {
             isDisabled={isModuleDisabled}
             isPanelVisible={isPanelVisible}
             isError={isError}
-            folderPath={folderPath}
             foldersType="third-party"
             fontSizeInput={"13px"}
             foldersList={commonThirdPartyList}

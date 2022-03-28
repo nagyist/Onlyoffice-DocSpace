@@ -11,14 +11,12 @@ class DocumentsModule extends React.Component {
   constructor(props) {
     super(props);
 
-    folderPath = getFromSessionStorage("LocalCopyPath");
     folder = getFromSessionStorage("LocalCopyFolder");
 
     this.state = {
       isStartCopy: false,
       selectedFolder: folder || "",
       isPanelVisible: false,
-      folderPath: folderPath || "",
     };
   }
 
@@ -63,12 +61,7 @@ class DocumentsModule extends React.Component {
 
   render() {
     const { isMaxProgress, t } = this.props;
-    const {
-      isPanelVisible,
-      isStartCopy,
-      folderPath,
-      selectedFolder,
-    } = this.state;
+    const { isPanelVisible, isStartCopy, selectedFolder } = this.state;
 
     const isModuleDisabled = !isMaxProgress || isStartCopy || !selectedFolder;
     return (
@@ -79,12 +72,12 @@ class DocumentsModule extends React.Component {
             name={"common"}
             onClose={this.onClose}
             onClickInput={this.onClickInput}
-            folderPath={folderPath}
             isPanelVisible={isPanelVisible}
             isDisabled={isModuleDisabled}
             foldersType="common"
             withoutProvider
             fontSizeInput={"13px"}
+            id={selectedFolder}
           />
         </div>
         <div className="manual-backup_buttons">

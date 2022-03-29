@@ -46,10 +46,16 @@ const StyledBody = styled.div`
     }
   }
 
-  .loader {
+  .select-folder_loader {
     overflow: hidden;
     .list-loader-wrapper {
       padding: 0;
+    }
+  }
+  .select-folder_list-loader {
+    display: flex;
+    div:first-child {
+      margin-right: 8px;
     }
   }
   .select-dialog_footer {
@@ -75,7 +81,8 @@ const StyledBody = styled.div`
 class SelectFolderDialog extends React.PureComponent {
   constructor(props) {
     super(props);
-    const { filter } = props;
+    const { filter, t } = props;
+    this.rootTitle = t("SelectFolder");
     this.newFilter = filter.clone();
 
     this.state = {
@@ -85,8 +92,10 @@ class SelectFolderDialog extends React.PureComponent {
       isNextPageLoading: false,
       page: 0,
       hasNextPage: true,
+
       id: "root",
-    
+      title: this.rootTitle,
+      folders: [],
     };
   }
   filterFoldersTree = (folders, arrayOfExceptions) => {
@@ -153,7 +162,6 @@ class SelectFolderDialog extends React.PureComponent {
 
     let requestedTreeFolders,
       filteredTreeFolders,
-      folderTitle,
       requests = [];
 
     const treeFoldersLength = treeFolders.length;
@@ -205,40 +213,6 @@ class SelectFolderDialog extends React.PureComponent {
   deletedCurrentFolderIdFromPathParts = (pathParts) => {
     pathParts.splice(-1, 1);
   };
-  getSelectedFolderInfo = async (id) => {
-    try {
-      const pageCount = 15;
-      this.newFilter.page = 0;
-      this.newFilter.pageCount = pageCount;
-      const data = await getFolder(id, this.newFilter);
-
-      clearTimeout(this.timerId);
-      this.timerId = null;
-
-      console.log("data", data);
-      const pathParts = [...data.pathParts];
-
-      this.deletedCurrentFolderIdFromPathParts(pathParts);
-
-      this.setState({
-        isDataLoading: false,
-        hasNextPage: true,
-        page: 0,
-        folderInfo: {
-          folders: data.folders,
-          files: [], //data.files,
-          title: data.current.title,
-          id: data.current.id,
-          pathParts: ["root", ...pathParts],
-        },
-      });
-    } catch (e) {
-      toastr.error(e);
-      this.setState({
-        isDataLoading: false,
-      });
-    }
-  };
 
   onButtonClick = (e) => {
     const { folderInfo } = this.state;
@@ -261,7 +235,6 @@ class SelectFolderDialog extends React.PureComponent {
 
     const newPathParts = [...pathParts];
     const prevFolderId = newPathParts.pop();
-    console.log("prevFolder id", prevFolderId, "newPathParts", newPathParts);
     const isRootFolder = newPathParts.length === 0;
 
     if (!isRootFolder) {
@@ -271,53 +244,32 @@ class SelectFolderDialog extends React.PureComponent {
           folders: [],
           hasNextPage: true,
           page: 0,
+          isDataLoading: true,
         });
-        // const pageCount = 15;
-        // this.newFilter.page = 0;
-        // this.newFilter.pageCount = pageCount;
-        // const data = await getFolder(prevFolderId, this.newFilter);
-
-        // const pathParts = [...data.pathParts];
-        // this.deletedCurrentFolderIdFromPathParts(pathParts);
-
-        // this.setState({
-        //   folders: data.folders,
-        //   title: data.current.title,
-        //   id: data.current.id,
-        //   pathParts: ["root", ...pathParts],
-        //   page: 0,
-        //   hasNextPage: true,
-        // });
       } catch (e) {
         toastr.error(e);
       }
     } else {
       this.setState({
-        folderInfo: {
-          folders: [],
-          title: "",
-          id: "root",
-          pathParts: [],
-        },
+        isDataLoading: false,
+        folders: [],
+        title: this.rootTitle,
+        id: "root",
+        pathParts: [],
       });
     }
   };
 
   onRowClick = (id) => {
     console.log("on row click - id ", id);
-    this.folderInfo = null;
-    // this.timerId = setTimeout(() => {
-    //   this.setState({ isDataLoading: true });
-    // }, 1000);
 
     this.setState({
       id,
       folders: [],
       page: 0,
       hasNextPage: true,
+      isDataLoading: true,
     });
-
-    //this.getSelectedFolderInfo(id);
   };
 
   _loadNextPage = () => {
@@ -351,6 +303,7 @@ class SelectFolderDialog extends React.PureComponent {
       console.log("firstLoadInfo", firstLoadInfo, "id", id);
       this._isLoadNextPage = false;
       this.setState((state) => ({
+        isDataLoading: false,
         hasNextPage: hasNextPage,
         isNextPageLoading: false,
         page: state.page + 1,
@@ -360,6 +313,9 @@ class SelectFolderDialog extends React.PureComponent {
     });
   };
 
+  onSetDataLoading = () => {
+    this.setState({});
+  };
   render() {
     const {
       isPanelVisible,
@@ -409,7 +365,7 @@ class SelectFolderDialog extends React.PureComponent {
                 {title}
               </div>
             ) : (
-              t("SelectFolder")
+              title
             )}
           </StyledHeader>
         </ModalDialog.Header>
@@ -432,26 +388,17 @@ class SelectFolderDialog extends React.PureComponent {
             <StyledBody footerChild={!!footerChild} headerChild={!!headerChild}>
               <div className="content-body">
                 <div className="select-dialog_header-child">{headerChild}</div>
-                {isDataLoading ? (
-                  <div className="loader" key="loader">
-                    <Loaders.ListLoader
-                      withoutFirstRectangle
-                      withoutLastRectangle
-                    />
-                  </div>
-                ) : (
-                  <div>
-                    <ElementsPage
-                      hasNextPage={hasNextPage}
-                      isNextPageLoading={isNextPageLoading}
-                      id={id}
-                      folders={folders}
-                      loadNextPage={this._loadNextPage}
-                      onClick={this.onRowClick}
-                      loadingText={loadingText}
-                    />
-                  </div>
-                )}
+                <div>
+                  <ElementsPage
+                    hasNextPage={hasNextPage}
+                    isNextPageLoading={isNextPageLoading}
+                    id={id}
+                    folders={folders}
+                    loadNextPage={this._loadNextPage}
+                    onClick={this.onRowClick}
+                    loadingText={loadingText}
+                  />
+                </div>
                 <div className="select-dialog_footer">
                   <div className="select-dialog_footer-child">
                     {footerChild}

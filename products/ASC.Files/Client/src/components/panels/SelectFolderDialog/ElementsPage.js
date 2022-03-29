@@ -7,6 +7,8 @@ import CustomScrollbarsVirtualList from "@appserver/components/scrollbar/custom-
 import InfiniteLoader from "react-window-infinite-loader";
 import Loader from "@appserver/components/loader";
 import Text from "@appserver/components/text";
+import Loaders from "@appserver/common/components/Loaders";
+let countLoad;
 const ElementsPage = ({
   hasNextPage,
   isNextPageLoading,
@@ -18,8 +20,10 @@ const ElementsPage = ({
   loadingText,
 }) => {
   const filesListRef = useRef(null);
+
   console.log("folders", folders);
   useEffect(() => {
+    countLoad = 0;
     if (filesListRef && filesListRef.current) {
       console.log(" useEffect id", id);
       filesListRef.current.resetloadMoreItemsCache(true);
@@ -37,6 +41,7 @@ const ElementsPage = ({
 
   const loadMoreItems = useCallback(() => {
     if (isNextPageLoading) return;
+    countLoad++;
     loadNextPage && loadNextPage();
   }, [isNextPageLoading, folders]);
 
@@ -44,10 +49,7 @@ const ElementsPage = ({
     (style) => {
       return (
         <div style={style}>
-          <div
-            key="loader"
-            className="panel-loader-wrapper loader-wrapper_margin"
-          >
+          <div key="loader" className="select-folder_list-loader">
             <Loader
               //theme={theme}
               type="oval"
@@ -63,12 +65,23 @@ const ElementsPage = ({
     [loadingText]
   );
 
+  const renderFirstLoader = (style) => {
+    return (
+      <div style={style}>
+        <div className="select-folder_loader" key="loader">
+          <Loaders.ListLoader withoutFirstRectangle withoutLastRectangle />
+        </div>
+      </div>
+    );
+  };
+
   const Item = useCallback(
     ({ index, style }) => {
       const isLoaded = isItemLoaded(index);
 
       if (!isLoaded) {
-        return renderPageLoader(style);
+        if (countLoad >= 1) return renderPageLoader(style);
+        return renderFirstLoader(style);
       }
 
       const item = folders[index];

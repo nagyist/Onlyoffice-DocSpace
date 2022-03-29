@@ -75,17 +75,18 @@ const StyledBody = styled.div`
 class SelectFolderDialog extends React.PureComponent {
   constructor(props) {
     super(props);
+    const { filter } = props;
+    this.newFilter = filter.clone();
+
     this.state = {
       resultingFolderTree: [],
       isDataLoading: false,
       isInitialLoader: false,
-      folderInfo: {
-        pathParts: [],
-        folders: [],
-        files: [],
-        id: "root",
-        title: "",
-      },
+      isNextPageLoading: false,
+      page: 0,
+      hasNextPage: true,
+      id: "root",
+    
     };
   }
   filterFoldersTree = (folders, arrayOfExceptions) => {
@@ -165,21 +166,19 @@ class SelectFolderDialog extends React.PureComponent {
       requests.push(this.getRequestFolderTree());
       if (id) requests.push(getFolder(id));
 
-      [requestedTreeFolders, this.folderInfo] = await Promise.all(requests);
+      [requestedTreeFolders] = await Promise.all(requests);
 
       clearTimeout(timerId);
       timerId = null;
-
-      console.log("requestedFolderTree", requestedTreeFolders);
     }
 
     const foldersTree =
       treeFoldersLength > 0 ? treeFolders : requestedTreeFolders;
 
     if (foldersType === "common") {
-      if (onSetBaseFolderPath) {
-        this.getSelectedFolderInfo(id ? id : foldersTree[0].id);
-      }
+      // if (onSetBaseFolderPath) {
+      //   this.getSelectedFolderInfo(id ? id : foldersTree[0].id);
+      // }
       const passedId = id ? id : foldersTree[0].id;
 
       onSetBaseFolderPath && onSetBaseFolderPath(passedId);
@@ -191,8 +190,6 @@ class SelectFolderDialog extends React.PureComponent {
       foldersType === "exceptPrivacyTrashFolders"
     ) {
       filteredTreeFolders = this.getExceptionsFolders(foldersTree);
-
-      console.log("exceptionsFolders", filteredTreeFolders);
     }
 
     this.setState({
@@ -210,7 +207,10 @@ class SelectFolderDialog extends React.PureComponent {
   };
   getSelectedFolderInfo = async (id) => {
     try {
-      const data = this.folderInfo ? this.folderInfo : await getFolder(id);
+      const pageCount = 15;
+      this.newFilter.page = 0;
+      this.newFilter.pageCount = pageCount;
+      const data = await getFolder(id, this.newFilter);
 
       clearTimeout(this.timerId);
       this.timerId = null;
@@ -222,6 +222,8 @@ class SelectFolderDialog extends React.PureComponent {
 
       this.setState({
         isDataLoading: false,
+        hasNextPage: true,
+        page: 0,
         folderInfo: {
           folders: data.folders,
           files: [], //data.files,
@@ -238,15 +240,6 @@ class SelectFolderDialog extends React.PureComponent {
     }
   };
 
-  onRowClick = (id) => {
-    console.log("on row click - id ", id);
-    this.folderInfo = null;
-    this.timerId = setTimeout(() => {
-      this.setState({ isDataLoading: true });
-    }, 1000);
-
-    this.getSelectedFolderInfo(id);
-  };
   onButtonClick = (e) => {
     const { folderInfo } = this.state;
     const { onClose, onSelectFolder, onSetNewFolderPath, id } = this.props;
@@ -264,8 +257,8 @@ class SelectFolderDialog extends React.PureComponent {
     onClose();
   };
   onArrowClickAction = async () => {
-    const { folderInfo } = this.state;
-    const { pathParts } = folderInfo;
+    const { pathParts } = this.state;
+
     const newPathParts = [...pathParts];
     const prevFolderId = newPathParts.pop();
     console.log("prevFolder id", prevFolderId, "newPathParts", newPathParts);
@@ -273,20 +266,28 @@ class SelectFolderDialog extends React.PureComponent {
 
     if (!isRootFolder) {
       try {
-        const data = await getFolder(prevFolderId);
-
-        const pathParts = [...data.pathParts];
-        this.deletedCurrentFolderIdFromPathParts(pathParts);
-
         this.setState({
-          folderInfo: {
-            folders: data.folders,
-            files: [], //data.files,
-            title: data.current.title,
-            id: data.current.id,
-            pathParts: ["root", ...pathParts],
-          },
+          id: prevFolderId,
+          folders: [],
+          hasNextPage: true,
+          page: 0,
         });
+        // const pageCount = 15;
+        // this.newFilter.page = 0;
+        // this.newFilter.pageCount = pageCount;
+        // const data = await getFolder(prevFolderId, this.newFilter);
+
+        // const pathParts = [...data.pathParts];
+        // this.deletedCurrentFolderIdFromPathParts(pathParts);
+
+        // this.setState({
+        //   folders: data.folders,
+        //   title: data.current.title,
+        //   id: data.current.id,
+        //   pathParts: ["root", ...pathParts],
+        //   page: 0,
+        //   hasNextPage: true,
+        // });
       } catch (e) {
         toastr.error(e);
       }
@@ -294,7 +295,6 @@ class SelectFolderDialog extends React.PureComponent {
       this.setState({
         folderInfo: {
           folders: [],
-          files: [], //data.files,
           title: "",
           id: "root",
           pathParts: [],
@@ -302,6 +302,64 @@ class SelectFolderDialog extends React.PureComponent {
       });
     }
   };
+
+  onRowClick = (id) => {
+    console.log("on row click - id ", id);
+    this.folderInfo = null;
+    // this.timerId = setTimeout(() => {
+    //   this.setState({ isDataLoading: true });
+    // }, 1000);
+
+    this.setState({
+      id,
+      folders: [],
+      page: 0,
+      hasNextPage: true,
+    });
+
+    //this.getSelectedFolderInfo(id);
+  };
+
+  _loadNextPage = () => {
+    const { id, folders, page } = this.state;
+
+    if (this._isLoadNextPage) return;
+
+    this._isLoadNextPage = true;
+    const pageCount = 15;
+    this.newFilter.page = page;
+    this.newFilter.pageCount = pageCount;
+
+    console.log("loadNextPage", this.state.isNextPageLoading);
+
+    this.setState({ isNextPageLoading: true }, async () => {
+      const data = await getFolder(id, this.newFilter);
+      const newFoldersList = [...folders].concat(data.folders);
+      console.log("newFoldersList", newFoldersList, "folders", folders);
+      const hasNextPage = data.folders.length === pageCount;
+
+      let firstLoadInfo = {};
+      if (page === 0) {
+        const pathParts = [...data.pathParts];
+        this.deletedCurrentFolderIdFromPathParts(pathParts);
+
+        firstLoadInfo = {
+          pathParts: ["root", ...pathParts],
+          title: data.current.title,
+        };
+      }
+      console.log("firstLoadInfo", firstLoadInfo, "id", id);
+      this._isLoadNextPage = false;
+      this.setState((state) => ({
+        hasNextPage: hasNextPage,
+        isNextPageLoading: false,
+        page: state.page + 1,
+        folders: newFoldersList,
+        ...firstLoadInfo,
+      }));
+    });
+  };
+
   render() {
     const {
       isPanelVisible,
@@ -309,19 +367,24 @@ class SelectFolderDialog extends React.PureComponent {
       t,
       footer: footerChild,
       header: headerChild,
-      onSave,
     } = this.props;
     const {
       resultingFolderTree,
-      folderInfo,
       isDataLoading,
       isInitialLoader,
+      isNextPageLoading,
+      hasNextPage,
+      folders,
+      id,
+      title,
     } = this.state;
-    const { title, id } = folderInfo;
 
     const isRootPage = id === "root";
 
     console.log("this.state", this.state);
+    const loadingText = `${t("Common:LoadingProcessing")} ${t(
+      "Common:LoadingDescription"
+    )}`;
     return (
       <ModalDialog
         visible={isPanelVisible}
@@ -379,8 +442,13 @@ class SelectFolderDialog extends React.PureComponent {
                 ) : (
                   <div>
                     <ElementsPage
-                      folderInfo={folderInfo}
+                      hasNextPage={hasNextPage}
+                      isNextPageLoading={isNextPageLoading}
+                      id={id}
+                      folders={folders}
+                      loadNextPage={this._loadNextPage}
                       onClick={this.onRowClick}
+                      loadingText={loadingText}
                     />
                   </div>
                 )}
@@ -414,10 +482,11 @@ class SelectFolderDialog extends React.PureComponent {
   }
 }
 
-export default inject(({ treeFoldersStore }) => {
+export default inject(({ treeFoldersStore, filesStore }) => {
   const { treeFolders } = treeFoldersStore;
-
+  const { filter } = filesStore;
   return {
     treeFolders,
+    filter,
   };
 })(observer(withTranslation(["SelectFolder", "Common"])(SelectFolderDialog)));

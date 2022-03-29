@@ -31,7 +31,7 @@ const ElementRow = (props) => {
   const { item, icon, onClick } = props;
   const { id, fileExst } = item;
   const element = <ItemIcon id={id} icon={icon} fileExst={fileExst} />;
-  console.log("element Row");
+
   const onRowClick = () => {
     onClick && onClick(id);
   };

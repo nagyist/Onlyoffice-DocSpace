@@ -8,6 +8,7 @@ import InfiniteLoader from "react-window-infinite-loader";
 import Loader from "@appserver/components/loader";
 import Text from "@appserver/components/text";
 import Loaders from "@appserver/common/components/Loaders";
+import EmptyContainer from "../../EmptyContainer/EmptyContainer";
 let countLoad;
 const ElementsPage = ({
   hasNextPage,
@@ -18,17 +19,21 @@ const ElementsPage = ({
   getIcon,
   onClick,
   loadingText,
+  page,
+  t,
 }) => {
   const filesListRef = useRef(null);
 
-  console.log("folders", folders);
-  useEffect(() => {
+  if (page === 0) {
     countLoad = 0;
+  }
+
+  useEffect(() => {
     if (filesListRef && filesListRef.current) {
-      console.log(" useEffect id", id);
       filesListRef.current.resetloadMoreItemsCache(true);
     }
   }, [id]);
+
   // Every row is loaded except for our loading indicator row.
   const isItemLoaded = useCallback(
     (index) => {
@@ -106,31 +111,43 @@ const ElementsPage = ({
   );
 
   return (
-    <AutoSizer>
-      {({ height, width }) => (
-        <InfiniteLoader
-          //theme={theme}
-          ref={filesListRef}
-          isItemLoaded={isItemLoaded}
-          itemCount={itemCount}
-          loadMoreItems={loadMoreItems}
-        >
-          {({ onItemsRendered, ref }) => (
-            <List
-              height={height}
-              width={width}
-              itemSize={48}
-              itemCount={itemCount}
-              outerElementType={CustomScrollbarsVirtualList}
-              onItemsRendered={onItemsRendered}
-              ref={ref}
-            >
-              {Item}
-            </List>
-          )}
-        </InfiniteLoader>
+    <div className="select-folder_list-body">
+      <AutoSizer>
+        {({ height, width }) => (
+          <InfiniteLoader
+            //theme={theme}
+            ref={filesListRef}
+            isItemLoaded={isItemLoaded}
+            itemCount={itemCount}
+            loadMoreItems={loadMoreItems}
+          >
+            {({ onItemsRendered, ref }) => (
+              <List
+                height={height}
+                width={width}
+                itemSize={48}
+                itemCount={itemCount}
+                outerElementType={CustomScrollbarsVirtualList}
+                onItemsRendered={onItemsRendered}
+                ref={ref}
+              >
+                {Item}
+              </List>
+            )}
+          </InfiniteLoader>
+        )}
+      </AutoSizer>
+
+      {!hasNextPage && itemCount === 0 && (
+        <div className="select-file-dialog_empty-container">
+          <EmptyContainer
+            //theme={theme}
+            headerText={t("Home:EmptyFolderHeader")}
+            imageSrc="/static/images/empty_screen.png"
+          />
+        </div>
       )}
-    </AutoSizer>
+    </div>
   );
 };
 

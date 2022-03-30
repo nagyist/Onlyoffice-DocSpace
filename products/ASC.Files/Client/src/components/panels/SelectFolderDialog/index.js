@@ -45,6 +45,9 @@ const StyledBody = styled.div`
       ${(props) => props.headerChild && `padding-bottom: 16px;`}
     }
   }
+  .select-folder_list-body {
+    height: 100%;
+  }
 
   .select-folder_loader {
     overflow: hidden;
@@ -278,7 +281,7 @@ class SelectFolderDialog extends React.PureComponent {
     if (this._isLoadNextPage) return;
 
     this._isLoadNextPage = true;
-    const pageCount = 15;
+    const pageCount = 30;
     this.newFilter.page = page;
     this.newFilter.pageCount = pageCount;
 
@@ -333,6 +336,7 @@ class SelectFolderDialog extends React.PureComponent {
       folders,
       id,
       title,
+      page,
     } = this.state;
 
     const isRootPage = id === "root";
@@ -397,6 +401,8 @@ class SelectFolderDialog extends React.PureComponent {
                     loadNextPage={this._loadNextPage}
                     onClick={this.onRowClick}
                     loadingText={loadingText}
+                    page={page}
+                    t={t}
                   />
                 </div>
                 <div className="select-dialog_footer">

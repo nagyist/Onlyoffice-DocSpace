@@ -7,7 +7,7 @@ import {
   getFoldersTree,
   getThirdPartyFoldersTree,
 } from "@appserver/common/api/files";
-
+import PropTypes from "prop-types";
 import ModalDialog from "@appserver/components/modal-dialog";
 import toastr from "studio/toastr";
 import {
@@ -424,6 +424,25 @@ class SelectFolderDialog extends React.PureComponent {
     );
   }
 }
+
+SelectFolderDialog.propTypes = {
+  onClose: PropTypes.func.isRequired,
+  isPanelVisible: PropTypes.bool.isRequired,
+  onSelectFolder: PropTypes.func.isRequired,
+  foldersType: PropTypes.oneOf([
+    "common",
+    "third-party",
+    "exceptSortedByTags",
+    "exceptPrivacyTrashFolders",
+  ]).isRequired,
+  id: PropTypes.string,
+};
+
+SelectFolderDialog.defaultProps = {
+  isPanelVisible: false,
+  foldersType: "common",
+  id: "",
+};
 
 export default inject(({ treeFoldersStore, filesStore }) => {
   const { treeFolders } = treeFoldersStore;

@@ -38,7 +38,7 @@ const StyledRootPage = styled.div`
 `;
 const StyledBody = styled.div`
   height: 100%;
-  .content-body {
+  .select-folder_content-body {
     display: grid;
     height: calc(100% - 32px);
     grid-template-rows: max-content auto max-content;
@@ -283,7 +283,7 @@ class SelectFolderDialog extends React.PureComponent {
 
   _loadNextPage = () => {
     const { id, folders, page } = this.state;
-    const { withoutProvider, isPanelVisible } = this.props;
+    const { withoutProvider } = this.props;
     let dataWithoutProvider;
     if (this._isLoadNextPage) return;
 
@@ -411,7 +411,7 @@ class SelectFolderDialog extends React.PureComponent {
             </StyledRootPage>
           ) : (
             <StyledBody footerChild={!!footerChild} headerChild={!!headerChild}>
-              <div className="content-body">
+              <div className="select-folder_content-body">
                 <div className="select-dialog_header-child">{headerChild}</div>
                 <div>
                   <ElementsPage

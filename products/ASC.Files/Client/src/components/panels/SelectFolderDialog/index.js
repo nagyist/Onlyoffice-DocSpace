@@ -174,12 +174,22 @@ class SelectFolderDialog extends React.PureComponent {
     }, 1000);
 
     if (treeFoldersLength === 0) {
-      requestedTreeFolders = foldersList
-        ? foldersList
-        : await this.getRequestFolderTree();
+      try {
+        requestedTreeFolders = foldersList
+          ? foldersList
+          : await this.getRequestFolderTree();
 
-      clearTimeout(timerId);
-      timerId = null;
+        clearTimeout(timerId);
+        timerId = null;
+      } catch (e) {
+        toastr.error(e);
+        clearTimeout(timerId);
+
+        timerId = null;
+        this.setState({ isInitialLoader: false });
+
+        return;
+      }
     }
 
     const foldersTree =
@@ -273,7 +283,7 @@ class SelectFolderDialog extends React.PureComponent {
 
   _loadNextPage = () => {
     const { id, folders, page } = this.state;
-    const { withoutProvider } = this.props;
+    const { withoutProvider, isPanelVisible } = this.props;
     let dataWithoutProvider;
     if (this._isLoadNextPage) return;
 
@@ -284,43 +294,50 @@ class SelectFolderDialog extends React.PureComponent {
     this.newFilter.pageCount = pageCount;
 
     this.setState({ isNextPageLoading: true }, async () => {
-      const data = await getFolder(id, this.newFilter);
+      try {
+        const data = await getFolder(id, this.newFilter);
 
-      if (
-        data.current.rootFolderType === FolderType.COMMON &&
-        withoutProvider
-      ) {
-        dataWithoutProvider = data.folders.filter((value) => {
-          if (!value.providerKey) return value;
+        if (
+          data.current.rootFolderType === FolderType.COMMON &&
+          withoutProvider
+        ) {
+          dataWithoutProvider = data.folders.filter((value) => {
+            if (!value.providerKey) return value;
+          });
+        }
+
+        const finalData = withoutProvider ? dataWithoutProvider : data.folders;
+
+        const newFoldersList = [...folders].concat(finalData);
+
+        const hasNextPage = finalData.length === pageCount;
+
+        let firstLoadInfo = {};
+        if (page === 0) {
+          const pathParts = [...data.pathParts];
+          this.deletedCurrentFolderIdFromPathParts(pathParts);
+
+          firstLoadInfo = {
+            pathParts: ["root", ...pathParts],
+            title: data.current.title,
+          };
+        }
+
+        this._isLoadNextPage = false;
+        this.setState((state) => ({
+          isDataLoading: false,
+          hasNextPage: hasNextPage,
+          isNextPageLoading: false,
+          page: state.page + 1,
+          folders: newFoldersList,
+          ...firstLoadInfo,
+        }));
+      } catch (e) {
+        toastr.error(e);
+        this.setState({
+          isDataLoading: false,
         });
       }
-
-      const finalData = withoutProvider ? dataWithoutProvider : data.folders;
-
-      const newFoldersList = [...folders].concat(finalData);
-
-      const hasNextPage = finalData.length === pageCount;
-
-      let firstLoadInfo = {};
-      if (page === 0) {
-        const pathParts = [...data.pathParts];
-        this.deletedCurrentFolderIdFromPathParts(pathParts);
-
-        firstLoadInfo = {
-          pathParts: ["root", ...pathParts],
-          title: data.current.title,
-        };
-      }
-
-      this._isLoadNextPage = false;
-      this.setState((state) => ({
-        isDataLoading: false,
-        hasNextPage: hasNextPage,
-        isNextPageLoading: false,
-        page: state.page + 1,
-        folders: newFoldersList,
-        ...firstLoadInfo,
-      }));
     });
   };
 

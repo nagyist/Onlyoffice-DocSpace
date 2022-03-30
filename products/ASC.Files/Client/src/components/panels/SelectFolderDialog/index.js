@@ -227,7 +227,7 @@ class SelectFolderDialog extends React.PureComponent {
 
   _loadNextPage = () => {
     const { id, folders, page } = this.state;
-    const { withoutProvider } = this.props;
+    const { withoutProvider, foldersType } = this.props;
     let dataWithoutProvider;
     if (this._isLoadNextPage) return;
 
@@ -259,10 +259,13 @@ class SelectFolderDialog extends React.PureComponent {
         let firstLoadInfo = {};
         if (page === 0) {
           const pathParts = [...data.pathParts];
+
           this.deletedCurrentFolderIdFromPathParts(pathParts);
 
+          const additionalPage = foldersType === "third-party" ? [] : ["root"];
+
           firstLoadInfo = {
-            pathParts: ["root", ...pathParts],
+            pathParts: [...additionalPage, ...pathParts],
             title: data.current.title,
           };
         }

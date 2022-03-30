@@ -161,12 +161,10 @@ class SelectFolderDialog extends React.PureComponent {
       id,
       onSetBaseFolderPath,
       onSelectFolder,
+      foldersList,
     } = this.props;
 
-    let requestedTreeFolders,
-      filteredTreeFolders,
-      requests = [],
-      passedId;
+    let requestedTreeFolders, filteredTreeFolders, passedId;
 
     const treeFoldersLength = treeFolders.length;
 
@@ -175,9 +173,9 @@ class SelectFolderDialog extends React.PureComponent {
     }, 1000);
 
     if (treeFoldersLength === 0) {
-      requests.push(this.getRequestFolderTree());
-
-      requestedTreeFolders = await this.getRequestFolderTree();
+      requestedTreeFolders = foldersList
+        ? foldersList
+        : await this.getRequestFolderTree();
 
       clearTimeout(timerId);
       timerId = null;
@@ -186,7 +184,7 @@ class SelectFolderDialog extends React.PureComponent {
     const foldersTree =
       treeFoldersLength > 0 ? treeFolders : requestedTreeFolders;
 
-    if (foldersType === "common") {
+    if (id || foldersType === "common") {
       passedId = id ? id : foldersTree[0].id;
 
       onSetBaseFolderPath && onSetBaseFolderPath(passedId);
@@ -263,8 +261,6 @@ class SelectFolderDialog extends React.PureComponent {
   };
 
   onRowClick = (id) => {
-    console.log("on row click - id ", id);
-
     this.setState({
       id,
       folders: [],
@@ -280,16 +276,15 @@ class SelectFolderDialog extends React.PureComponent {
     if (this._isLoadNextPage) return;
 
     this._isLoadNextPage = true;
+
     const pageCount = 30;
     this.newFilter.page = page;
     this.newFilter.pageCount = pageCount;
 
-    console.log("loadNextPage", this.state.isNextPageLoading);
-
     this.setState({ isNextPageLoading: true }, async () => {
       const data = await getFolder(id, this.newFilter);
       const newFoldersList = [...folders].concat(data.folders);
-      console.log("newFoldersList", newFoldersList, "folders", folders);
+
       const hasNextPage = data.folders.length === pageCount;
 
       let firstLoadInfo = {};
@@ -302,7 +297,7 @@ class SelectFolderDialog extends React.PureComponent {
           title: data.current.title,
         };
       }
-      console.log("firstLoadInfo", firstLoadInfo, "id", id);
+
       this._isLoadNextPage = false;
       this.setState((state) => ({
         isDataLoading: false,
@@ -315,9 +310,6 @@ class SelectFolderDialog extends React.PureComponent {
     });
   };
 
-  onSetDataLoading = () => {
-    this.setState({});
-  };
   render() {
     const {
       isPanelVisible,
@@ -340,7 +332,6 @@ class SelectFolderDialog extends React.PureComponent {
 
     const isRootPage = id === "root";
 
-    console.log("this.state", this.state);
     const loadingText = `${t("Common:LoadingProcessing")} ${t(
       "Common:LoadingDescription"
     )}`;

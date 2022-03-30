@@ -14,8 +14,8 @@ import {
   exceptSortedByTagsFolders,
   exceptPrivacyTrashFolders,
 } from "./ExceptionFoldersConstants";
-import RootPage from "./RootPage";
-import ElementsPage from "./ElementsPage";
+import RootPage from "./SubComponents/RootPage";
+import ElementsPage from "./SubComponents/ElementsPage";
 import IconButton from "@appserver/components/icon-button";
 import styled from "styled-components";
 import Button from "@appserver/components/button";

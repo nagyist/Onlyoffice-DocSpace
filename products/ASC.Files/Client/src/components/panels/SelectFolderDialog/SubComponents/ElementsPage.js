@@ -8,7 +8,7 @@ import InfiniteLoader from "react-window-infinite-loader";
 import Loader from "@appserver/components/loader";
 import Text from "@appserver/components/text";
 import Loaders from "@appserver/common/components/Loaders";
-import EmptyContainer from "../../EmptyContainer/EmptyContainer";
+import EmptyContainer from "../../../EmptyContainer/EmptyContainer";
 let countLoad;
 const ElementsPage = ({
   hasNextPage,

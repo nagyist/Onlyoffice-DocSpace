@@ -1,4 +1,4 @@
-import ItemIcon from "../../ItemIcon";
+import ItemIcon from "../../../ItemIcon";
 import React from "react";
 import styled, { css } from "styled-components";
 import Text from "@appserver/components/text";

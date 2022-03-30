@@ -172,7 +172,8 @@ var config = {
         "./SelectFileDialog": "./src/components/panels/SelectFileDialog",
         "./SelectFolderDialog":
           "./src/components/panels/SelectFolderDialog/SelectFolderDialogWrapper",
-        "./SelectFolderInput": "./src/components/panels/SelectFolderInput",
+        "./SelectFolderInput":
+          "./src/components/panels/SelectFolderInput/SelectFolderInputWrapper.js",
         "./SelectFileInput": "./src/components/panels/SelectFileInput",
       },
       shared: {

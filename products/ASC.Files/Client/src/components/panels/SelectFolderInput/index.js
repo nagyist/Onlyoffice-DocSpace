@@ -1,15 +1,13 @@
 import React from "react";
-import { Provider as MobxProvider, inject, observer } from "mobx-react";
+import { inject, observer } from "mobx-react";
 import PropTypes from "prop-types";
-import stores from "../../../store/index";
 import SelectFolderDialog from "../SelectFolderDialog/index";
 import StyledComponent from "./StyledSelectFolderInput";
 import { getFolderPath } from "@appserver/common/api/files";
 import FileInput from "@appserver/components/file-input";
 import toastr from "@appserver/components/toast/toastr";
-import i18n from "./i18n";
-import { I18nextProvider } from "react-i18next";
-class SelectFolderInputBody extends React.PureComponent {
+
+class SelectFolderInput extends React.PureComponent {
   constructor(props) {
     super(props);
     const { id, foldersType } = this.props;
@@ -148,35 +146,22 @@ class SelectFolderInputBody extends React.PureComponent {
   }
 }
 
-SelectFolderInputBody.propTypes = {
+SelectFolderInput.propTypes = {
   onClickInput: PropTypes.func.isRequired,
   hasError: PropTypes.bool,
   isDisabled: PropTypes.bool,
   placeholder: PropTypes.string,
 };
 
-SelectFolderInputBody.defaultProps = {
+SelectFolderInput.defaultProps = {
   hasError: false,
   isDisabled: false,
   placeholder: "",
 };
 
-const SelectFolderInputBodyWrapper = inject(({ filesStore }) => {
+export default inject(({ filesStore }) => {
   const { setFirstLoad } = filesStore;
   return {
     setFirstLoad,
   };
-})(observer(SelectFolderInputBody));
-class SelectFolderInput extends React.Component {
-  render() {
-    return (
-      <MobxProvider {...stores}>
-        <I18nextProvider i18n={i18n}>
-          <SelectFolderInputBodyWrapper {...this.props} />
-        </I18nextProvider>
-      </MobxProvider>
-    );
-  }
-}
-
-export default SelectFolderInput;
+})(observer(SelectFolderInput));

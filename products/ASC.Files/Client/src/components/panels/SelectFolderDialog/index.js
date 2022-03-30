@@ -410,7 +410,7 @@ SelectFolderDialog.propTypes = {
     "exceptSortedByTags",
     "exceptPrivacyTrashFolders",
   ]).isRequired,
-  id: PropTypes.string,
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   withoutProvider: PropTypes.bool,
 };
 

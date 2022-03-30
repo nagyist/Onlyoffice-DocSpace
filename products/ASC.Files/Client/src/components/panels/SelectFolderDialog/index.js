@@ -20,6 +20,7 @@ import IconButton from "@appserver/components/icon-button";
 import styled from "styled-components";
 import Button from "@appserver/components/button";
 import Loaders from "@appserver/common/components/Loaders";
+import { FolderType } from "@appserver/common/constants";
 
 const StyledHeader = styled.div`
   .dialog-header {
@@ -272,7 +273,8 @@ class SelectFolderDialog extends React.PureComponent {
 
   _loadNextPage = () => {
     const { id, folders, page } = this.state;
-
+    const { withoutProvider } = this.props;
+    let dataWithoutProvider;
     if (this._isLoadNextPage) return;
 
     this._isLoadNextPage = true;
@@ -283,9 +285,21 @@ class SelectFolderDialog extends React.PureComponent {
 
     this.setState({ isNextPageLoading: true }, async () => {
       const data = await getFolder(id, this.newFilter);
-      const newFoldersList = [...folders].concat(data.folders);
 
-      const hasNextPage = data.folders.length === pageCount;
+      if (
+        data.current.rootFolderType === FolderType.COMMON &&
+        withoutProvider
+      ) {
+        dataWithoutProvider = data.folders.filter((value) => {
+          if (!value.providerKey) return value;
+        });
+      }
+
+      const finalData = withoutProvider ? dataWithoutProvider : data.folders;
+
+      const newFoldersList = [...folders].concat(finalData);
+
+      const hasNextPage = finalData.length === pageCount;
 
       let firstLoadInfo = {};
       if (page === 0) {
@@ -436,12 +450,14 @@ SelectFolderDialog.propTypes = {
     "exceptPrivacyTrashFolders",
   ]).isRequired,
   id: PropTypes.string,
+  withoutProvider: PropTypes.bool,
 };
 
 SelectFolderDialog.defaultProps = {
   isPanelVisible: false,
   foldersType: "common",
   id: "",
+  withoutProvider: false,
 };
 
 export default inject(({ treeFoldersStore, filesStore }) => {

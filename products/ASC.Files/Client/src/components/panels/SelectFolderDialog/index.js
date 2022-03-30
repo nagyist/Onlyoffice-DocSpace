@@ -84,7 +84,7 @@ const StyledBody = styled.div`
 class SelectFolderDialog extends React.PureComponent {
   constructor(props) {
     super(props);
-    const { filter, t } = props;
+    const { filter, t, id } = props;
     this.rootTitle = t("SelectFolder");
     this.newFilter = filter.clone();
 
@@ -96,7 +96,7 @@ class SelectFolderDialog extends React.PureComponent {
       page: 0,
       hasNextPage: true,
 
-      id: "root",
+      id: id ? id : "root",
       title: this.rootTitle,
       folders: [],
     };
@@ -165,7 +165,8 @@ class SelectFolderDialog extends React.PureComponent {
 
     let requestedTreeFolders,
       filteredTreeFolders,
-      requests = [];
+      requests = [],
+      passedId;
 
     const treeFoldersLength = treeFolders.length;
 
@@ -175,9 +176,8 @@ class SelectFolderDialog extends React.PureComponent {
 
     if (treeFoldersLength === 0) {
       requests.push(this.getRequestFolderTree());
-      if (id) requests.push(getFolder(id));
 
-      [requestedTreeFolders] = await Promise.all(requests);
+      requestedTreeFolders = await this.getRequestFolderTree();
 
       clearTimeout(timerId);
       timerId = null;
@@ -187,10 +187,7 @@ class SelectFolderDialog extends React.PureComponent {
       treeFoldersLength > 0 ? treeFolders : requestedTreeFolders;
 
     if (foldersType === "common") {
-      // if (onSetBaseFolderPath) {
-      //   this.getSelectedFolderInfo(id ? id : foldersTree[0].id);
-      // }
-      const passedId = id ? id : foldersTree[0].id;
+      passedId = id ? id : foldersTree[0].id;
 
       onSetBaseFolderPath && onSetBaseFolderPath(passedId);
       onSelectFolder && onSelectFolder(passedId);
@@ -206,32 +203,34 @@ class SelectFolderDialog extends React.PureComponent {
     this.setState({
       resultingFolderTree: filteredTreeFolders || foldersTree,
       isInitialLoader: false,
+      ...(foldersType === "common" && { id: passedId }),
     });
   }
-
-  componentWillUnmount() {}
-
-  componentDidUpdate(prevProps) {}
 
   deletedCurrentFolderIdFromPathParts = (pathParts) => {
     pathParts.splice(-1, 1);
   };
 
   onButtonClick = (e) => {
-    const { folderInfo } = this.state;
-    const { onClose, onSelectFolder, onSetNewFolderPath, id } = this.props;
-    console.log("e", id, folderInfo.id);
-    if (id) {
-      if (+id !== +folderInfo.id) {
-        onSetNewFolderPath && onSetNewFolderPath(folderInfo.id);
-        onSelectFolder && onSelectFolder(folderInfo.id);
+    const { id } = this.state;
+    const {
+      onClose,
+      onSelectFolder,
+      onSetNewFolderPath,
+      id: propsId,
+    } = this.props;
+
+    if (propsId) {
+      if (+propsId !== +id) {
+        onSetNewFolderPath && onSetNewFolderPath(id);
+        onSelectFolder && onSelectFolder(id);
       }
     } else {
-      onSetNewFolderPath && onSetNewFolderPath(folderInfo.id);
-      onSelectFolder && onSelectFolder(folderInfo.id);
+      onSetNewFolderPath && onSetNewFolderPath(id);
+      onSelectFolder && onSelectFolder(id);
     }
 
-    onClose();
+    onClose && onClose();
   };
   onArrowClickAction = async () => {
     const { pathParts } = this.state;

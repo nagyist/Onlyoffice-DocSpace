@@ -18,11 +18,43 @@ class SelectFolderInput extends React.PureComponent {
       isLoading: isNeedLoader,
       baseFolderPath: "",
       newFolderPath: "",
+      resultingFolderTree: [],
+      baseId: "",
     };
   }
-  componentDidMount() {
-    const { setFirstLoad } = this.props;
+  async componentDidMount() {
+    const {
+      setFirstLoad,
+      treeFolders,
+      foldersType,
+      id,
+      onSelectFolder,
+      foldersList,
+    } = this.props;
 
+    let resultingFolderTree, resultingId;
+
+    try {
+      [
+        resultingFolderTree,
+        resultingId,
+      ] = await SelectFolderDialog.getBasicFolderInfo(
+        treeFolders,
+        foldersType,
+        id,
+        this.onSetBaseFolderPath,
+        onSelectFolder,
+        foldersList
+      );
+    } catch (e) {
+      toastr.error(e);
+      return;
+    }
+
+    this.setState({
+      resultingFolderTree,
+      baseId: resultingId,
+    });
     setFirstLoad(false);
   }
 
@@ -113,7 +145,13 @@ class SelectFolderInput extends React.PureComponent {
     });
   };
   render() {
-    const { isLoading, baseFolderPath, newFolderPath } = this.state;
+    const {
+      isLoading,
+      baseFolderPath,
+      newFolderPath,
+      resultingFolderTree,
+      baseId,
+    } = this.state;
     const {
       onClickInput,
       hasError,
@@ -121,9 +159,12 @@ class SelectFolderInput extends React.PureComponent {
       placeholder,
       maxInputWidth,
       isDisabled,
+      isPanelVisible,
+      id,
       ...rest
     } = this.props;
 
+    const passedId = baseId !== id && id ? id : baseId;
     return (
       <StyledComponent maxWidth={maxInputWidth}>
         <FileInput
@@ -136,11 +177,16 @@ class SelectFolderInput extends React.PureComponent {
           simplifiedFileInput
         />
 
-        <SelectFolderDialog
-          {...rest}
-          onSetBaseFolderPath={this.onSetBaseFolderPath}
-          onSetNewFolderPath={this.onSetNewFolderPath}
-        />
+        {isPanelVisible && (
+          <SelectFolderDialog
+            {...rest}
+            treeFromInput={resultingFolderTree}
+            id={passedId}
+            isPanelVisible={isPanelVisible}
+            onSetBaseFolderPath={this.onSetBaseFolderPath}
+            onSetNewFolderPath={this.onSetNewFolderPath}
+          />
+        )}
       </StyledComponent>
     );
   }
@@ -159,9 +205,11 @@ SelectFolderInput.defaultProps = {
   placeholder: "",
 };
 
-export default inject(({ filesStore }) => {
+export default inject(({ filesStore, treeFoldersStore }) => {
+  const { treeFolders } = treeFoldersStore;
   const { setFirstLoad } = filesStore;
   return {
     setFirstLoad,
+    treeFolders,
   };
 })(observer(SelectFolderInput));

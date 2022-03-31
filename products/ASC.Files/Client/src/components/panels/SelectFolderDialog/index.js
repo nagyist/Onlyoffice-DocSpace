@@ -1,5 +1,5 @@
 import React from "react";
-import { inject, observer } from "mobx-react";
+import { inject, observer, Provider as MobxProvider } from "mobx-react";
 import { withTranslation } from "react-i18next";
 import {
   getCommonFoldersTree,
@@ -26,7 +26,7 @@ import {
   StyledHeader,
 } from "./StyledSelectFolderDialog";
 
-class SelectFolderDialog extends React.PureComponent {
+class SelectFolderDialogBody extends React.PureComponent {
   constructor(props) {
     super(props);
     const { filter, t, id } = props;
@@ -41,63 +41,11 @@ class SelectFolderDialog extends React.PureComponent {
       page: 0,
       hasNextPage: true,
 
-      id: id ? id : "root",
+      folderId: id ? id : "root",
       title: this.rootTitle,
       folders: [],
     };
   }
-  filterFoldersTree = (folders, arrayOfExceptions) => {
-    let newArray = [];
-
-    for (let i = 0; i < folders.length; i++) {
-      if (!arrayOfExceptions.includes(folders[i].rootFolderType)) {
-        newArray.push(folders[i]);
-      }
-    }
-
-    return newArray;
-  };
-
-  getRequestFolderTree = () => {
-    const { foldersType } = this.props;
-
-    switch (foldersType) {
-      case "exceptSortedByTags":
-      case "exceptPrivacyTrashFolders":
-        try {
-          return getFoldersTree();
-        } catch (err) {
-          console.error(err);
-        }
-        break;
-      case "common":
-        try {
-          return getCommonFoldersTree();
-        } catch (err) {
-          console.error(err);
-        }
-        break;
-
-      case "third-party":
-        try {
-          return getThirdPartyFoldersTree();
-        } catch (err) {
-          console.error(err);
-        }
-        break;
-    }
-  };
-
-  getExceptionsFolders = (treeFolders) => {
-    const { foldersType } = this.props;
-
-    switch (foldersType) {
-      case "exceptSortedByTags":
-        return this.filterFoldersTree(treeFolders, exceptSortedByTagsFolders);
-      case "exceptPrivacyTrashFolders":
-        return this.filterFoldersTree(treeFolders, exceptPrivacyTrashFolders);
-    }
-  };
 
   async componentDidMount() {
     const {
@@ -107,28 +55,32 @@ class SelectFolderDialog extends React.PureComponent {
       onSetBaseFolderPath,
       onSelectFolder,
       foldersList,
+      treeFromInput,
     } = this.props;
-
-    let requestedTreeFolders, filteredTreeFolders, passedId;
-
-    const treeFoldersLength = treeFolders.length;
 
     let timerId = setTimeout(() => {
       this.setState({ isInitialLoader: true });
     }, 1000);
 
-    if (treeFoldersLength === 0) {
-      try {
-        requestedTreeFolders = foldersList
-          ? foldersList
-          : await this.getRequestFolderTree();
+    let resultingFolderTree, resultingId;
 
-        clearTimeout(timerId);
-        timerId = null;
+    if (!treeFromInput) {
+      try {
+        [
+          resultingFolderTree,
+          resultingId,
+        ] = await SelectFolderDialog.getBasicFolderInfo(
+          treeFolders,
+          foldersType,
+          id,
+          onSetBaseFolderPath,
+          onSelectFolder,
+          foldersList
+        );
       } catch (e) {
         toastr.error(e);
-        clearTimeout(timerId);
 
+        clearTimeout(timerId);
         timerId = null;
         this.setState({ isInitialLoader: false });
 
@@ -136,27 +88,15 @@ class SelectFolderDialog extends React.PureComponent {
       }
     }
 
-    const foldersTree =
-      treeFoldersLength > 0 ? treeFolders : requestedTreeFolders;
-
-    if (id || foldersType === "common") {
-      passedId = id ? id : foldersTree[0].id;
-
-      onSetBaseFolderPath && onSetBaseFolderPath(passedId);
-      onSelectFolder && onSelectFolder(passedId);
-    }
-
-    if (
-      foldersType === "exceptSortedByTags" ||
-      foldersType === "exceptPrivacyTrashFolders"
-    ) {
-      filteredTreeFolders = this.getExceptionsFolders(foldersTree);
-    }
+    clearTimeout(timerId);
+    timerId = null;
 
     this.setState({
-      resultingFolderTree: filteredTreeFolders || foldersTree,
+      resultingFolderTree: treeFromInput ? treeFromInput : resultingFolderTree,
       isInitialLoader: false,
-      ...(foldersType === "common" && { id: passedId }),
+      ...(foldersType === "common" && {
+        folderId: treeFromInput ? id : resultingId,
+      }),
     });
   }
 
@@ -165,26 +105,22 @@ class SelectFolderDialog extends React.PureComponent {
   };
 
   onButtonClick = (e) => {
-    const { id } = this.state;
-    const {
-      onClose,
-      onSelectFolder,
-      onSetNewFolderPath,
-      id: propsId,
-    } = this.props;
+    const { folderId } = this.state;
+    const { onClose, onSelectFolder, onSetNewFolderPath, id } = this.props;
 
-    if (propsId) {
-      if (+propsId !== +id) {
-        onSetNewFolderPath && onSetNewFolderPath(id);
-        onSelectFolder && onSelectFolder(id);
+    if (id) {
+      if (+id !== +folderId) {
+        onSetNewFolderPath && onSetNewFolderPath(folderId);
+        onSelectFolder && onSelectFolder(folderId);
       }
     } else {
-      onSetNewFolderPath && onSetNewFolderPath(id);
-      onSelectFolder && onSelectFolder(id);
+      onSetNewFolderPath && onSetNewFolderPath(folderId);
+      onSelectFolder && onSelectFolder(folderId);
     }
 
     onClose && onClose();
   };
+
   onArrowClickAction = async () => {
     const { pathParts } = this.state;
 
@@ -195,7 +131,7 @@ class SelectFolderDialog extends React.PureComponent {
     if (!isRootFolder) {
       try {
         this.setState({
-          id: prevFolderId,
+          folderId: prevFolderId,
           folders: [],
           hasNextPage: true,
           page: 0,
@@ -209,7 +145,7 @@ class SelectFolderDialog extends React.PureComponent {
         isDataLoading: false,
         folders: [],
         title: this.rootTitle,
-        id: "root",
+        folderId: "root",
         pathParts: [],
       });
     }
@@ -217,7 +153,7 @@ class SelectFolderDialog extends React.PureComponent {
 
   onRowClick = (id) => {
     this.setState({
-      id,
+      folderId: id,
       folders: [],
       page: 0,
       hasNextPage: true,
@@ -226,7 +162,7 @@ class SelectFolderDialog extends React.PureComponent {
   };
 
   _loadNextPage = () => {
-    const { id, folders, page } = this.state;
+    const { folderId, folders, page } = this.state;
     const { withoutProvider, foldersType } = this.props;
     let dataWithoutProvider;
     if (this._isLoadNextPage) return;
@@ -239,7 +175,7 @@ class SelectFolderDialog extends React.PureComponent {
 
     this.setState({ isNextPageLoading: true }, async () => {
       try {
-        const data = await getFolder(id, this.newFilter);
+        const data = await getFolder(folderId, this.newFilter);
 
         if (
           data.current.rootFolderType === FolderType.COMMON &&
@@ -303,12 +239,12 @@ class SelectFolderDialog extends React.PureComponent {
       isNextPageLoading,
       hasNextPage,
       folders,
-      id,
+      folderId,
       title,
       page,
     } = this.state;
 
-    const isRootPage = id === "root";
+    const isRootPage = folderId === "root";
 
     const loadingText = `${t("Common:LoadingProcessing")} ${t(
       "Common:LoadingDescription"
@@ -364,7 +300,7 @@ class SelectFolderDialog extends React.PureComponent {
                   <ElementsPage
                     hasNextPage={hasNextPage}
                     isNextPageLoading={isNextPageLoading}
-                    id={id}
+                    id={folderId}
                     folders={folders}
                     loadNextPage={this._loadNextPage}
                     onClick={this.onRowClick}
@@ -403,7 +339,7 @@ class SelectFolderDialog extends React.PureComponent {
   }
 }
 
-SelectFolderDialog.propTypes = {
+SelectFolderDialogBody.propTypes = {
   onClose: PropTypes.func.isRequired,
   isPanelVisible: PropTypes.bool.isRequired,
   onSelectFolder: PropTypes.func.isRequired,
@@ -417,18 +353,118 @@ SelectFolderDialog.propTypes = {
   withoutProvider: PropTypes.bool,
 };
 
-SelectFolderDialog.defaultProps = {
+SelectFolderDialogBody.defaultProps = {
   isPanelVisible: false,
   foldersType: "common",
   id: "",
   withoutProvider: false,
 };
 
-export default inject(({ treeFoldersStore, filesStore }) => {
+const SelectFolderDialogWrapper = inject(({ treeFoldersStore, filesStore }) => {
   const { treeFolders } = treeFoldersStore;
   const { filter } = filesStore;
   return {
     treeFolders,
     filter,
   };
-})(observer(withTranslation(["SelectFolder", "Common"])(SelectFolderDialog)));
+})(
+  observer(withTranslation(["SelectFolder", "Common"])(SelectFolderDialogBody))
+);
+
+class SelectFolderDialog extends React.Component {
+  static getBasicFolderInfo = async (
+    treeFolders,
+    foldersType,
+    id,
+    onSetBaseFolderPath,
+    onSelectFolder,
+    foldersList
+  ) => {
+    const getRequestFolderTree = () => {
+      switch (foldersType) {
+        case "exceptSortedByTags":
+        case "exceptPrivacyTrashFolders":
+          try {
+            return getFoldersTree();
+          } catch (err) {
+            console.error(err);
+          }
+          break;
+        case "common":
+          try {
+            return getCommonFoldersTree();
+          } catch (err) {
+            console.error(err);
+          }
+          break;
+
+        case "third-party":
+          try {
+            return getThirdPartyFoldersTree();
+          } catch (err) {
+            console.error(err);
+          }
+          break;
+      }
+    };
+
+    const filterFoldersTree = (folders, arrayOfExceptions) => {
+      let newArray = [];
+
+      for (let i = 0; i < folders.length; i++) {
+        if (!arrayOfExceptions.includes(folders[i].rootFolderType)) {
+          newArray.push(folders[i]);
+        }
+      }
+
+      return newArray;
+    };
+    const getExceptionsFolders = (treeFolders) => {
+      switch (foldersType) {
+        case "exceptSortedByTags":
+          return filterFoldersTree(treeFolders, exceptSortedByTagsFolders);
+        case "exceptPrivacyTrashFolders":
+          return filterFoldersTree(treeFolders, exceptPrivacyTrashFolders);
+      }
+    };
+
+    let requestedTreeFolders, filteredTreeFolders, passedId;
+
+    const treeFoldersLength = treeFolders.length;
+
+    if (treeFoldersLength === 0) {
+      try {
+        requestedTreeFolders = foldersList
+          ? foldersList
+          : await getRequestFolderTree();
+      } catch (e) {
+        toastr.error(e);
+        return;
+      }
+    }
+
+    const foldersTree =
+      treeFoldersLength > 0 ? treeFolders : requestedTreeFolders;
+
+    if (id || foldersType === "common") {
+      passedId = id ? id : foldersTree[0].id;
+
+      onSetBaseFolderPath && onSetBaseFolderPath(passedId);
+      onSelectFolder && onSelectFolder(passedId);
+    }
+
+    if (
+      foldersType === "exceptSortedByTags" ||
+      foldersType === "exceptPrivacyTrashFolders"
+    ) {
+      filteredTreeFolders = getExceptionsFolders(foldersTree);
+    }
+
+    return [filteredTreeFolders || requestedTreeFolders, passedId];
+  };
+  render() {
+    return <SelectFolderDialogWrapper {...this.props} />;
+  }
+}
+
+export default SelectFolderDialog;

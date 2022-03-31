@@ -73,4 +73,29 @@ const StyledBody = styled.div`
   }
 `;
 
-export { StyledRootPage, StyledBody, StyledHeader };
+const StyledWrapper = styled.div`
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  grid-gap: 8px;
+  position: relative;
+  height: 48px;
+
+  .element-row_text {
+    margin-top: auto;
+    margin-bottom: 16px;
+  }
+  .element-row_icon {
+    margin: auto 0;
+  }
+  .element-row_clicked-area {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+  }
+`;
+
+export { StyledRootPage, StyledBody, StyledHeader, StyledWrapper };

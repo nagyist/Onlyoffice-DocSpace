@@ -1,5 +1,5 @@
 import React from "react";
-import { inject, observer, Provider as MobxProvider } from "mobx-react";
+import { inject, observer } from "mobx-react";
 import { withTranslation } from "react-i18next";
 import {
   getCommonFoldersTree,

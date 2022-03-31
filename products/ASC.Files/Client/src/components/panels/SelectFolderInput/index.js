@@ -32,6 +32,8 @@ class SelectFolderInput extends React.PureComponent {
       foldersList,
     } = this.props;
 
+    setFirstLoad(false);
+
     let resultingFolderTree, resultingId;
 
     try {
@@ -55,7 +57,6 @@ class SelectFolderInput extends React.PureComponent {
       resultingFolderTree,
       baseId: resultingId,
     });
-    setFirstLoad(false);
   }
 
   componentDidUpdate(prevProps) {

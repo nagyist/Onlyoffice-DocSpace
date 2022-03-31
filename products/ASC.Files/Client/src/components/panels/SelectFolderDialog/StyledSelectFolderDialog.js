@@ -59,6 +59,18 @@ const StyledBody = styled.div`
       ${(props) => props.footerChild && `padding-bottom: 16px;`}
     }
   }
+  .empty-folder_container {
+    grid-template-areas:
+      "img img"
+      "headerText headerText";
+
+    .ec-image {
+      margin: auto;
+    }
+    .ec-header {
+      margin: auto;
+    }
+  }
 `;
 
 export { StyledRootPage, StyledBody, StyledHeader };

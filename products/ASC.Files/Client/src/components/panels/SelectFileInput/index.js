@@ -12,6 +12,7 @@ class SelectFileInputBody extends React.PureComponent {
 
     this.state = {
       fileName: "",
+      folderId: "",
     };
   }
 
@@ -19,11 +20,13 @@ class SelectFileInputBody extends React.PureComponent {
     this.props.setFirstLoad(false);
   }
 
-  onSetFileName = (fileName) => {
+  onSetFileNameAndLocation = (fileName, id) => {
     this.setState({
       fileName: fileName,
+      folderId: id,
     });
   };
+
   render() {
     const {
       onClickInput,
@@ -35,7 +38,7 @@ class SelectFileInputBody extends React.PureComponent {
       ...rest
     } = this.props;
 
-    const { fileName } = this.state;
+    const { fileName, folderId } = this.state;
 
     return (
       <StyledComponent maxInputWidth={maxInputWidth}>
@@ -51,8 +54,9 @@ class SelectFileInputBody extends React.PureComponent {
         {isPanelVisible && (
           <SelectFileDialog
             {...rest}
+            id={folderId}
             isPanelVisible={isPanelVisible}
-            onSetFileName={this.onSetFileName}
+            onSetFileNameAndLocation={this.onSetFileNameAndLocation}
           />
         )}
       </StyledComponent>

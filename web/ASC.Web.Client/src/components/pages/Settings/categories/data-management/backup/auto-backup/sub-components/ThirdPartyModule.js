@@ -69,7 +69,6 @@ class ThirdPartyModule extends React.PureComponent {
 export default inject(({ backup }) => {
   const {
     setSelectedFolder,
-    defaultFolderId,
     defaultStorageType,
     commonThirdPartyList,
     selectedFolderId,

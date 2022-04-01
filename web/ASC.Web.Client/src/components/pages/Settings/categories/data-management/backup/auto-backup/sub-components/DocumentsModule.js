@@ -65,16 +65,11 @@ class DocumentsModule extends React.PureComponent {
 }
 
 export default inject(({ backup }) => {
-  const {
-    setSelectedFolder,
-    defaultFolderId,
-    defaultStorageType,
-    selectedFolderId,
-  } = backup;
+  const { setSelectedFolder, defaultStorageType, selectedFolderId } = backup;
 
   const isDocumentsDefault =
     defaultStorageType === `${BackupStorageType.DocumentModuleType}`;
-  console.log("selectedFolderId", selectedFolderId);
+
   const passedId = isDocumentsDefault ? selectedFolderId : "";
 
   return {

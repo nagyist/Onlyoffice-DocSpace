@@ -1,11 +1,12 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import PropTypes from "prop-types";
-import SelectFolderDialog from "../SelectFolderDialog/index";
 import StyledComponent from "./StyledSelectFolderInput";
 import { getFolderPath } from "@appserver/common/api/files";
 import FileInput from "@appserver/components/file-input";
 import toastr from "@appserver/components/toast/toastr";
+import SelectionPanel from "../SelectionPanel/SelectionPanelBody";
+import SelectFolderDialog from "../SelectFolderDialog";
 
 class SelectFolderInput extends React.PureComponent {
   constructor(props) {
@@ -40,7 +41,7 @@ class SelectFolderInput extends React.PureComponent {
       [
         resultingFolderTree,
         resultingId,
-      ] = await SelectFolderDialog.getBasicFolderInfo(
+      ] = await SelectionPanel.getBasicFolderInfo(
         treeFolders,
         foldersType,
         id,

@@ -1,12 +1,9 @@
 import React from "react";
-import { StyledFilesList } from "../StyledPanels";
-import { ReactSVG } from "react-svg";
-import { inject, observer } from "mobx-react";
 import Text from "@appserver/components/text";
 import RadioButton from "@appserver/components/radio-button";
 import ItemIcon from "../../ItemIcon";
-import { StyledWrapper } from "../SelectFolderDialog/StyledSelectFolderDialog";
-const FilesListRow = (props) => {
+import { StyledWrapper } from "./StyledSelectionPanel";
+const ElementRow = (props) => {
   const { item, icon, onFolderClick, isChecked, onSelectFile, index } = props;
   const { id, fileExst } = item;
   const element = <ItemIcon id={id} icon={icon} fileExst={fileExst} />;
@@ -53,4 +50,4 @@ const FilesListRow = (props) => {
   );
 };
 
-export default FilesListRow;
+export default ElementRow;

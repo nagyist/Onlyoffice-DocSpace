@@ -1,32 +1,13 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import { withTranslation } from "react-i18next";
-import {
-  getCommonFoldersTree,
-  getFolder,
-  getFoldersTree,
-  getThirdPartyFoldersTree,
-} from "@appserver/common/api/files";
+import { getFolder } from "@appserver/common/api/files";
 import PropTypes from "prop-types";
-import ModalDialog from "@appserver/components/modal-dialog";
 import toastr from "studio/toastr";
-import {
-  exceptSortedByTagsFolders,
-  exceptPrivacyTrashFolders,
-} from "./ExceptionFoldersConstants";
-import RootPage from "./SubComponents/RootPage";
-import ElementsPage from "./SubComponents/ElementsPage";
-import IconButton from "@appserver/components/icon-button";
-import Button from "@appserver/components/button";
-import Loaders from "@appserver/common/components/Loaders";
 import { FolderType } from "@appserver/common/constants";
-import {
-  StyledRootPage,
-  StyledBody,
-  StyledHeader,
-} from "./StyledSelectFolderDialog";
+import SelectionPanel from "../SelectionPanel/SelectionPanelBody";
 
-class SelectFolderDialogBody extends React.PureComponent {
+class SelectFolderDialog extends React.PureComponent {
   constructor(props) {
     super(props);
     const { filter, t, id } = props;
@@ -69,7 +50,7 @@ class SelectFolderDialogBody extends React.PureComponent {
         [
           resultingFolderTree,
           resultingId,
-        ] = await SelectFolderDialog.getBasicFolderInfo(
+        ] = await SelectionPanel.getBasicFolderInfo(
           treeFolders,
           foldersType,
           id,
@@ -234,7 +215,6 @@ class SelectFolderDialogBody extends React.PureComponent {
     } = this.props;
     const {
       resultingFolderTree,
-      isDataLoading,
       isInitialLoader,
       isNextPageLoading,
       hasNextPage,
@@ -242,104 +222,39 @@ class SelectFolderDialogBody extends React.PureComponent {
       folderId,
       title,
       page,
+      isDataLoading,
     } = this.state;
-
-    const isRootPage = folderId === "root";
 
     const loadingText = `${t("Common:LoadingProcessing")} ${t(
       "Common:LoadingDescription"
     )}`;
     return (
-      <ModalDialog
-        visible={isPanelVisible}
-        zIndex={310}
+      <SelectionPanel
+        loadingText={loadingText}
+        resultingFolderTree={resultingFolderTree}
+        isInitialLoader={isInitialLoader}
+        isNextPageLoading={isNextPageLoading}
+        hasNextPage={hasNextPage}
+        items={folders}
+        folderId={folderId}
+        title={title}
+        page={page}
+        footerChild={footerChild}
+        headerChild={headerChild}
+        onButtonClick={this.onButtonClick}
         onClose={onClose}
-        displayType="aside"
-        withoutBodyScroll
-        contentHeight="100%"
-        contentPaddingBottom="0px"
-      >
-        <ModalDialog.Header>
-          <StyledHeader>
-            {!isRootPage ? (
-              <div className="dialog-header">
-                <IconButton
-                  iconName="/static/images/arrow.path.react.svg"
-                  size="17"
-                  isFill={true}
-                  className="arrow-button"
-                  onClick={this.onArrowClickAction}
-                />
-                {title}
-              </div>
-            ) : (
-              title
-            )}
-          </StyledHeader>
-        </ModalDialog.Header>
-
-        <ModalDialog.Body>
-          {isRootPage && !isDataLoading ? (
-            <StyledRootPage>
-              {isInitialLoader ? (
-                <div className="root-loader" key="loader">
-                  <Loaders.RootFoldersTree />
-                </div>
-              ) : (
-                <RootPage
-                  data={resultingFolderTree}
-                  onClick={this.onRowClick}
-                />
-              )}
-            </StyledRootPage>
-          ) : (
-            <StyledBody footerChild={!!footerChild} headerChild={!!headerChild}>
-              <div className="select-folder_content-body">
-                <div className="select-dialog_header-child">{headerChild}</div>
-                <div>
-                  <ElementsPage
-                    hasNextPage={hasNextPage}
-                    isNextPageLoading={isNextPageLoading}
-                    id={folderId}
-                    folders={folders}
-                    loadNextPage={this._loadNextPage}
-                    onClick={this.onRowClick}
-                    loadingText={loadingText}
-                    page={page}
-                    t={t}
-                  />
-                </div>
-                <div className="select-dialog_footer">
-                  <div className="select-dialog_footer-child">
-                    {footerChild}
-                  </div>
-                  <div className="select-dialog_buttons">
-                    <Button
-                      //theme={theme}
-                      primary
-                      size="small"
-                      label={t("SaveHere")}
-                      onClick={this.onButtonClick}
-                      isDisabled={isDataLoading}
-                    />
-                    <Button
-                      size="small"
-                      label={t("Common:CancelButton")}
-                      onClick={onClose}
-                      isDisabled={isDataLoading}
-                    />
-                  </div>
-                </div>
-              </div>
-            </StyledBody>
-          )}
-        </ModalDialog.Body>
-      </ModalDialog>
+        isPanelVisible={isPanelVisible}
+        onArrowClickAction={this.onArrowClickAction}
+        onFolderClick={this.onRowClick}
+        t={t}
+        isDataLoading={isDataLoading}
+        loadNextPage={this._loadNextPage}
+      />
     );
   }
 }
 
-SelectFolderDialogBody.propTypes = {
+SelectFolderDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   isPanelVisible: PropTypes.bool.isRequired,
   onSelectFolder: PropTypes.func.isRequired,
@@ -353,118 +268,18 @@ SelectFolderDialogBody.propTypes = {
   withoutProvider: PropTypes.bool,
 };
 
-SelectFolderDialogBody.defaultProps = {
+SelectFolderDialog.defaultProps = {
   isPanelVisible: false,
   foldersType: "common",
   id: "",
   withoutProvider: false,
 };
 
-const SelectFolderDialogWrapper = inject(({ treeFoldersStore, filesStore }) => {
+export default inject(({ treeFoldersStore, filesStore }) => {
   const { treeFolders } = treeFoldersStore;
   const { filter } = filesStore;
   return {
     treeFolders,
     filter,
   };
-})(
-  observer(withTranslation(["SelectFolder", "Common"])(SelectFolderDialogBody))
-);
-
-class SelectFolderDialog extends React.Component {
-  static getBasicFolderInfo = async (
-    treeFolders,
-    foldersType,
-    id,
-    onSetBaseFolderPath,
-    onSelectFolder,
-    foldersList
-  ) => {
-    const getRequestFolderTree = () => {
-      switch (foldersType) {
-        case "exceptSortedByTags":
-        case "exceptPrivacyTrashFolders":
-          try {
-            return getFoldersTree();
-          } catch (err) {
-            console.error(err);
-          }
-          break;
-        case "common":
-          try {
-            return getCommonFoldersTree();
-          } catch (err) {
-            console.error(err);
-          }
-          break;
-
-        case "third-party":
-          try {
-            return getThirdPartyFoldersTree();
-          } catch (err) {
-            console.error(err);
-          }
-          break;
-      }
-    };
-
-    const filterFoldersTree = (folders, arrayOfExceptions) => {
-      let newArray = [];
-
-      for (let i = 0; i < folders.length; i++) {
-        if (!arrayOfExceptions.includes(folders[i].rootFolderType)) {
-          newArray.push(folders[i]);
-        }
-      }
-
-      return newArray;
-    };
-    const getExceptionsFolders = (treeFolders) => {
-      switch (foldersType) {
-        case "exceptSortedByTags":
-          return filterFoldersTree(treeFolders, exceptSortedByTagsFolders);
-        case "exceptPrivacyTrashFolders":
-          return filterFoldersTree(treeFolders, exceptPrivacyTrashFolders);
-      }
-    };
-
-    let requestedTreeFolders, filteredTreeFolders, passedId;
-
-    const treeFoldersLength = treeFolders.length;
-
-    if (treeFoldersLength === 0) {
-      try {
-        requestedTreeFolders = foldersList
-          ? foldersList
-          : await getRequestFolderTree();
-      } catch (e) {
-        toastr.error(e);
-        return;
-      }
-    }
-
-    const foldersTree =
-      treeFoldersLength > 0 ? treeFolders : requestedTreeFolders;
-
-    if (id || foldersType === "common") {
-      passedId = id ? id : foldersTree[0].id;
-
-      onSetBaseFolderPath && onSetBaseFolderPath(passedId);
-      onSelectFolder && onSelectFolder(passedId);
-    }
-
-    if (
-      foldersType === "exceptSortedByTags" ||
-      foldersType === "exceptPrivacyTrashFolders"
-    ) {
-      filteredTreeFolders = getExceptionsFolders(foldersTree);
-    }
-
-    return [filteredTreeFolders || requestedTreeFolders, passedId];
-  };
-  render() {
-    return <SelectFolderDialogWrapper {...this.props} />;
-  }
-}
-
-export default SelectFolderDialog;
+})(observer(withTranslation(["SelectFolder", "Common"])(SelectFolderDialog)));

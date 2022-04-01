@@ -1,28 +1,12 @@
 import React from "react";
 import { inject, observer } from "mobx-react";
 import { withTranslation } from "react-i18next";
-import {
-  getCommonFoldersTree,
-  getFolder,
-  getFoldersTree,
-  getThirdPartyFoldersTree,
-} from "@appserver/common/api/files";
+import { getFolder } from "@appserver/common/api/files";
 import PropTypes from "prop-types";
-import ModalDialog from "@appserver/components/modal-dialog";
 import toastr from "studio/toastr";
-
-import RootPage from "./SubComponents/RootPage";
-import IconButton from "@appserver/components/icon-button";
-import Button from "@appserver/components/button";
-import Loaders from "@appserver/common/components/Loaders";
 import { FolderType } from "@appserver/common/constants";
-import {
-  StyledRootPage,
-  StyledBody,
-  StyledHeader,
-} from "../SelectFolderDialog/StyledSelectFolderDialog";
-import FilesList from "./FilesListBody";
 import SelectFolderDialog from "../SelectFolderDialog";
+import SelectionPanel from "../SelectionPanel/SelectionPanelBody";
 class SelectFileDialog extends React.PureComponent {
   constructor(props) {
     super(props);
@@ -49,7 +33,7 @@ class SelectFileDialog extends React.PureComponent {
     const { treeFolders, foldersType, id, foldersList } = this.props;
 
     let timerId = setTimeout(() => {
-      foldersType !== "common" && this.setState({ isInitialLoader: true });
+      this.setState({ isInitialLoader: true });
     }, 1000);
 
     let resultingFolderTree, resultingId;
@@ -58,7 +42,7 @@ class SelectFileDialog extends React.PureComponent {
       [
         resultingFolderTree,
         resultingId,
-      ] = await SelectFolderDialog.getBasicFolderInfo(
+      ] = await SelectionPanel.getBasicFolderInfo(
         treeFolders,
         foldersType,
         id,
@@ -82,9 +66,6 @@ class SelectFileDialog extends React.PureComponent {
     this.setState({
       resultingFolderTree: resultingFolderTree,
       isInitialLoader: false,
-      ...(foldersType === "common" && {
-        folderId: resultingId,
-      }),
     });
   }
 
@@ -93,9 +74,10 @@ class SelectFileDialog extends React.PureComponent {
   };
 
   onButtonClick = (e) => {
-    const { selectedFileInfo } = this.state;
-    const { onClose, onSelectFile, onSetFileName } = this.props;
-    onSetFileName && onSetFileName(selectedFileInfo.title);
+    const { selectedFileInfo, folderId } = this.state;
+    const { onClose, onSelectFile, onSetFileNameAndLocation } = this.props;
+    onSetFileNameAndLocation &&
+      onSetFileNameAndLocation(selectedFileInfo.title, folderId);
     onSelectFile && onSelectFile(selectedFileInfo);
 
     onClose && onClose();
@@ -162,7 +144,6 @@ class SelectFileDialog extends React.PureComponent {
     this.setState({ isNextPageLoading: true }, async () => {
       try {
         const data = await getFolder(folderId, this.newFilter);
-        console.log("DATa", data);
         if (
           data.current.rootFolderType === FolderType.COMMON &&
           withoutProvider
@@ -178,7 +159,7 @@ class SelectFileDialog extends React.PureComponent {
           : [...data.folders, ...data.files];
 
         const newFilesList = [...files].concat(finalData);
-        console.log("newFilesList", newFilesList.length, data.total);
+
         const hasNextPage = newFilesList.length < data.total - 1;
         let firstLoadInfo = {};
         if (page === 0) {
@@ -233,99 +214,33 @@ class SelectFileDialog extends React.PureComponent {
       selectedFileInfo,
     } = this.state;
 
-    const isRootPage = folderId === "root";
-
     const loadingText = `${t("Common:LoadingProcessing")} ${t(
       "Common:LoadingDescription"
     )}`;
     return (
-      <ModalDialog
-        visible={isPanelVisible}
-        zIndex={310}
+      <SelectionPanel
+        loadingText={loadingText}
+        resultingFolderTree={resultingFolderTree}
+        isInitialLoader={isInitialLoader}
+        isNextPageLoading={isNextPageLoading}
+        hasNextPage={hasNextPage}
+        items={files}
+        folderId={folderId}
+        title={title}
+        page={page}
+        footerChild={footerChild}
+        headerChild={headerChild}
+        onButtonClick={this.onButtonClick}
         onClose={onClose}
-        displayType="aside"
-        withoutBodyScroll
-        contentHeight="100%"
-        contentPaddingBottom="0px"
-      >
-        <ModalDialog.Header>
-          <StyledHeader>
-            {!isRootPage ? (
-              <div className="dialog-header">
-                <IconButton
-                  iconName="/static/images/arrow.path.react.svg"
-                  size="17"
-                  isFill={true}
-                  className="arrow-button"
-                  onClick={this.onArrowClickAction}
-                />
-                {title}
-              </div>
-            ) : (
-              title
-            )}
-          </StyledHeader>
-        </ModalDialog.Header>
-
-        <ModalDialog.Body>
-          {isRootPage && !isDataLoading ? (
-            <StyledRootPage>
-              {isInitialLoader ? (
-                <div className="root-loader" key="loader">
-                  <Loaders.RootFoldersTree />
-                </div>
-              ) : (
-                <RootPage
-                  data={resultingFolderTree}
-                  onClick={this.onFolderClick}
-                />
-              )}
-            </StyledRootPage>
-          ) : (
-            <StyledBody footerChild={!!footerChild} headerChild={!!headerChild}>
-              <div className="select-folder_content-body">
-                <div className="select-dialog_header-child">{headerChild}</div>
-                <div>
-                  <FilesList
-                    hasNextPage={hasNextPage}
-                    isNextPageLoading={isNextPageLoading}
-                    id={folderId}
-                    files={files}
-                    loadNextPage={this._loadNextPage}
-                    onFolderClick={this.onFolderClick}
-                    loadingText={loadingText}
-                    page={page}
-                    t={t}
-                    selectedFileInfo={selectedFileInfo}
-                    onSelectFile={this.onSelectFile}
-                  />
-                </div>
-                <div className="select-dialog_footer">
-                  <div className="select-dialog_footer-child">
-                    {footerChild}
-                  </div>
-                  <div className="select-dialog_buttons">
-                    <Button
-                      //theme={theme}
-                      primary
-                      size="small"
-                      label={t("SaveHere")}
-                      onClick={this.onButtonClick}
-                      isDisabled={isDataLoading}
-                    />
-                    <Button
-                      size="small"
-                      label={t("Common:CancelButton")}
-                      onClick={onClose}
-                      isDisabled={isDataLoading}
-                    />
-                  </div>
-                </div>
-              </div>
-            </StyledBody>
-          )}
-        </ModalDialog.Body>
-      </ModalDialog>
+        isPanelVisible={isPanelVisible}
+        onArrowClickAction={this.onArrowClickAction}
+        onFolderClick={this.onFolderClick}
+        onSelectFile={this.onSelectFile}
+        t={t}
+        isDataLoading={isDataLoading}
+        loadNextPage={this._loadNextPage}
+        selectedFileInfo={selectedFileInfo}
+      />
     );
   }
 }
@@ -333,7 +248,7 @@ class SelectFileDialog extends React.PureComponent {
 SelectFileDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   isPanelVisible: PropTypes.bool.isRequired,
-  // onSelectFolder: PropTypes.func.isRequired,
+  onSelectFile: PropTypes.func.isRequired,
   foldersType: PropTypes.oneOf([
     "common",
     "third-party",

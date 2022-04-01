@@ -31,6 +31,7 @@ class SelectFileInputBody extends React.PureComponent {
       t,
       placeholder,
       maxInputWidth,
+      isPanelVisible,
       ...rest
     } = this.props;
 
@@ -47,7 +48,13 @@ class SelectFileInputBody extends React.PureComponent {
           simplifiedFileInput
         />
 
-        <SelectFileDialog {...rest} />
+        {isPanelVisible && (
+          <SelectFileDialog
+            {...rest}
+            isPanelVisible={isPanelVisible}
+            onSetFileName={this.onSetFileName}
+          />
+        )}
       </StyledComponent>
     );
   }

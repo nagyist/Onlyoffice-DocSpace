@@ -71,20 +71,31 @@ const StyledBody = styled.div`
       margin: auto;
     }
   }
+
+  .nav-thumb-vertical {
+    margin-left: 5px !important;
+  }
 `;
 
 const StyledWrapper = styled.div`
   display: grid;
-  grid-template-columns: 32px 1fr;
+  grid-template-columns: 32px auto 16px;
   grid-gap: 8px;
   position: relative;
   height: 48px;
-
+  width: calc(100% - 16px);
   .element-row_text {
     margin-top: auto;
     margin-bottom: 16px;
+    overflow: hidden;
+    p {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
   }
-  .element-row_icon {
+  .element-row_icon,
+  .element-row_checkbox {
     margin: auto 0;
   }
   .element-row_clicked-area {

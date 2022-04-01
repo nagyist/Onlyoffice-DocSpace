@@ -1,214 +1,156 @@
 import React from "react";
-import { inject, observer, Provider as MobxProvider } from "mobx-react";
-import { I18nextProvider } from "react-i18next";
+import { inject, observer } from "mobx-react";
 import { withTranslation } from "react-i18next";
+import {
+  getCommonFoldersTree,
+  getFolder,
+  getFoldersTree,
+  getThirdPartyFoldersTree,
+} from "@appserver/common/api/files";
 import PropTypes from "prop-types";
-import throttle from "lodash/throttle";
+import ModalDialog from "@appserver/components/modal-dialog";
+import toastr from "studio/toastr";
 
-import stores from "../../../store/index";
-import i18n from "./i18n";
-import SelectFileDialogModalView from "./ModalView";
-import SelectFileDialogAsideView from "./AsideView";
-
-import utils from "@appserver/components/utils";
-//import SelectFolderDialog from "../SelectFolderDialog";
-import { getFolder } from "@appserver/common/api/files";
-import { FilterType } from "@appserver/common/constants";
-
-const { desktop } = utils.device;
-
-import store from "studio/store";
-
-const { auth: authStore } = store;
-
-class SelectFileDialogBody extends React.Component {
+import RootPage from "./SubComponents/RootPage";
+import IconButton from "@appserver/components/icon-button";
+import Button from "@appserver/components/button";
+import Loaders from "@appserver/common/components/Loaders";
+import { FolderType } from "@appserver/common/constants";
+import {
+  StyledRootPage,
+  StyledBody,
+  StyledHeader,
+} from "../SelectFolderDialog/StyledSelectFolderDialog";
+import FilesList from "./FilesListBody";
+import SelectFolderDialog from "../SelectFolderDialog";
+class SelectFileDialog extends React.PureComponent {
   constructor(props) {
     super(props);
-    const {
-      folderId,
-      storeFolderId,
-      fileInfo,
-      filter,
-      creationButtonPrimary,
-      t,
-    } = props;
-
-    this.buttonName = creationButtonPrimary
-      ? t("Common:Create")
-      : t("Common:SaveButton");
+    const { filter, t, id } = props;
+    this.rootTitle = t("SelectFolder");
+    this.newFilter = filter.clone();
 
     this.state = {
-      isVisible: false,
-      selectedFolder: storeFolderId || "",
-      passedId: folderId,
-      selectedFile: fileInfo || "",
-      fileName: (fileInfo && fileInfo.title) || "",
-      filesList: [],
-      hasNextPage: true,
+      resultingFolderTree: [],
+      isDataLoading: false,
+      isInitialLoader: false,
       isNextPageLoading: false,
-      displayType: this.getDisplayType(),
       page: 0,
-      filterParams: this.getFilterParameters(),
-      isAvailableFolderList: true,
+      hasNextPage: true,
+
+      folderId: id ? id : "root",
+      title: this.rootTitle,
+      files: [],
+      selectedFileInfo: [],
     };
-    this.throttledResize = throttle(this.setDisplayType, 300);
-    this.newFilter = filter.clone();
-    this._isLoadNextPage = false;
   }
 
-  getFilterParameters = () => {
-    const {
-      isImageOnly,
-      isDocumentsOnly,
-      isArchiveOnly,
-      isPresentationOnly,
-      isTablesOnly,
-      isMediaOnly,
-      searchParam = "",
-      ByExtension,
-    } = this.props;
+  async componentDidMount() {
+    const { treeFolders, foldersType, id, foldersList } = this.props;
 
-    if (isImageOnly) {
-      return { filterType: FilterType.ImagesOnly, filterValue: searchParam };
-    }
-    if (isDocumentsOnly) {
-      return { filterType: FilterType.DocumentsOnly, filterValue: searchParam };
-    }
-    if (isArchiveOnly) {
-      return { filterType: FilterType.ArchiveOnly, filterValue: searchParam };
-    }
-    if (isPresentationOnly) {
-      return {
-        filterType: FilterType.PresentationsOnly,
-        filterValue: searchParam,
-      };
-    }
-    if (isTablesOnly) {
-      return {
-        filterType: FilterType.SpreadsheetsOnly,
-        filterValue: searchParam,
-      };
-    }
-    if (isMediaOnly) {
-      return { filterType: FilterType.MediaOnly, filterValue: searchParam };
+    let timerId = setTimeout(() => {
+      foldersType !== "common" && this.setState({ isInitialLoader: true });
+    }, 1000);
+
+    let resultingFolderTree, resultingId;
+
+    try {
+      [
+        resultingFolderTree,
+        resultingId,
+      ] = await SelectFolderDialog.getBasicFolderInfo(
+        treeFolders,
+        foldersType,
+        id,
+        null,
+        null,
+        foldersList
+      );
+    } catch (e) {
+      toastr.error(e);
+
+      clearTimeout(timerId);
+      timerId = null;
+      this.setState({ isInitialLoader: false });
+
+      return;
     }
 
-    if (ByExtension) {
-      return { filterType: FilterType.ByExtension, filterValue: searchParam };
-    }
+    clearTimeout(timerId);
+    timerId = null;
 
-    return { filterType: FilterType.FilesOnly, filterValue: "" };
-  };
-
-  setFilter = () => {
-    const { filterParams } = this.state;
-    const { withSubfolders = true } = this.props;
-
-    this.newFilter.filterType = filterParams.filterType;
-    this.newFilter.search = filterParams.filterValue;
-    this.newFilter.withSubfolders = withSubfolders;
-  };
-
-  componentDidMount() {
-    authStore.init(true); // it will work if authStore is not initialized
-
-    window.addEventListener("resize", this.throttledResize);
-    this.setFilter();
-  }
-  componentWillUnmount() {
-    const {
-      resetTreeFolders,
-      setExpandedPanelKeys,
-      setDefaultSelectedFolder,
-      setSelectedFolder,
-      setFolderId,
-      setFile,
-    } = this.props;
-    this.throttledResize && this.throttledResize.cancel();
-    window.removeEventListener("resize", this.throttledResize);
-
-    if (resetTreeFolders) {
-      setExpandedPanelKeys(null);
-      //setSelectedFolder(null);
-
-      setFolderId(null);
-      setFile(null);
-    }
+    this.setState({
+      resultingFolderTree: resultingFolderTree,
+      isInitialLoader: false,
+      ...(foldersType === "common" && {
+        folderId: resultingId,
+      }),
+    });
   }
 
-  getDisplayType = () => {
-    const displayType =
-      window.innerWidth < desktop.match(/\d+/)[0] ? "aside" : "modal";
-
-    return displayType;
+  deletedCurrentFolderIdFromPathParts = (pathParts) => {
+    pathParts.splice(-1, 1);
   };
 
-  setDisplayType = () => {
-    const displayType = this.getDisplayType();
+  onButtonClick = (e) => {
+    const { selectedFileInfo } = this.state;
+    const { onClose, onSelectFile, onSetFileName } = this.props;
+    onSetFileName && onSetFileName(selectedFileInfo.title);
+    onSelectFile && onSelectFile(selectedFileInfo);
 
-    this.setState({ displayType: displayType });
-  };
-
-  onClickInput = () => {
-    this.setState({
-      isVisible: true,
-    });
-  };
-
-  onCloseSelectFolderDialog = () => {
-    this.setState({
-      isVisible: false,
-    });
-  };
-
-  onSelectFolder = (id) => {
-    const { setFolderId } = this.props;
-
-    if (id) {
-      setFolderId(id);
-
-      this.setState({
-        selectedFolder: id,
-        hasNextPage: true,
-        filesList: [],
-        page: 0,
-      });
-    } else
-      this.setState({
-        isAvailableFolderList: false,
-      });
-  };
-
-  onSelectFile = (e) => {
-    const { filesList } = this.state;
-    const { setFile } = this.props;
-    const index = e.target.dataset.index || e.target.name;
-
-    if (!index) return;
-    setFile(filesList[+index]);
-    this.setState({
-      selectedFile: filesList[+index],
-      fileName: filesList[+index].title,
-    });
-  };
-
-  onClickSave = () => {
-    const { onSetFileName, onClose, onSelectFile } = this.props;
-    const { fileName, selectedFile } = this.state;
-
-    onSetFileName && onSetFileName(fileName);
-    onSelectFile && onSelectFile(selectedFile);
     onClose && onClose();
   };
 
-  loadNextPage = () => {
-    // const {
-    //   setSelectedNode,
-    //   setSelectedFolder,
-    //   setExpandedPanelKeys,
-    // } = this.props;
-    const { selectedFolder, page } = this.state;
+  onArrowClickAction = async () => {
+    const { pathParts } = this.state;
 
+    const newPathParts = [...pathParts];
+    const prevFolderId = newPathParts.pop();
+    const isRootFolder = newPathParts.length === 0;
+
+    if (!isRootFolder) {
+      try {
+        this.setState({
+          folderId: prevFolderId,
+          files: [],
+          hasNextPage: true,
+          page: 0,
+          isDataLoading: true,
+        });
+      } catch (e) {
+        toastr.error(e);
+      }
+    } else {
+      this.setState({
+        isDataLoading: false,
+        files: [],
+        title: this.rootTitle,
+        folderId: "root",
+        pathParts: [],
+      });
+    }
+  };
+
+  onFolderClick = (id) => {
+    this.setState({
+      folderId: id,
+      files: [],
+      selectedFileInfo: [],
+      page: 0,
+      hasNextPage: true,
+      isDataLoading: true,
+    });
+  };
+
+  onSelectFile = (item) => {
+    this.setState({
+      selectedFileInfo: item,
+    });
+  };
+  _loadNextPage = () => {
+    const { folderId, files, page } = this.state;
+    const { withoutProvider, foldersType } = this.props;
+    let dataWithoutProvider;
     if (this._isLoadNextPage) return;
 
     this._isLoadNextPage = true;
@@ -217,206 +159,203 @@ class SelectFileDialogBody extends React.Component {
     this.newFilter.page = page;
     this.newFilter.pageCount = pageCount;
 
-    this.setState({ isNextPageLoading: true }, () => {
-      getFolder(selectedFolder, this.newFilter)
-        .then((data) => {
-          let newFilesList = page
-            ? this.state.filesList.concat(data.files)
-            : data.files;
-
-          //TODO:  it will need if passed the folder id - need to come up with a different solution.
-
-          // const newPathParts = SelectFolderDialog.convertPathParts(
-          //
-          //   data.pathParts
-          // );
-
-          //setExpandedPanelKeys(newPathParts);
-
-          // setSelectedNode([selectedFolder + ""]);
-          // setSelectedFolder({
-          //   folders: data.folders,
-          //   ...data.current,
-          //   pathParts: newPathParts,
-          //   ...{ new: data.new },
-          // });
-          this.setState({
-            hasNextPage: newFilesList.length < data.total,
-            isNextPageLoading: false,
-            filesList: newFilesList,
-            page: page + 1,
+    this.setState({ isNextPageLoading: true }, async () => {
+      try {
+        const data = await getFolder(folderId, this.newFilter);
+        console.log("DATa", data);
+        if (
+          data.current.rootFolderType === FolderType.COMMON &&
+          withoutProvider
+        ) {
+          const filterFolder = data.folders.filter((value) => {
+            if (!value.providerKey) return value;
           });
-        })
-        .catch((error) => console.log(error))
-        .finally(() => (this._isLoadNextPage = false));
+          dataWithoutProvider = [...filterFolder, ...data.files];
+        }
+
+        const finalData = withoutProvider
+          ? dataWithoutProvider
+          : [...data.folders, ...data.files];
+
+        const newFilesList = [...files].concat(finalData);
+        console.log("newFilesList", newFilesList.length, data.total);
+        const hasNextPage = newFilesList.length < data.total - 1;
+        let firstLoadInfo = {};
+        if (page === 0) {
+          const pathParts = [...data.pathParts];
+
+          this.deletedCurrentFolderIdFromPathParts(pathParts);
+
+          const additionalPage = foldersType === "third-party" ? [] : ["root"];
+
+          firstLoadInfo = {
+            pathParts: [...additionalPage, ...pathParts],
+            title: data.current.title,
+          };
+        }
+
+        this._isLoadNextPage = false;
+        this.setState((state) => ({
+          isDataLoading: false,
+          hasNextPage: hasNextPage,
+          isNextPageLoading: false,
+          page: state.page + 1,
+          files: newFilesList,
+          ...firstLoadInfo,
+        }));
+      } catch (e) {
+        toastr.error(e);
+        this.setState({
+          isDataLoading: false,
+        });
+      }
     });
   };
+
   render() {
     const {
-      t,
       isPanelVisible,
       onClose,
-      zIndex,
-      foldersType,
-      withoutProvider,
-      titleFilesList,
-      loadingLabel,
-      folderId,
-      onSetFileName,
-      tReady,
-      headerName,
-      foldersList,
-      theme,
+      t,
+      footer: footerChild,
+      header: headerChild,
     } = this.props;
     const {
-      isVisible,
-      filesList,
-      hasNextPage,
+      resultingFolderTree,
+      isDataLoading,
+      isInitialLoader,
       isNextPageLoading,
-      selectedFolder,
-      displayType,
-      selectedFile,
-      fileName,
-      passedId,
-      isAvailableFolderList,
+      hasNextPage,
+      files,
+      folderId,
+      title,
+      page,
+      selectedFileInfo,
     } = this.state;
 
-    const loadingText = loadingLabel
-      ? loadingLabel
-      : `${t("Common:LoadingProcessing")} ${t("Common:LoadingDescription")}`;
+    const isRootPage = folderId === "root";
 
-    return displayType === "aside" ? (
-      <SelectFileDialogAsideView
-        theme={theme}
-        t={t}
-        isPanelVisible={isPanelVisible}
-        zIndex={zIndex}
+    const loadingText = `${t("Common:LoadingProcessing")} ${t(
+      "Common:LoadingDescription"
+    )}`;
+    return (
+      <ModalDialog
+        visible={isPanelVisible}
+        zIndex={310}
         onClose={onClose}
-        isVisible={isVisible}
-        withoutProvider={withoutProvider}
-        foldersType={foldersType}
-        filesList={filesList}
-        onSelectFile={this.onSelectFile}
-        onClickInput={this.onClickInput}
-        onClickSave={this.onClickSave}
-        onCloseSelectFolderDialog={this.onCloseSelectFolderDialog}
-        onSelectFolder={this.onSelectFolder}
-        hasNextPage={hasNextPage}
-        isNextPageLoading={isNextPageLoading}
-        loadNextPage={this.loadNextPage}
-        selectedFolder={selectedFolder}
-        headerName={headerName}
-        loadingText={loadingText}
-        selectedFile={selectedFile}
-        folderId={folderId}
-        onSetFileName={onSetFileName}
-        fileName={fileName}
-        displayType={displayType}
-        isTranslationsReady={tReady}
-        passedId={passedId}
-        titleFilesList={titleFilesList}
-        isAvailableFolderList={isAvailableFolderList}
-        primaryButtonName={this.buttonName}
-      />
-    ) : (
-      <SelectFileDialogModalView
-        theme={theme}
-        t={t}
-        isPanelVisible={isPanelVisible}
-        onClose={onClose}
-        onSelectFolder={this.onSelectFolder}
-        onSelectFile={this.onSelectFile}
-        foldersType={foldersType}
-        onClickSave={this.onClickSave}
-        filesList={filesList}
-        hasNextPage={hasNextPage}
-        isNextPageLoading={isNextPageLoading}
-        loadNextPage={this.loadNextPage}
-        selectedFolder={selectedFolder}
-        withoutProvider={withoutProvider}
-        headerName={headerName}
-        loadingText={loadingText}
-        selectedFile={selectedFile}
-        folderId={folderId}
-        passedId={passedId}
-        titleFilesList={titleFilesList}
-        primaryButtonName={this.buttonName}
-        foldersList={foldersList}
-      />
+        displayType="aside"
+        withoutBodyScroll
+        contentHeight="100%"
+        contentPaddingBottom="0px"
+      >
+        <ModalDialog.Header>
+          <StyledHeader>
+            {!isRootPage ? (
+              <div className="dialog-header">
+                <IconButton
+                  iconName="/static/images/arrow.path.react.svg"
+                  size="17"
+                  isFill={true}
+                  className="arrow-button"
+                  onClick={this.onArrowClickAction}
+                />
+                {title}
+              </div>
+            ) : (
+              title
+            )}
+          </StyledHeader>
+        </ModalDialog.Header>
+
+        <ModalDialog.Body>
+          {isRootPage && !isDataLoading ? (
+            <StyledRootPage>
+              {isInitialLoader ? (
+                <div className="root-loader" key="loader">
+                  <Loaders.RootFoldersTree />
+                </div>
+              ) : (
+                <RootPage
+                  data={resultingFolderTree}
+                  onClick={this.onFolderClick}
+                />
+              )}
+            </StyledRootPage>
+          ) : (
+            <StyledBody footerChild={!!footerChild} headerChild={!!headerChild}>
+              <div className="select-folder_content-body">
+                <div className="select-dialog_header-child">{headerChild}</div>
+                <div>
+                  <FilesList
+                    hasNextPage={hasNextPage}
+                    isNextPageLoading={isNextPageLoading}
+                    id={folderId}
+                    files={files}
+                    loadNextPage={this._loadNextPage}
+                    onFolderClick={this.onFolderClick}
+                    loadingText={loadingText}
+                    page={page}
+                    t={t}
+                    selectedFileInfo={selectedFileInfo}
+                    onSelectFile={this.onSelectFile}
+                  />
+                </div>
+                <div className="select-dialog_footer">
+                  <div className="select-dialog_footer-child">
+                    {footerChild}
+                  </div>
+                  <div className="select-dialog_buttons">
+                    <Button
+                      //theme={theme}
+                      primary
+                      size="small"
+                      label={t("SaveHere")}
+                      onClick={this.onButtonClick}
+                      isDisabled={isDataLoading}
+                    />
+                    <Button
+                      size="small"
+                      label={t("Common:CancelButton")}
+                      onClick={onClose}
+                      isDisabled={isDataLoading}
+                    />
+                  </div>
+                </div>
+              </div>
+            </StyledBody>
+          )}
+        </ModalDialog.Body>
+      </ModalDialog>
     );
   }
 }
-SelectFileDialogBody.propTypes = {
+
+SelectFileDialog.propTypes = {
   onClose: PropTypes.func.isRequired,
   isPanelVisible: PropTypes.bool.isRequired,
-  onSelectFile: PropTypes.func.isRequired,
+  // onSelectFolder: PropTypes.func.isRequired,
   foldersType: PropTypes.oneOf([
     "common",
     "third-party",
     "exceptSortedByTags",
     "exceptPrivacyTrashFolders",
-  ]),
-  folderId: PropTypes.string,
+  ]).isRequired,
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
   withoutProvider: PropTypes.bool,
-  creationButtonPrimary: PropTypes.bool,
-  headerName: PropTypes.string,
-  titleFilesList: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  zIndex: PropTypes.number,
 };
 
-SelectFileDialogBody.defaultProps = {
-  folderId: "",
-  titleFilesList: "",
+SelectFileDialog.defaultProps = {
+  isPanelVisible: false,
+  foldersType: "common",
+  id: "",
   withoutProvider: false,
-  zIndex: 310,
-  creationButtonPrimary: false,
 };
 
-const SelectFileDialogWrapper = inject(
-  ({
-    filesStore,
-    selectedFilesStore,
-    treeFoldersStore,
-    selectedFolderStore,
-  }) => {
-    const {
-      folderId: storeFolderId,
-      fileInfo,
-      setFolderId,
-      setFile,
-    } = selectedFilesStore;
-
-    const { setSelectedNode, setExpandedPanelKeys } = treeFoldersStore;
-    const { filter } = filesStore;
-    const { setSelectedFolder, id } = selectedFolderStore;
-    return {
-      storeFolderId: storeFolderId || id,
-      fileInfo,
-      setFile,
-      setFolderId,
-      setSelectedFolder,
-      setSelectedNode,
-      filter,
-      setExpandedPanelKeys,
-    };
-  }
-)(
-  observer(
-    withTranslation(["SelectFile", "Common", "Translations"])(
-      SelectFileDialogBody
-    )
-  )
-);
-class SelectFileDialog extends React.Component {
-  render() {
-    return (
-      <MobxProvider auth={authStore} {...stores}>
-        <I18nextProvider i18n={i18n}>
-          <SelectFileDialogWrapper {...this.props} />
-        </I18nextProvider>
-      </MobxProvider>
-    );
-  }
-}
-
-export default SelectFileDialog;
+export default inject(({ treeFoldersStore, filesStore }) => {
+  const { treeFolders } = treeFoldersStore;
+  const { filter } = filesStore;
+  return {
+    treeFolders,
+    filter,
+  };
+})(observer(withTranslation(["SelectFolder", "Common"])(SelectFileDialog)));

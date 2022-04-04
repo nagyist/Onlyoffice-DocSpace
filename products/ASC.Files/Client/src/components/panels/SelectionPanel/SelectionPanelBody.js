@@ -42,6 +42,7 @@ const SelectionPanelBody = ({
   title,
   t,
   selectedFileInfo,
+  buttonText,
 }) => {
   const isRootPage = folderId === "root";
   console.log("isRootPage", isRootPage);
@@ -111,7 +112,7 @@ const SelectionPanelBody = ({
                     //theme={theme}
                     primary
                     size="small"
-                    label={t("SaveHere")}
+                    label={buttonText}
                     onClick={onButtonClick}
                     isDisabled={isDataLoading}
                   />

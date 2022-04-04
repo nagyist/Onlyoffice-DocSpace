@@ -5,13 +5,12 @@ import { getFolder } from "@appserver/common/api/files";
 import PropTypes from "prop-types";
 import toastr from "studio/toastr";
 import { FolderType } from "@appserver/common/constants";
-import SelectFolderDialog from "../SelectFolderDialog";
 import SelectionPanel from "../SelectionPanel/SelectionPanelBody";
 class SelectFileDialog extends React.PureComponent {
   constructor(props) {
     super(props);
     const { filter, t, id } = props;
-    this.rootTitle = t("SelectFolder");
+    this.rootTitle = t("SelectFile");
     this.newFilter = filter.clone();
 
     this.state = {
@@ -213,7 +212,7 @@ class SelectFileDialog extends React.PureComponent {
       page,
       selectedFileInfo,
     } = this.state;
-
+    console.log("t", t("SelectFile"));
     const loadingText = `${t("Common:LoadingProcessing")} ${t(
       "Common:LoadingDescription"
     )}`;
@@ -240,6 +239,7 @@ class SelectFileDialog extends React.PureComponent {
         isDataLoading={isDataLoading}
         loadNextPage={this._loadNextPage}
         selectedFileInfo={selectedFileInfo}
+        buttonText={t("SaveHere")}
       />
     );
   }
@@ -273,4 +273,4 @@ export default inject(({ treeFoldersStore, filesStore }) => {
     treeFolders,
     filter,
   };
-})(observer(withTranslation(["SelectFolder", "Common"])(SelectFileDialog)));
+})(observer(withTranslation(["SelectFile", "Common"])(SelectFileDialog)));

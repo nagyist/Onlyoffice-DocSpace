@@ -24,7 +24,7 @@ newInstance.use(Backend).init({
     loadPath: loadLanguagePath(config.homepage),
   },
 
-  ns: ["SelectFile", "Common"],
+  ns: ["SelectFile"],
   defaultNS: "SelectFile",
 
   react: {

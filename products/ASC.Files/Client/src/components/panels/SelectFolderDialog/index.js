@@ -249,6 +249,7 @@ class SelectFolderDialog extends React.PureComponent {
         t={t}
         isDataLoading={isDataLoading}
         loadNextPage={this._loadNextPage}
+        buttonText={t("SaveHere")}
       />
     );
   }

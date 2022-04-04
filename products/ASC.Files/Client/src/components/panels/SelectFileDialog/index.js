@@ -4,7 +4,7 @@ import { withTranslation } from "react-i18next";
 import { getFolder } from "@appserver/common/api/files";
 import PropTypes from "prop-types";
 import toastr from "studio/toastr";
-import { FolderType } from "@appserver/common/constants";
+import { FilterType, FolderType } from "@appserver/common/constants";
 import SelectionPanel from "../SelectionPanel/SelectionPanelBody";
 class SelectFileDialog extends React.PureComponent {
   constructor(props) {
@@ -28,8 +28,64 @@ class SelectFileDialog extends React.PureComponent {
     };
   }
 
+  getFilterParameters = () => {
+    const {
+      isImageOnly,
+      isDocumentsOnly,
+      isArchiveOnly,
+      isPresentationOnly,
+      isTablesOnly,
+      isMediaOnly,
+      searchParam = "",
+      ByExtension,
+    } = this.props;
+
+    if (isImageOnly) {
+      return { filterType: FilterType.ImagesOnly, filterValue: searchParam };
+    }
+    if (isDocumentsOnly) {
+      return { filterType: FilterType.DocumentsOnly, filterValue: searchParam };
+    }
+    if (isArchiveOnly) {
+      return { filterType: FilterType.ArchiveOnly, filterValue: searchParam };
+    }
+    if (isPresentationOnly) {
+      return {
+        filterType: FilterType.PresentationsOnly,
+        filterValue: searchParam,
+      };
+    }
+    if (isTablesOnly) {
+      return {
+        filterType: FilterType.SpreadsheetsOnly,
+        filterValue: searchParam,
+      };
+    }
+    if (isMediaOnly) {
+      return { filterType: FilterType.MediaOnly, filterValue: searchParam };
+    }
+
+    if (ByExtension) {
+      return { filterType: FilterType.ByExtension, filterValue: searchParam };
+    }
+
+    return { filterType: FilterType.FilesOnly, filterValue: "" };
+  };
+
+  setFilter = () => {
+    const { withSubfolders = true } = this.props;
+
+    const filterParams = this.getFilterParameters();
+
+    this.newFilter.filterType = filterParams.filterType;
+    this.newFilter.search = filterParams.filterValue;
+    this.newFilter.withSubfolders = withSubfolders;
+  };
+
   async componentDidMount() {
     const { treeFolders, foldersType, id, foldersList } = this.props;
+
+    this.setFilter();
 
     let timerId = setTimeout(() => {
       this.setState({ isInitialLoader: true });
@@ -212,7 +268,7 @@ class SelectFileDialog extends React.PureComponent {
       page,
       selectedFileInfo,
     } = this.state;
-    console.log("t", t("SelectFile"));
+
     const loadingText = `${t("Common:LoadingProcessing")} ${t(
       "Common:LoadingDescription"
     )}`;

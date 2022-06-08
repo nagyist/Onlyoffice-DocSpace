@@ -1,0 +1,10 @@
+{
+  "HeaderExpiredTrialLicense": "Your trial for  {{organizationName}} Business cloud has expired",
+  "AddedUsers": "Added users",
+  "StorageSpace": "Storage space used",
+  "TariffsPlans": "Tariffs plans",
+  "SuitablePlan": "Choose the plan that suits your team",
+  "PerUserMonth": "per user/mo",
+  "HaveQuestions": "Have questions?",
+  "ContactUs": "Contact us"
+}

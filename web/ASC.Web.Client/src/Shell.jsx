@@ -42,6 +42,7 @@ const LOGIN_URLS = [
 const CONFIRM_URL = combineUrl(PROXY_HOMEPAGE_URL, "/confirm");
 const COMING_SOON_URLS = [combineUrl(PROXY_HOMEPAGE_URL, "/coming-soon")];
 const PAYMENTS_URL = combineUrl(PROXY_HOMEPAGE_URL, "/payments");
+const TARIFF_URL = combineUrl(PROXY_HOMEPAGE_URL, "/tariffs");
 const SETTINGS_URL = combineUrl(PROXY_HOMEPAGE_URL, "/settings");
 const ERROR_401_URL = combineUrl(PROXY_HOMEPAGE_URL, "/error401");
 const PROFILE_MY_URL = combineUrl(PROXY_HOMEPAGE_URL, "/my");
@@ -53,6 +54,8 @@ const PREPARATION_PORTAL = combineUrl(
 );
 
 const Payments = React.lazy(() => import("./components/pages/Payments"));
+const Tariffs = React.lazy(() => import("./components/pages/TariffsPage"));
+
 const Error404 = React.lazy(() => import("studio/Error404"));
 const Error401 = React.lazy(() => import("studio/Error401"));
 const Home = React.lazy(() => import("./components/pages/Home"));
@@ -82,6 +85,14 @@ const PaymentsRoute = (props) => (
   <React.Suspense fallback={<AppLoader />}>
     <ErrorBoundary>
       <Payments {...props} />
+    </ErrorBoundary>
+  </React.Suspense>
+);
+
+const TariffsRoute = (props) => (
+  <React.Suspense fallback={<AppLoader />}>
+    <ErrorBoundary>
+      <Tariffs {...props} />
     </ErrorBoundary>
   </React.Suspense>
 );
@@ -209,6 +220,7 @@ const Shell = ({ items = [], page = "home", ...rest }) => {
         CONFIRM_URL,
         COMING_SOON_URLS,
         PAYMENTS_URL,
+        TARIFF_URL,
         SETTINGS_URL,
         ERROR_401_URL,
       };
@@ -521,6 +533,7 @@ const Shell = ({ items = [], page = "home", ...rest }) => {
                 component={ComingSoonRoute}
               />
               <PrivateRoute path={PAYMENTS_URL} component={PaymentsRoute} />
+              <PrivateRoute path={TARIFF_URL} component={TariffsRoute} />
               {!personal && (
                 <PrivateRoute
                   restricted

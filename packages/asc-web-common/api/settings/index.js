@@ -459,3 +459,10 @@ export function toggleTipsSubscription() {
 export function getOforms(url) {
   return axios.get(url);
 }
+
+export function getPortalQuota() {
+  return request({
+    method: "get",
+    url: `/settings/quota`,
+  });
+}

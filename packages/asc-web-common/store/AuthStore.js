@@ -24,6 +24,8 @@ class AuthStore {
   providers = [];
   isInit = false;
 
+  quota = {};
+
   constructor() {
     this.userStore = new UserStore();
     this.moduleStore = new ModuleStore();
@@ -328,6 +330,11 @@ class AuthStore {
     const culture =
       this.userStore.user.cultureName || this.settingsStore.culture;
     return api.settings.getOforms(`${this.settingsStore.urlOforms}${culture}`);
+  };
+
+  setQuota = async () => {
+    const res = await api.settings.getPortalQuota();
+    if (res) this.quota = res;
   };
 }
 

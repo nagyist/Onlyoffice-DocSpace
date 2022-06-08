@@ -1,0 +1,10 @@
+{
+  "HeaderExpiredTrialLicense": "Пробный период облачного сервиса {{organizationName}} Business истек",
+  "AddedUsers": "Добавленные пользователи",
+  "StorageSpace": "Используемое место для хранения",
+  "TariffsPlans": "Тарифные планы",
+  "SuitablePlan": "Выберите план, подходящий вашей команде",
+  "PerUserMonth": "за пользователя/месяц",
+  "HaveQuestions": "Есть вопросы?",
+  "ContactUs": "Свяжитесь с нами"
+}

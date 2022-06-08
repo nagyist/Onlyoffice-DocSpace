@@ -16,6 +16,8 @@ class PaymentStore {
     trialMode: true,
   };
 
+  tariffsInfo = {};
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -58,6 +60,15 @@ class PaymentStore {
     const response = await acceptLicense().then((res) => console.log(res));
 
     return response;
+  };
+
+  setTariffsInfo = () => {
+    new Promise((resolve) => {
+      setTimeout(() => {
+        this.tariffsInfo = {};
+        resolve();
+      }, 500);
+    });
   };
 }
 

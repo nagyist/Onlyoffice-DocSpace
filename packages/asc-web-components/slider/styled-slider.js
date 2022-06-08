@@ -15,7 +15,16 @@ const StyledSlider = styled.input.attrs({
   -webkit-appearance: none;
 
   background-image: ${(props) =>
-    props.withPouring && `linear-gradient(#2da7db, #2da7db)`};
+    props.withPouring &&
+    `linear-gradient(${
+      props.colorPouring
+        ? props.colorPouring
+        : props.theme.avatarEditorBody.slider.sliderThumb.background
+    }, ${
+      props.colorPouring
+        ? props.colorPouring
+        : props.theme.avatarEditorBody.slider.sliderThumb.background
+    })`};
   background-size: ${(props) => `${props.size} 100%`};
   background-repeat: no-repeat;
 
@@ -42,7 +51,10 @@ const StyledSlider = styled.input.attrs({
     height: ${(props) =>
       props.theme.avatarEditorBody.slider.sliderThumb.height};
     background: ${(props) =>
-      props.theme.avatarEditorBody.slider.sliderThumb.background};
+      props.colorPouring
+        ? props.colorPouring
+        : props.theme.avatarEditorBody.slider.sliderThumb.background};
+
     border: ${(props) =>
       props.theme.avatarEditorBody.slider.sliderThumb.border};
     border-radius: ${(props) =>

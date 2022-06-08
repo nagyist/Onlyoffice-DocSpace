@@ -13,6 +13,7 @@ const Slider = ({
   value,
   withPouring,
   style,
+  colorPouring,
 }) => {
   const [size, setSize] = useState("0%");
 
@@ -22,6 +23,7 @@ const Slider = ({
 
   return (
     <StyledSlider
+      colorPouring={colorPouring}
       style={style}
       id={id}
       type={type}
@@ -48,6 +50,7 @@ Slider.propTypes = {
   value: PropTypes.number,
   withPouring: PropTypes.bool,
   style: PropTypes.oneOfType([PropTypes.object, PropTypes.array]),
+  colorPouring: PropTypes.string,
 };
 
 export default Slider;

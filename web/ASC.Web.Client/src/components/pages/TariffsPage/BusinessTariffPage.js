@@ -12,6 +12,7 @@ import Slider from "@appserver/components/slider";
 import PlusIcon from "../../../../public/images/plus.react.svg";
 import MinusIcon from "../../../../public/images/minus.react.svg";
 import SelectUsersCountContainer from "./sub-components/SelectUsersCountContainer";
+import SubscriptionTitleContainer from "./sub-components/SubscriptionTitleContainer";
 
 const StyledBody = styled.div`
   margin-left: auto;
@@ -54,14 +55,15 @@ const BusinessTariffPage = ({}) => {
 
   return (
     <StyledBody>
-      <SelectUsersCountContainer
+      <SubscriptionTitleContainer />
+      {/* <SelectUsersCountContainer
         maxUsersCount={maxUsersCount}
         step={step}
         usersCount={usersCount}
         onMinusClick={onMinusClick}
         onPlusClick={onPlusClick}
         onSliderChange={onSliderChange}
-      />
+      /> */}
 
       <ContactContainer />
     </StyledBody>

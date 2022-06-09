@@ -7,5 +7,8 @@
   "PerUserMonth": "per user/mo",
   "HaveQuestions": "Have questions?",
   "ContactUs": "Contact us",
-  "SelectNumber": "Select the number of users"
+  "SelectNumber": "Select the number of users",
+  "StartPrice": "From {{price}} per user/mo",
+  "RenewSubscription": "Renew subscription to {{organizationName}} Business cloud",
+  "ReActivate": "Re-activate business plan?"
 }

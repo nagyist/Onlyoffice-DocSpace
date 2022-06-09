@@ -14,17 +14,43 @@ import MinusIcon from "../../../../public/images/minus.react.svg";
 import SelectUsersCountContainer from "./sub-components/SelectUsersCountContainer";
 import SubscriptionTitleContainer from "./sub-components/SubscriptionTitleContainer";
 import BenefitsContainer from "./sub-components/BenefitsContainer";
+import PaymentContainer from "./sub-components/PaymentContainer";
 
 const StyledBody = styled.div`
   margin-left: auto;
   margin-right: auto;
-  max-width: 960px;
+  max-width: 889px;
 
   margin-top: 48px;
+
+  display: grid;
+  grid-template-areas: "subscription subscription" "benefits payment";
+  grid-template-columns: minmax(100px, 490px) minmax(100px, 400px);
+  grid-template-rows: auto 1fr;
+
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+
+  border: 1px solid #d0d5da;
 
   .current-tariff {
     margin: 0 auto;
     margin-top: 40px;
+  }
+
+  .tariff-subscription_container {
+    grid-area: subscription;
+    padding: 24px;
+    border-bottom: 1px solid #d0d5da;
+  }
+  .tariff-benefits_container {
+    grid-area: benefits;
+    padding: 24px;
+    border-right: 1px solid #d0d5da;
+  }
+  .tariff-payment_container {
+    grid-area: payment;
+    padding: 24px;
   }
 
   @media (max-height: 1042px) {
@@ -32,42 +58,20 @@ const StyledBody = styled.div`
   }
 `;
 
-const step = "50",
-  minUsersCount = 3,
-  maxUsersCount = 1000;
-
 const BusinessTariffPage = ({}) => {
   const { t } = useTranslation("Payments");
 
-  const [usersCount, setUsersCount] = useState(minUsersCount);
-
-  const onSliderChange = (e) => {
-    const count = parseFloat(e.target.value);
-    count > minUsersCount ? setUsersCount(count) : setUsersCount(minUsersCount);
-  };
-
-  const onPlusClick = () => {
-    usersCount < maxUsersCount && setUsersCount(usersCount + 1);
-  };
-
-  const onMinusClick = () => {
-    usersCount > minUsersCount && setUsersCount(usersCount - 1);
-  };
-
   return (
     <StyledBody>
-      <SubscriptionTitleContainer />
-      <BenefitsContainer />
-      <SelectUsersCountContainer
-        maxUsersCount={maxUsersCount}
-        step={step}
-        usersCount={usersCount}
-        onMinusClick={onMinusClick}
-        onPlusClick={onPlusClick}
-        onSliderChange={onSliderChange}
-      />
-
-      <ContactContainer />
+      <div className={"tariff-subscription_container"}>
+        <SubscriptionTitleContainer />
+      </div>
+      <div className={"tariff-benefits_container"}>
+        <BenefitsContainer />
+      </div>
+      <div className={"tariff-payment_container"}>
+        <PaymentContainer t={t} />
+      </div>
     </StyledBody>
   );
 };

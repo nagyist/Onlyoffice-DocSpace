@@ -11,5 +11,8 @@
   "StartPrice": "От {{price}} за пользователя/месяц",
   "RenewSubscription": "Продлить подписку на облачный сервис {{organizationName}} Business",
   "ReActivate": "Повторно активировать Business план?",
-  "Benefits": "Преимущества"
+  "Benefits": "Преимущества",
+  "MonthPeriod": "1 месяц",
+  "YearPeriod": "1 год",
+  "ThreeYearPeriod": "3 года"
 }

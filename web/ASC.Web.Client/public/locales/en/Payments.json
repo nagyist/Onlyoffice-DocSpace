@@ -11,5 +11,8 @@
   "StartPrice": "From {{price}} per user/mo",
   "RenewSubscription": "Renew subscription to {{organizationName}} Business cloud",
   "ReActivate": "Re-activate business plan?",
-  "Benefits": "Benefits"
+  "Benefits": "Benefits",
+  "MonthPeriod": "1 Month",
+  "YearPeriod": "1 Year",
+  "ThreeYearPeriod": "3 Year"
 }

@@ -7,7 +7,7 @@ import PlusIcon from "../../../../../public/images/plus.react.svg";
 import MinusIcon from "../../../../../public/images/minus.react.svg";
 
 const StyledBody = styled.div`
-  width: 400px;
+  max-width: 352px;
 
   .tariff-users {
     display: flex;

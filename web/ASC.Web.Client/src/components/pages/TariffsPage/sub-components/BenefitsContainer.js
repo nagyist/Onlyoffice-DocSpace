@@ -22,6 +22,7 @@ const StyledBody = styled.div`
 
 const BenefitsContainer = ({ tariffsInfo }) => {
   const { t } = useTranslation("Payments");
+  const { availableTariffs } = tariffsInfo;
 
   return (
     <StyledBody>

@@ -18,6 +18,8 @@ class PaymentStore {
 
   tariffsInfo = {};
 
+  tariffPeriod = null;
+
   constructor() {
     makeAutoObservable(this);
   }
@@ -69,6 +71,10 @@ class PaymentStore {
         resolve();
       }, 500);
     });
+  };
+
+  setTariffPeriod = (period) => {
+    this.tariffPeriod = period;
   };
 }
 

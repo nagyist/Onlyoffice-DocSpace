@@ -13,6 +13,7 @@ import PlusIcon from "../../../../public/images/plus.react.svg";
 import MinusIcon from "../../../../public/images/minus.react.svg";
 import SelectUsersCountContainer from "./sub-components/SelectUsersCountContainer";
 import SubscriptionTitleContainer from "./sub-components/SubscriptionTitleContainer";
+import BenefitsContainer from "./sub-components/BenefitsContainer";
 
 const StyledBody = styled.div`
   margin-left: auto;
@@ -56,14 +57,15 @@ const BusinessTariffPage = ({}) => {
   return (
     <StyledBody>
       <SubscriptionTitleContainer />
-      {/* <SelectUsersCountContainer
+      <BenefitsContainer />
+      <SelectUsersCountContainer
         maxUsersCount={maxUsersCount}
         step={step}
         usersCount={usersCount}
         onMinusClick={onMinusClick}
         onPlusClick={onPlusClick}
         onSliderChange={onSliderChange}
-      /> */}
+      />
 
       <ContactContainer />
     </StyledBody>

@@ -10,5 +10,6 @@
   "SelectNumber": "Выберите количество пользователей",
   "StartPrice": "От {{price}} за пользователя/месяц",
   "RenewSubscription": "Продлить подписку на облачный сервис {{organizationName}} Business",
-  "ReActivate": "Повторно активировать Business план?"
+  "ReActivate": "Повторно активировать Business план?",
+  "Benefits": "Преимущества"
 }

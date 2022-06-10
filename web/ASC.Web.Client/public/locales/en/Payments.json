@@ -14,5 +14,6 @@
   "Benefits": "Benefits",
   "MonthPeriod": "1 Month",
   "YearPeriod": "1 Year",
-  "ThreeYearPeriod": "3 Year"
+  "ThreeYearPeriod": "3 Year",
+  "SavedMoney": "Save {{price}}"
 }

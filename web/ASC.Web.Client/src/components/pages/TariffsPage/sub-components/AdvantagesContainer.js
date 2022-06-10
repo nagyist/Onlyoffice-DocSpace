@@ -88,7 +88,7 @@ const AdvantagesContainer = ({ t, tariffsInfo }) => {
             </Text>
             <div className="tariff-price">
               <Text fontSize="48px" textAlign="center" fontWeight={600}>
-                {availableTariffs[0].price}
+                {availableTariffs[0].yearsPrice}
               </Text>
               <Text
                 fontSize="11px"

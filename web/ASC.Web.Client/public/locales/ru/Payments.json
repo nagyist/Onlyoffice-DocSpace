@@ -14,5 +14,6 @@
   "Benefits": "Преимущества",
   "MonthPeriod": "1 месяц",
   "YearPeriod": "1 год",
-  "ThreeYearPeriod": "3 года"
+  "ThreeYearPeriod": "3 года",
+  "SavedMoney": "Сэкономьте {{price}}"
 }

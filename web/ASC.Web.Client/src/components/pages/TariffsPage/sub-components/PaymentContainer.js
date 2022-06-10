@@ -6,6 +6,7 @@ import { inject, observer } from "mobx-react";
 
 import SelectUsersCountContainer from "./SelectUsersCountContainer";
 import SubscriptionPeriod from "./SubscriptionPeriod";
+import TotalTariffContainer from "./TotalTariffContainer";
 
 const StyledBody = styled.div`
   .tariff-benefits_text {
@@ -53,6 +54,7 @@ const PaymentContainer = ({ t }) => {
         onPlusClick={onPlusClick}
         onSliderChange={onSliderChange}
       />
+      <TotalTariffContainer t={t} usersCount={usersCount} />
     </StyledBody>
   );
 };

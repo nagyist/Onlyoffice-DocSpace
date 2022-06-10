@@ -66,7 +66,7 @@ const StyledTariffBody = styled.div`
     padding-bottom: 76px;
   }
 `;
-const AdvantagesContainer = ({ t, tariffsInfo }) => {
+const AdvantagesContainer = ({ t, tariffsInfo, onOpenBusinessDescription }) => {
   const { availableTariffs } = tariffsInfo;
 
   return (
@@ -88,7 +88,7 @@ const AdvantagesContainer = ({ t, tariffsInfo }) => {
             </Text>
             <div className="tariff-price">
               <Text fontSize="48px" textAlign="center" fontWeight={600}>
-                {availableTariffs[0].yearsPrice}
+                {availableTariffs[0].price}
               </Text>
               <Text
                 fontSize="11px"
@@ -132,7 +132,7 @@ const AdvantagesContainer = ({ t, tariffsInfo }) => {
             </Text>
             <div className="tariff-price">
               <Text fontSize="48px" textAlign="center" fontWeight={600}>
-                {availableTariffs[1].price}
+                {availableTariffs[1].monthPrice}
               </Text>
               <Text
                 fontSize="11px"
@@ -154,6 +154,7 @@ const AdvantagesContainer = ({ t, tariffsInfo }) => {
               })}
             </div>
             <Button
+              onClick={onOpenBusinessDescription}
               className={"tariff-button"}
               label={t("Common:ContinueButton")}
               size={"medium"}

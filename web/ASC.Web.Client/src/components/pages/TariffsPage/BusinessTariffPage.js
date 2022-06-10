@@ -20,7 +20,7 @@ const StyledBody = styled.div`
   margin-left: auto;
   margin-right: auto;
   max-width: 889px;
-
+  margin-bottom: 28px;
   margin-top: 48px;
 
   display: grid;

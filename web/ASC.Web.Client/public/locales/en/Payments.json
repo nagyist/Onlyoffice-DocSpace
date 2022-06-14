@@ -15,5 +15,8 @@
   "MonthPeriod": "1 Month",
   "YearPeriod": "1 Year",
   "ThreeYearPeriod": "3 Year",
-  "SavedMoney": "Save {{price}}"
+  "SavedMoney": "Save {{price}}",
+  "TrialTitle": "You are using ONLYOFFICE business cloud free trial",
+  "BusinessTitle": "You’re using ONLYOFFICE Business cloud",
+  "StartupTitle": "You’re using free Startup plan"
 }

@@ -12,14 +12,14 @@ const StyledBody = styled.div`
 
 const SubscriptionTitleContainer = ({ tariffsInfo, organizationName }) => {
   const { t } = useTranslation("Payments");
-  const { isBusiness, isStartup, isTrial, availableTariffs } = tariffsInfo;
+  const { trialExpired, isStartup, isTrial, availableTariffs } = tariffsInfo;
 
   return (
     <StyledBody>
       <Text noSelect isBold fontSize={"16"}>
         <Trans
           t={t}
-          i18nKey={isBusiness || isStartup ? "ReActivate" : "RenewSubscription"}
+          i18nKey={isStartup ? "ReActivate" : "RenewSubscription"}
           ns="Payments"
         >
           {{ organizationName }}

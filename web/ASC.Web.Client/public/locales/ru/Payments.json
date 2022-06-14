@@ -15,5 +15,8 @@
   "MonthPeriod": "1 месяц",
   "YearPeriod": "1 год",
   "ThreeYearPeriod": "3 года",
-  "SavedMoney": "Сэкономьте {{price}}"
+  "SavedMoney": "Сэкономьте {{price}}",
+  "TrialTitle": "Вы используете бесплатную пробную версию облачного сервиса {{organizationName}} Business",
+  "BusinessTitle": "Вы используете облачный сервис {{organizationName}} Business",
+  "StartupTitle": "Вы используете бесплатный план Startup"
 }

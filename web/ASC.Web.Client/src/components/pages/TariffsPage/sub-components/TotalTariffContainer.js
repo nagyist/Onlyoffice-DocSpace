@@ -50,14 +50,16 @@ const TotalTariffContainer = ({ t, usersCount, tariffsInfo, tariffPeriod }) => {
     : availableTariffs[1].yearsPrice;
 
   const totalPrice =
-    price * usersCount * (activeYearsPeriod ? 36 : activeYearPeriod ? 12 : 0);
+    price * usersCount * (activeYearsPeriod ? 36 : activeYearPeriod ? 12 : 1);
 
   const priceWithoutBenefit =
     availableTariffs[1].monthPrice *
     usersCount *
     (activeYearsPeriod ? 36 : activeYearPeriod ? 12 : 0);
 
-  const priceBenefit = priceWithoutBenefit - totalPrice;
+  const priceBenefit = priceWithoutBenefit
+    ? priceWithoutBenefit - totalPrice
+    : 0;
 
   return (
     <StyledBody priceBenefit={priceBenefit}>

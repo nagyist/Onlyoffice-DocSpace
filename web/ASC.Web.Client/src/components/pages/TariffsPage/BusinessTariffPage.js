@@ -17,11 +17,16 @@ import BenefitsContainer from "./sub-components/BenefitsContainer";
 import PaymentContainer from "./sub-components/PaymentContainer";
 
 const StyledBody = styled.div`
-  margin-left: auto;
-  margin-right: auto;
+  ${(props) =>
+    props.trialExpired &&
+    css`
+      margin-left: auto;
+      margin-right: auto;
+    `}
+
   max-width: 889px;
   margin-bottom: 28px;
-  margin-top: 48px;
+  margin-top: ${(props) => (props.trialExpired ? "48px" : "28px")};
 
   display: grid;
   grid-template-areas: "subscription subscription" "benefits payment";

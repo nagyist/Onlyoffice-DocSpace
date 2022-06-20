@@ -28,16 +28,20 @@ using DbContext = ASC.Core.Common.EF.Context.DbContext;
 
 namespace ASC.Geolocation;
 
+[Scope]
 public class GeolocationHelper
 {
-    public string Dbid { get; set; }
     private readonly ILogger<GeolocationHelper> _logger;
-    private readonly DbContext _dbContext;
+
+    private readonly Lazy<DbContext> _lazyDbContext;
+
+    private DbContext DbContext { get => _lazyDbContext.Value; }
 
     public GeolocationHelper(DbContextManager<DbContext> dbContext, ILogger<GeolocationHelper> logger)
     {
         _logger = logger;
-        _dbContext = dbContext.Get(Dbid);
+
+        _lazyDbContext = new Lazy<DbContext>(() => dbContext.Value);
     }
 
     public IPGeolocationInfo GetIPGeolocation(string ip)
@@ -45,7 +49,7 @@ public class GeolocationHelper
         try
         {
             var ipformatted = FormatIP(ip);
-            var q = _dbContext.DbipLocation
+            var q = DbContext.DbipLocation
                 .Where(r => r.IPStart.CompareTo(ipformatted) <= 0)
                 .Where(r => ipformatted.CompareTo(r.IPEnd) <= 0)
                 .OrderByDescending(r => r.IPStart)

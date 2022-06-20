@@ -2014,6 +2014,357 @@ namespace ASC.Web.Core.PublicResources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to To cancel Recurring Payments, please, go to your Avangate account..
+        /// </summary>
+        public static string SaasTariffsPageAutorenewInfoText {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageAutorenewInfoText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your Business plan has expired.
+        /// </summary>
+        public static string SaasTariffsPageBusinessExpiredTariffPlanHeader {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageBusinessExpiredTariffPlanHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You’re using ONLYOFFICE Business cloud.
+        /// </summary>
+        public static string SaasTariffsPageBusinessTariffPlanHeader {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageBusinessTariffPlanHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Buy now.
+        /// </summary>
+        public static string SaasTariffsPageBuyButtonText {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageBuyButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The pricing plan is not available until the end of the 3 year pricing plan..
+        /// </summary>
+        public static string SaasTariffsPageDisable3YearInfoText {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageDisable3YearInfoText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The pricing plan is not available until the end of the paid year..
+        /// </summary>
+        public static string SaasTariffsPageDisableYearInfoText {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageDisableYearInfoText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The number of admins should not exceed {0}..
+        /// </summary>
+        public static string SaasTariffsPageErrorStartupAdminsCountExceeded {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageErrorStartupAdminsCountExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please, disable all 3rd party services..
+        /// </summary>
+        public static string SaasTariffsPageErrorStartupDisable3rdParty {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageErrorStartupDisable3rdParty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please, disable automatic backups..
+        /// </summary>
+        public static string SaasTariffsPageErrorStartupDisableBackup {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageErrorStartupDisableBackup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please, disable DNS in the Portal settings..
+        /// </summary>
+        public static string SaasTariffsPageErrorStartupDisableDNS {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageErrorStartupDisableDNS", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please, disable LDAP..
+        /// </summary>
+        public static string SaasTariffsPageErrorStartupDisableLdap {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageErrorStartupDisableLdap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please, disconnect all social networks..
+        /// </summary>
+        public static string SaasTariffsPageErrorStartupDisableSocialNetworks {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageErrorStartupDisableSocialNetworks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please, disable SSO..
+        /// </summary>
+        public static string SaasTariffsPageErrorStartupDisableSso {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageErrorStartupDisableSso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Whitelabel settings should be set by default..
+        /// </summary>
+        public static string SaasTariffsPageErrorStartupDisableWhitelabel {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageErrorStartupDisableWhitelabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The number of guests should not exceed {0}..
+        /// </summary>
+        public static string SaasTariffsPageErrorStartupGuestsCountExceeded {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageErrorStartupGuestsCountExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The used storage size should not exceed {0}..
+        /// </summary>
+        public static string SaasTariffsPageErrorStartupStorageSizeExceeded {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageErrorStartupStorageSizeExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only the trial tariff can be changed to the startup tariff..
+        /// </summary>
+        public static string SaasTariffsPageErrorStartupTariffNotAvailable {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageErrorStartupTariffNotAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The startup tariff not found..
+        /// </summary>
+        public static string SaasTariffsPageErrorStartupTariffNotFound {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageErrorStartupTariffNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The number of active users should not exceed {0}..
+        /// </summary>
+        public static string SaasTariffsPageErrorStartupUsersCountExceeded {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageErrorStartupUsersCountExceeded", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Data backups &amp; recovery.
+        /// </summary>
+        public static string SaasTariffsPageFeature_autobackup {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageFeature_autobackup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LDAP.
+        /// </summary>
+        public static string SaasTariffsPageFeature_ldap {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageFeature_ldap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to SSO.
+        /// </summary>
+        public static string SaasTariffsPageFeature_sso {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageFeature_sso", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pro integrations: Twilio, DocuSign.
+        /// </summary>
+        public static string SaasTariffsPageFeature_thirdparty {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageFeature_thirdparty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Branding &amp; customization.
+        /// </summary>
+        public static string SaasTariffsPageFeature_whitelabel {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageFeature_whitelabel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You are using a plan for nonprofit organization..
+        /// </summary>
+        public static string SaasTariffsPageNonProfitTariffPlanHeader {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageNonProfitTariffPlanHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to per user/mo.
+        /// </summary>
+        public static string SaasTariffsPagePricePerUserPerMonthHeader {
+            get {
+                return ResourceManager.GetString("SaasTariffsPagePricePerUserPerMonthHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to To prolong the term automatically, please make sure the Recurring Payment checkbox in your Avangate account is on..
+        /// </summary>
+        public static string SaasTariffsPageProlongableInfoText {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageProlongableInfoText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Prolong.
+        /// </summary>
+        public static string SaasTariffsPageProlongButtonText {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageProlongButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Recurring payments are on.
+        /// </summary>
+        public static string SaasTariffsPageRecurringButtonText {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageRecurringButtonText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You’re using free Startup plan.
+        /// </summary>
+        public static string SaasTariffsPageStartupTariffPlanHeader {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageStartupTariffPlanHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Added users: {0}{1}.
+        /// </summary>
+        public static string SaasTariffsPageStatisticsAddedUsers {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageStatisticsAddedUsers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Storage space used: {0}/{1}.
+        /// </summary>
+        public static string SaasTariffsPageStatisticsUsedStorageSpace {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageStatisticsUsedStorageSpace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose the plan that suits your team.
+        /// </summary>
+        public static string SaasTariffsPageTariffPlanChooseHeader {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageTariffPlanChooseHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Free days left {0}.
+        /// </summary>
+        public static string SaasTariffsPageTariffPlanDaysLeft {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageTariffPlanDaysLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to From {0} per user/month.
+        /// </summary>
+        public static string SaasTariffsPageTariffPlanMinPriceHeader {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageTariffPlanMinPriceHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Re-activate business plan?.
+        /// </summary>
+        public static string SaasTariffsPageTariffPlanReactivateHeader {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageTariffPlanReactivateHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Renew subscription to ONLYOFFICE Business cloud.
+        /// </summary>
+        public static string SaasTariffsPageTariffPlanRenewHeader {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageTariffPlanRenewHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your trial for ONLYOFFICE Business cloud has expired.
+        /// </summary>
+        public static string SaasTariffsPageTrialExpiredTariffPlanHeader {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageTrialExpiredTariffPlanHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to You have 30 days of Business cloud for free.
+        /// </summary>
+        public static string SaasTariffsPageTrialTariffPlanHeader {
+            get {
+                return ResourceManager.GetString("SaasTariffsPageTrialTariffPlanHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Asia Pacific (Singapore).
         /// </summary>
         public static string SgServerRegion {

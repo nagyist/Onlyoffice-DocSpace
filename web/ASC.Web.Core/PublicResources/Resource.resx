@@ -769,4 +769,121 @@
   <data name="WhatsNewSubscriptionName" xml:space="preserve">
     <value>What's New</value>
   </data>
+  <data name="SaasTariffsPageAutorenewInfoText" xml:space="preserve">
+    <value>To cancel Recurring Payments, please, go to your Avangate account.</value>
+  </data>
+  <data name="SaasTariffsPageBusinessExpiredTariffPlanHeader" xml:space="preserve">
+    <value>Your Business plan has expired</value>
+  </data>
+  <data name="SaasTariffsPageBusinessTariffPlanHeader" xml:space="preserve">
+    <value>You’re using ONLYOFFICE Business cloud</value>
+  </data>
+  <data name="SaasTariffsPageBuyButtonText" xml:space="preserve">
+    <value>Buy now</value>
+  </data>
+  <data name="SaasTariffsPageDisable3YearInfoText" xml:space="preserve">
+    <value>The pricing plan is not available until the end of the 3 year pricing plan.</value>
+  </data>
+  <data name="SaasTariffsPageDisableYearInfoText" xml:space="preserve">
+    <value>The pricing plan is not available until the end of the paid year.</value>
+  </data>
+  <data name="SaasTariffsPageErrorStartupAdminsCountExceeded" xml:space="preserve">
+    <value>The number of admins should not exceed {0}.</value>
+  </data>
+  <data name="SaasTariffsPageErrorStartupDisable3rdParty" xml:space="preserve">
+    <value>Please, disable all 3rd party services.</value>
+  </data>
+  <data name="SaasTariffsPageErrorStartupDisableBackup" xml:space="preserve">
+    <value>Please, disable automatic backups.</value>
+  </data>
+  <data name="SaasTariffsPageErrorStartupDisableDNS" xml:space="preserve">
+    <value>Please, disable DNS in the Portal settings.</value>
+  </data>
+  <data name="SaasTariffsPageErrorStartupDisableLdap" xml:space="preserve">
+    <value>Please, disable LDAP.</value>
+  </data>
+  <data name="SaasTariffsPageErrorStartupDisableSocialNetworks" xml:space="preserve">
+    <value>Please, disconnect all social networks.</value>
+  </data>
+  <data name="SaasTariffsPageErrorStartupDisableSso" xml:space="preserve">
+    <value>Please, disable SSO.</value>
+  </data>
+  <data name="SaasTariffsPageErrorStartupDisableWhitelabel" xml:space="preserve">
+    <value>Whitelabel settings should be set by default.</value>
+  </data>
+  <data name="SaasTariffsPageErrorStartupGuestsCountExceeded" xml:space="preserve">
+    <value>The number of guests should not exceed {0}.</value>
+  </data>
+  <data name="SaasTariffsPageErrorStartupStorageSizeExceeded" xml:space="preserve">
+    <value>The used storage size should not exceed {0}.</value>
+  </data>
+  <data name="SaasTariffsPageErrorStartupTariffNotAvailable" xml:space="preserve">
+    <value>Only the trial tariff can be changed to the startup tariff.</value>
+  </data>
+  <data name="SaasTariffsPageErrorStartupTariffNotFound" xml:space="preserve">
+    <value>The startup tariff not found.</value>
+  </data>
+  <data name="SaasTariffsPageErrorStartupUsersCountExceeded" xml:space="preserve">
+    <value>The number of active users should not exceed {0}.</value>
+  </data>
+  <data name="SaasTariffsPageNonProfitTariffPlanHeader" xml:space="preserve">
+    <value>You are using a plan for nonprofit organization.</value>
+  </data>
+  <data name="SaasTariffsPagePricePerUserPerMonthHeader" xml:space="preserve">
+    <value>per user/mo</value>
+  </data>
+  <data name="SaasTariffsPageProlongableInfoText" xml:space="preserve">
+    <value>To prolong the term automatically, please make sure the Recurring Payment checkbox in your Avangate account is on.</value>
+  </data>
+  <data name="SaasTariffsPageProlongButtonText" xml:space="preserve">
+    <value>Prolong</value>
+  </data>
+  <data name="SaasTariffsPageRecurringButtonText" xml:space="preserve">
+    <value>Recurring payments are on</value>
+  </data>
+  <data name="SaasTariffsPageStartupTariffPlanHeader" xml:space="preserve">
+    <value>You’re using free Startup plan</value>
+  </data>
+  <data name="SaasTariffsPageStatisticsAddedUsers" xml:space="preserve">
+    <value>Added users: {0}{1}</value>
+  </data>
+  <data name="SaasTariffsPageStatisticsUsedStorageSpace" xml:space="preserve">
+    <value>Storage space used: {0}/{1}</value>
+  </data>
+  <data name="SaasTariffsPageTariffPlanChooseHeader" xml:space="preserve">
+    <value>Choose the plan that suits your team</value>
+  </data>
+  <data name="SaasTariffsPageTariffPlanDaysLeft" xml:space="preserve">
+    <value>Free days left {0}</value>
+  </data>
+  <data name="SaasTariffsPageTariffPlanMinPriceHeader" xml:space="preserve">
+    <value>From {0} per user/month</value>
+  </data>
+  <data name="SaasTariffsPageTariffPlanReactivateHeader" xml:space="preserve">
+    <value>Re-activate business plan?</value>
+  </data>
+  <data name="SaasTariffsPageTariffPlanRenewHeader" xml:space="preserve">
+    <value>Renew subscription to ONLYOFFICE Business cloud</value>
+  </data>
+  <data name="SaasTariffsPageTrialExpiredTariffPlanHeader" xml:space="preserve">
+    <value>Your trial for ONLYOFFICE Business cloud has expired</value>
+  </data>
+  <data name="SaasTariffsPageTrialTariffPlanHeader" xml:space="preserve">
+    <value>You have 30 days of Business cloud for free</value>
+  </data>
+  <data name="SaasTariffsPageFeature_autobackup" xml:space="preserve">
+    <value>Data backups &amp; recovery</value>
+  </data>
+  <data name="SaasTariffsPageFeature_ldap" xml:space="preserve">
+    <value>LDAP</value>
+  </data>
+  <data name="SaasTariffsPageFeature_sso" xml:space="preserve">
+    <value>SSO</value>
+  </data>
+  <data name="SaasTariffsPageFeature_thirdparty" xml:space="preserve">
+    <value>Pro integrations: Twilio, DocuSign</value>
+  </data>
+  <data name="SaasTariffsPageFeature_whitelabel" xml:space="preserve">
+    <value>Branding &amp; customization</value>
+  </data>
 </root>

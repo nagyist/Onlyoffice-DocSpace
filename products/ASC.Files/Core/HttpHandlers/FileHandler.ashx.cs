@@ -79,6 +79,8 @@ public class FileHandlerService
     private readonly SocketManager _socketManager;
     private readonly ILogger<FileHandlerService> _logger;
     private readonly IHttpClientFactory _clientFactory;
+    private readonly FileUploader _fileUploader;
+    private readonly CommonLinkUtility _commonLinkUtility;
 
     public FileHandlerService(
         FilesLinkUtility filesLinkUtility,
@@ -109,7 +111,9 @@ public class FileHandlerService
         CompressToArchive compressToArchive,
         InstanceCrypto instanceCrypto,
         IHttpClientFactory clientFactory,
-        ThumbnailSettings thumbnailSettings)
+        ThumbnailSettings thumbnailSettings,
+        FileUploader fileUploader,
+        CommonLinkUtility commonLinkUtility)
     {
         _filesLinkUtility = filesLinkUtility;
         _tenantExtra = tenantExtra;
@@ -140,6 +144,8 @@ public class FileHandlerService
         _logger = logger;
         _clientFactory = clientFactory;
         this._thumbnailSettings = thumbnailSettings;
+        _fileUploader = fileUploader;
+        _commonLinkUtility = commonLinkUtility;
     }
 
     public Task Invoke(HttpContext context)
@@ -189,6 +195,9 @@ public class FileHandlerService
                     break;
                 case "thumb":
                     await ThumbnailFile(context).ConfigureAwait(false);
+                    break;
+                case "upload":
+                    await UploadFile(context).ConfigureAwait(false);
                     break;
                 case "track":
                     await TrackFile(context).ConfigureAwait(false);
@@ -1416,6 +1425,47 @@ public class FileHandlerService
         }
 
         context.Response.Redirect(urlRedirect);
+    }
+
+    private async Task UploadFile(HttpContext context)
+    {
+        if (!_securityContext.IsAuthenticated)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
+            return;
+        }
+
+        try
+        {
+            var fileName = "file" + MimeMapping.GetExtention(new ContentType(context.Request.ContentType).MediaType);
+            var contentDisposition = new ContentDisposition(context.Request.Headers["Content-Disposition"]);
+            if (contentDisposition != null)
+            {
+                fileName = contentDisposition.FileName;
+            }
+
+            File<int> file;
+            using (var stream = new MemoryStream())
+            {
+                await context.Request.Body.CopyToAsync(stream);
+
+                file = await _fileUploader.ExecAsync(_globalFolderHelper.FolderMy, fileName, stream.Length, stream, true, true);
+            }
+
+            context.Response.ContentType = "application/json";
+
+            var response = string.Format("{{\"id\": \"{0}\", \"url\": \"{1}\"}}",
+                file.Id,
+                _commonLinkUtility.GetFullAbsolutePath(_filesLinkUtility.GetFileWebEditorUrl(file.Id)));
+
+            await context.Response.WriteAsync(response);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "FilesHandler UploadFile error");
+
+            throw new HttpException((int)HttpStatusCode.BadRequest, ex.Message);
+        }
     }
 
     private async Task TrackFile(HttpContext context)

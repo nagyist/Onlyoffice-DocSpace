@@ -331,6 +331,11 @@ public class FilesLinkUtility
         return url;
     }
 
+    public string GetFolderExternalUrl(object folderId)
+    {
+        return $"{FilesBaseVirtualPath}filter?folder={folderId}";
+    }
+
     public string GetFileWebPreviewUrl(FileUtility fileUtility, string fileTitle, object fileId, int fileVersion = 0)
     {
         if (fileUtility.CanImageView(fileTitle) || fileUtility.CanMediaView(fileTitle))

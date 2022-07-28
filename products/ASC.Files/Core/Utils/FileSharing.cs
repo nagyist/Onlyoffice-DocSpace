@@ -474,19 +474,19 @@ public class FileSharing
             result.Add(w);
         }
 
-        if (entry.FileEntryType == FileEntryType.File && result.All(w => w.SubjectId != FileConstant.ShareLinkId)
-            && entry.FileEntryType == FileEntryType.File
-            && !((File<T>)entry).Encrypted)
+        if (result.All(w => w.SubjectId != FileConstant.ShareLinkId) && (entry is File<T> { Encrypted: false }) || entry is Folder<T>)
         {
+            var link = entry is File<T> file ? _fileShareLink.GetLink(file) : _fileShareLink.GetLink((Folder<T>)entry);
+            
             var w = new AceWrapper
             {
                 SubjectId = FileConstant.ShareLinkId,
-                Link = _filesSettingsHelper.ExternalShare ? _fileShareLink.GetLink((File<T>)entry) : string.Empty,
+                Link = _filesSettingsHelper.ExternalShare ? link : string.Empty,
                 SubjectGroup = true,
                 Share = linkAccess,
                 Owner = false
             };
-
+        
             result.Add(w);
         }
 

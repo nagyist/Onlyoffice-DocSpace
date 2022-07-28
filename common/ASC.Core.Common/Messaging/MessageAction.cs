@@ -433,6 +433,7 @@ public enum MessageAction
     FolderMovedToTrash = 5026,
     FolderDeleted = 5027,
     FolderRemovedFromList = 5059,
+    FolderExternalLinkAccessUpdated = 5082,
 
     FolderDownloaded = 5057,
 

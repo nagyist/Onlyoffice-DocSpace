@@ -70,6 +70,11 @@ public class FileShareLink
         return _baseCommonLinkUtility.GetFullAbsolutePath(url);
     }
 
+    public string GetLink<T>(Folder<T> folder)
+    {
+        return _baseCommonLinkUtility.GetFullAbsolutePath(_filesLinkUtility.GetFolderExternalUrl(folder.Id));
+    }
+
     public string CreateKey<T>(T fileId)
     {
         return Signature.Create(fileId, _global.GetDocDbKey());

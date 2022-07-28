@@ -2421,37 +2421,20 @@ public class FileStorageService<T> //: IFileStorageService
         }
     }
 
-    public async Task<bool> SetAceLinkAsync(T fileId, FileShare share)
+    public async Task<bool> SetFolderShareLinkAsync(T folderId, FileShare share)
     {
-        FileEntry<T> file;
+        var folderDao = GetFolderDao();
+        var folder = await folderDao.GetFolderAsync(folderId);
+
+        return await SetAceLinkAsync(folder, folder.FileEntryType, share);
+    }
+
+    public async Task<bool> SetFileShareLinkAsync(T fileId, FileShare share)
+    {
         var fileDao = GetFileDao();
-        file = await fileDao.GetFileAsync(fileId);
-        var aces = new List<AceWrapper>
-            {
-                new AceWrapper
-                {
-                    Share = share,
-                    SubjectId = FileConstant.ShareLinkId,
-                    SubjectGroup = true,
-                }
-            };
+        var file = await fileDao.GetFileAsync(fileId);
 
-        try
-        {
-            var changed = await _fileSharingAceHelper.SetAceObjectAsync(aces, file, false, null, null);
-            if (changed)
-            {
-                _filesMessageService.Send(file, GetHttpHeaders(), MessageAction.FileExternalLinkAccessUpdated, file.Title, GetAccessString(share));
-            }
-        }
-        catch (Exception e)
-        {
-            throw GenerateException(e);
-        }
-
-        var securityDao = GetSecurityDao();
-
-        return await securityDao.IsSharedAsync(file.Id, FileEntryType.File);
+        return await SetAceLinkAsync(file, file.FileEntryType, share);
     }
 
     public Task<List<MentionWrapper>> SharedUsersAsync(T fileId)
@@ -2936,6 +2919,38 @@ public class FileStorageService<T> //: IFileStorageService
     public string GetHelpCenter()
     {
         return string.Empty; //TODO: Studio.UserControls.Common.HelpCenter.HelpCenter.RenderControlToString();
+    }
+    
+    private async Task<bool> SetAceLinkAsync(FileEntry<T> entry, FileEntryType entryType, FileShare share)
+    {
+        var aces = new List<AceWrapper>
+        {
+            new()
+            {
+                Share = share,
+                SubjectId = FileConstant.ShareLinkId,
+                SubjectGroup = true,
+            }
+        };
+
+        try
+        {
+            var changed = await _fileSharingAceHelper.SetAceObjectAsync(aces, entry, false, null, null);
+            if (changed)
+            {
+                _filesMessageService.Send(entry, GetHttpHeaders(), 
+                    entryType == FileEntryType.File ? MessageAction.FileExternalLinkAccessUpdated : MessageAction.FolderExternalLinkAccessUpdated, 
+                    entry.Title, GetAccessString(share));
+            }
+        }
+        catch (Exception e)
+        {
+            throw GenerateException(e);
+        }
+
+        var securityDao = GetSecurityDao();
+
+        return await securityDao.IsSharedAsync(entry.Id, entryType);
     }
 
     private IFolderDao<T> GetFolderDao()

@@ -26,7 +26,7 @@
 
 namespace ASC.Files.Core.ApiModels.RequestDto;
 
-public class GenerateSharedLinkRequestDto
+public class AccessLinkRequestDto
 {
     public FileShare Share { get; set; }
 }

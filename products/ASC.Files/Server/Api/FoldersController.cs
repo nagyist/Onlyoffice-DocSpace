@@ -92,6 +92,7 @@ public abstract class FoldersController<T> : ApiControllerBase
     /// <param name="userIdOrGroupId" optional="true">User or group ID</param>
     /// <param name="filterType" optional="true" remark="Allowed values: None (0), FilesOnly (1), FoldersOnly (2), DocumentsOnly (3), PresentationsOnly (4), SpreadsheetsOnly (5) or ImagesOnly (7)">Filter type</param>
     /// <returns>Folder contents</returns>
+    [AllowAnonymous]
     [HttpGet("{folderId}")]
     public async Task<FolderContentDto<T>> GetFolderAsync(T folderId, Guid userIdOrGroupId, FilterType filterType, bool searchInContent, bool withsubfolders)
     {

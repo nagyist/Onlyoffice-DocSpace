@@ -2426,6 +2426,9 @@ public class FileStorageService<T> //: IFileStorageService
         var folderDao = GetFolderDao();
         var folder = await folderDao.GetFolderAsync(folderId);
 
+        ErrorIf(folder == null, FilesCommonResource.ErrorMassage_FolderNotFound);
+        ErrorIf(DocSpaceHelper.IsRoom(folder.FolderType) || folder.RootFolderType == FolderType.Privacy, FilesCommonResource.ErrorMassage_SecurityException);
+
         return await SetAceLinkAsync(folder, folder.FileEntryType, share);
     }
 

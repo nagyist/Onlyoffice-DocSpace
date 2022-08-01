@@ -503,7 +503,7 @@ public class FileSecurity : IFileSecurity
             List<Guid> subjects = null;
             foreach (var e in entries.Where(filter))
             {
-                if (!_authManager.GetAccountByID(_tenantManager.GetCurrentTenant().Id, userId).IsAuthenticated && userId != FileConstant.ShareLinkId)
+                if (!_authManager.GetAccountByID(_tenantManager.GetCurrentTenant().Id, userId).IsAuthenticated && userId != FileConstant.ShareLinkId && action != FilesSecurityActions.Read)
                 {
                     continue;
                 }
@@ -678,7 +678,7 @@ public class FileSecurity : IFileSecurity
 
                 if (subjects == null)
                 {
-                    subjects = GetUserSubjects(userId);
+                    subjects = GetUserSubjects(userId, true);
                     if (shares == null)
                     {
                         shares = await GetSharesAsync(entries);
@@ -687,7 +687,7 @@ public class FileSecurity : IFileSecurity
                     shares = shares
                         .Join(subjects, r => r.Subject, s => s, (r, s) => r)
                         .ToList();
-                }
+                } 
 
                 FileShareRecord ace;
                 if (e.FileEntryType == FileEntryType.File)
@@ -1383,7 +1383,7 @@ public class FileSecurity : IFileSecurity
         return _daoFactory.GetSecurityDao<T>().RemoveSubjectAsync(subject);
     }
 
-    public List<Guid> GetUserSubjects(Guid userId)
+    public List<Guid> GetUserSubjects(Guid userId, bool withLink = false)
     {
         // priority order
         // User, Departments, admin, everyone
@@ -1401,6 +1401,11 @@ public class FileSecurity : IFileSecurity
         }
 
         result.Add(Constants.GroupEveryone.ID);
+
+        if (withLink)
+        {
+            result.Add(FileConstant.ShareLinkId);
+        }
 
         return result;
     }

@@ -474,7 +474,7 @@ public class FileSharing
             result.Add(w);
         }
 
-        if (result.All(w => w.SubjectId != FileConstant.ShareLinkId) && (entry is File<T> { Encrypted: false }) || entry is Folder<T>)
+        if (result.All(w => w.SubjectId != FileConstant.ShareLinkId) && (entry is File<T> { Encrypted: false }) || (entry is Folder<T> folder && !DocSpaceHelper.IsRoom(folder.FolderType)))
         {
             var link = entry is File<T> file ? _fileShareLink.GetLink(file) : _fileShareLink.GetLink((Folder<T>)entry);
             

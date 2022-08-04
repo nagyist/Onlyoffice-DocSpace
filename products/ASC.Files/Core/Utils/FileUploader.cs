@@ -134,8 +134,9 @@ public class FileUploader
 
         var fileDao = _daoFactory.GetFileDao<T>();
         var file = await fileDao.GetFileAsync(folderId, fileName);
+        var linkAccess = await _fileSecurity.CanEditAsync(file, FileConstant.ShareLinkId);
 
-        if (updateIfExists && await CanEditAsync(file))
+        if (updateIfExists && (await CanEditAsync(file) || linkAccess))
         {
             file.Title = fileName;
             file.ConvertedType = null;

@@ -263,8 +263,10 @@ public class FileStorageService<T> //: IFileStorageService
             throw GenerateException(e);
         }
 
+        var canReadByLink = await _fileSecurity.CanReadAsync(parent, FileConstant.ShareLinkId);
+        var canRead = await _fileSecurity.CanReadAsync(parent);
         ErrorIf(parent == null, FilesCommonResource.ErrorMassage_FolderNotFound);
-        ErrorIf(!await _fileSecurity.CanReadAsync(parent), FilesCommonResource.ErrorMassage_SecurityException_ViewFolder);
+        ErrorIf(!canReadByLink && !canRead, FilesCommonResource.ErrorMassage_SecurityException_ViewFolder);
         ErrorIf(parent.RootFolderType == FolderType.TRASH && !Equals(parent.Id, _globalFolderHelper.FolderTrash), FilesCommonResource.ErrorMassage_ViewTrashItem);
 
         if (orderBy != null)
@@ -286,7 +288,7 @@ public class FileStorageService<T> //: IFileStorageService
         try
         {
             (entries, total) = await _entryManager.GetEntriesAsync(parent, from, count, filterType, subjectGroup, subjectId, searchText, searchInContent, withSubfolders, orderBy, searchArea, 
-                withoutTags, tagNames, withoutMe);
+                withoutTags, tagNames, withoutMe, canReadByLink && !canRead ? canReadByLink : false);
         }
         catch (Exception e)
         {
@@ -510,8 +512,9 @@ public class FileStorageService<T> //: IFileStorageService
         var parent = await folderDao.GetFolderAsync(parentId);
         var isRoom = DocSpaceHelper.IsRoom(folderType);
 
+        var canCreateByLink = await _fileSecurity.CanCreateAsync(parent, FileConstant.ShareLinkId);
         ErrorIf(parent == null, FilesCommonResource.ErrorMassage_FolderNotFound);
-        ErrorIf(!await _fileSecurity.CanCreateAsync(parent), FilesCommonResource.ErrorMassage_SecurityException_Create);
+        ErrorIf(!await _fileSecurity.CanCreateAsync(parent) && !canCreateByLink, FilesCommonResource.ErrorMassage_SecurityException_Create);
         ErrorIf(parent.RootFolderType == FolderType.Archive, FilesCommonResource.ErrorMessage_UpdateArchivedRoom);
         ErrorIf(parent.FolderType == FolderType.Archive, FilesCommonResource.ErrorMassage_SecurityException);
         ErrorIf(!isRoom && parent.FolderType == FolderType.VirtualRooms, FilesCommonResource.ErrorMassage_SecurityException_Create);
@@ -522,6 +525,12 @@ public class FileStorageService<T> //: IFileStorageService
             newFolder.Title = title;
             newFolder.ParentId = parent.Id;
             newFolder.FolderType = folderType;
+
+            if (!_authContext.IsAuthenticated && canCreateByLink)
+            {
+                newFolder.CreateBy = _authContext.CurrentAccount.ID;
+                newFolder.ModifiedBy = _authContext.CurrentAccount.ID;
+            }
 
             var folderId = await folderDao.SaveFolderAsync(newFolder);
             var folder = await folderDao.GetFolderAsync(folderId);
@@ -550,11 +559,10 @@ public class FileStorageService<T> //: IFileStorageService
         var folder = await folderDao.GetFolderAsync(folderId);
         ErrorIf(folder == null, FilesCommonResource.ErrorMassage_FolderNotFound);
 
-        var canEdit = (folder.FolderType == FolderType.FillingFormsRoom || folder.FolderType == FolderType.EditingRoom
-            || folder.FolderType == FolderType.ReviewRoom || folder.FolderType == FolderType.ReadOnlyRoom || folder.FolderType == FolderType.CustomRoom)
-            ? await _fileSecurity.CanEditRoomAsync(folder) : await _fileSecurity.CanRenameAsync(folder);
+        var canRenameByLink = DocSpaceHelper.IsRoom(folder.FolderType) ? false : await _fileSecurity.CanRenameAsync(folder, FileConstant.ShareLinkId);
+        var canEdit = DocSpaceHelper.IsRoom(folder.FolderType) ? await _fileSecurity.CanEditRoomAsync(folder) : await _fileSecurity.CanRenameAsync(folder);
 
-        ErrorIf(!canEdit, FilesCommonResource.ErrorMassage_SecurityException_RenameFolder);
+        ErrorIf(!canEdit && !canRenameByLink, FilesCommonResource.ErrorMassage_SecurityException_RenameFolder);
         if (!canEdit && _userManager.GetUsers(_authContext.CurrentAccount.ID).IsVisitor(_userManager))
         {
             throw new SecurityException(FilesCommonResource.ErrorMassage_SecurityException_RenameFolder);
@@ -715,10 +723,13 @@ public class FileStorageService<T> //: IFileStorageService
         if (!EqualityComparer<T>.Default.Equals(fileWrapper.ParentId, default(T)))
         {
             folder = await folderDao.GetFolderAsync(fileWrapper.ParentId);
+            var canCreateByLink = await _fileSecurity.CanCreateAsync(folder, FileConstant.ShareLinkId);
             var canCreate = await _fileSecurity.CanCreateAsync(folder) && folder.FolderType != FolderType.VirtualRooms
                 && folder.FolderType != FolderType.Archive;
 
-            if (!canCreate)
+            ErrorIf(!_authContext.IsAuthenticated && !canCreateByLink, FilesCommonResource.ErrorMassage_SecurityException_Create);
+
+            if (!canCreate && !canCreateByLink)
             {
                 folder = null;
             }
@@ -1079,7 +1090,7 @@ public class FileStorageService<T> //: IFileStorageService
     {
         var fileDao = GetFileDao();
         var file = await fileDao.GetFileAsync(fileId);
-        ErrorIf(!await _fileSecurity.CanReadAsync(file), FilesCommonResource.ErrorMassage_SecurityException_ReadFile);
+        ErrorIf(!await _fileSecurity.CanReadAsync(file) && !await _fileSecurity.CanReadAsync(file, FileConstant.ShareLinkId), FilesCommonResource.ErrorMassage_SecurityException_ReadFile);
 
         var result = await fileDao.GetFileHistoryAsync(fileId).ToListAsync();
 

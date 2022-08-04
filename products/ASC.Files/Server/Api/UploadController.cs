@@ -104,6 +104,7 @@ public abstract class UploadController<T> : ApiControllerBase
     /// <param name="keepConvertStatus" visible="false">Keep status conversation after finishing</param>
     /// <category>Uploads</category>
     /// <returns></returns>
+    [AllowAnonymous]
     [HttpPost("{folderId}/insert", Order = 1)]
     public Task<FileDto<T>> InsertFileAsync(T folderId, [FromForm][ModelBinder(BinderType = typeof(InsertFileModelBinder))] InsertFileRequestDto inDto)
     {
@@ -133,6 +134,7 @@ public abstract class UploadController<T> : ApiControllerBase
     /// <param name="storeOriginalFileFlag" visible="false">If True, upload documents in original formats as well</param>
     /// <param name="keepConvertStatus" visible="false">Keep status conversation after finishing</param>
     /// <returns>Uploaded file</returns>
+    [AllowAnonymous]
     [HttpPost("{folderId}/upload", Order = 1)]
     public Task<object> UploadFileAsync(T folderId, [ModelBinder(BinderType = typeof(UploadModelBinder))] UploadRequestDto inDto)
     {

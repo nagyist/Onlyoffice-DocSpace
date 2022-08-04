@@ -24,8 +24,6 @@
 // content are licensed under the terms of the Creative Commons Attribution-ShareAlike 4.0
 // International. See the License terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
 
-using FileShare = ASC.Files.Core.Security.FileShare;
-
 namespace ASC.Files.Api;
 
 [ConstraintRoute("int")]
@@ -90,6 +88,7 @@ public abstract class SecurityController<T> : ApiControllerBase
     /// <param name="folderId">Folder ID</param>
     /// <category>Sharing</category>
     /// <returns>Shared folder information</returns>
+    [AllowAnonymous]
     [HttpGet("folder/{folderId}/share")]
     public Task<IEnumerable<FileShareDto>> GetFolderSecurityInfoAsync(T folderId)
     {

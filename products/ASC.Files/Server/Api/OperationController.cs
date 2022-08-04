@@ -152,6 +152,7 @@ public class OperationController : ApiControllerBase
     /// <param name="conflictResolveType">Overwriting behavior: skip(0), overwrite(1) or duplicate(2)</param>
     /// <param name="deleteAfter">Delete after finished</param>
     /// <returns>Operation result</returns>
+    [AllowAnonymous]
     [HttpPut("fileops/move")]
     public Task<IEnumerable<FileOperationDto>> MoveBatchItems(BatchRequestDto inDto)
     {

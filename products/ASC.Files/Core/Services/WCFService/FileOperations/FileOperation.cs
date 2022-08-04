@@ -84,8 +84,10 @@ public abstract class FileOperation : DistributedTask
     {
         var progress = Total != 0 ? 100 * _processed / Total : 0;
 
+        var principal = _principal != null && _principal.Identity.IsAuthenticated ? _principal : Thread.CurrentPrincipal ?? ASC.Core.Configuration.Constants.Anonymous;
+
         _taskInfo[OpType] = (int)OperationType;
-        _taskInfo[Owner] = ((IAccount)(_principal ?? Thread.CurrentPrincipal).Identity).ID.ToString();
+        _taskInfo[Owner] = ((IAccount)principal.Identity).ID.ToString();
         _taskInfo[Progress] = progress < 100 ? progress : 100;
         _taskInfo[Res] = Result;
         _taskInfo[Err] = Error;

@@ -89,6 +89,7 @@ public abstract class FilesController<T> : ApiControllerBase
     /// <param name="continueVersion">Mark as version or revision</param>
     /// <category>Files</category>
     /// <returns></returns>
+    [AllowAnonymous]
     [HttpPut("file/{fileId}/history")]
     public Task<IEnumerable<FileDto<T>>> ChangeHistoryAsync(T fileId, ChangeHistoryRequestDto inDto)
     {
@@ -143,6 +144,7 @@ public abstract class FilesController<T> : ApiControllerBase
     /// <param name="title" remark="Allowed values: the file must have one of the following extensions: DOCX, XLSX, PPTX">File title</param>
     /// <remarks>In case the extension for the file title differs from DOCX/XLSX/PPTX and belongs to one of the known text, spreadsheet or presentation formats, it will be changed to DOCX/XLSX/PPTX accordingly. If the file extension is not set or is unknown, the DOCX extension will be added to the file title.</remarks>
     /// <returns>New file info</returns>
+    [AllowAnonymous]
     [HttpPost("{folderId}/file")]
     public Task<FileDto<T>> CreateFileAsync(T folderId, CreateFileRequestDto<JsonElement> inDto)
     {
@@ -228,6 +230,7 @@ public abstract class FilesController<T> : ApiControllerBase
     /// <category>Files</category>
     /// <param name="fileId">File ID</param>
     /// <returns>File information</returns>
+    [AllowAnonymous]
     [HttpGet("file/{fileId}/history")]
     public Task<IEnumerable<FileDto<T>>> GetFileVersionInfoAsync(T fileId)
     {
@@ -281,6 +284,7 @@ public abstract class FilesController<T> : ApiControllerBase
     /// <param name="title">New title</param>
     /// <param name="lastVersion">File last version number</param>
     /// <returns>File info</returns>
+    [AllowAnonymous]
     [HttpPut("file/{fileId}")]
     public Task<FileDto<T>> UpdateFileAsync(T fileId, UpdateFileRequestDto inDto)
     {

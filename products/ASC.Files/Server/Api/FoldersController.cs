@@ -60,6 +60,7 @@ public abstract class FoldersController<T> : ApiControllerBase
     /// <param name="folderId">Parent folder ID</param>
     /// <param name="title">Title of new folder</param>
     /// <returns>New folder contents</returns>
+    [AllowAnonymous]
     [HttpPost("folder/{folderId}")]
     public Task<FolderDto<T>> CreateFolderAsync(T folderId, CreateFolderRequestDto inDto)
     {
@@ -147,6 +148,7 @@ public abstract class FoldersController<T> : ApiControllerBase
     /// <param name="folderId">Folder ID</param>
     /// <param name="title">New title</param>
     /// <returns>Folder contents</returns>
+    [AllowAnonymous]
     [HttpPut("folder/{folderId}")]
     public Task<FolderDto<T>> RenameFolderAsync(T folderId, CreateFolderRequestDto inDto)
     {

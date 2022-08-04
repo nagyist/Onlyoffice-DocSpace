@@ -332,8 +332,7 @@ public class FileSharingHelper
             entry != null
             && ((entry.RootFolderType == FolderType.COMMON && _global.IsAdministrator)
             || (entry.RootFolderType == FolderType.VirtualRooms && _global.IsAdministrator)
-            || (folder != null && (folder.FolderType == FolderType.FillingFormsRoom || folder.FolderType == FolderType.EditingRoom || folder.FolderType == FolderType.ReviewRoom ||
-                folder.FolderType == FolderType.ReadOnlyRoom || folder.FolderType == FolderType.CustomRoom) && await _fileSecurity.CanEditRoomAsync(entry))
+            || (folder != null && DocSpaceHelper.IsRoom(folder.FolderType) && await _fileSecurity.CanEditRoomAsync(entry))
                 || !_userManager.GetUsers(_authContext.CurrentAccount.ID).IsVisitor(_userManager)
                     && (entry.RootFolderType == FolderType.USER
                         && (Equals(entry.RootId, _globalFolderHelper.FolderMy) || await _fileSecurity.CanShare(entry))
@@ -553,11 +552,6 @@ public class FileSharing
 
     public async Task<List<AceWrapper>> GetSharedInfoAsync<T>(IEnumerable<T> fileIds, IEnumerable<T> folderIds, bool invite = false)
     {
-        if (!_authContext.IsAuthenticated)
-        {
-            throw new InvalidOperationException(FilesCommonResource.ErrorMassage_SecurityException);
-        }
-
         var result = new List<AceWrapper>();
 
         var fileDao = _daoFactory.GetFileDao<T>();

@@ -125,7 +125,8 @@ class FileMoveCopyOperation<T> : FileOperation<FileMoveCopyOperationData<T>, T>
 
         if (toFolder.FolderType != FolderType.VirtualRooms && toFolder.FolderType != FolderType.Archive)
         {
-            if (!await FilesSecurity.CanCreateAsync(toFolder))
+            var canCreateByLink = await FilesSecurity.CanCreateAsync(toFolder, FileConstant.ShareLinkId);
+            if (!await FilesSecurity.CanCreateAsync(toFolder) && !canCreateByLink)
             {
                 throw new SecurityException(FilesCommonResource.ErrorMassage_SecurityException_Create);
             }
@@ -219,12 +220,14 @@ class FileMoveCopyOperation<T> : FileOperation<FileMoveCopyOperationData<T>, T>
             var isRoom = DocSpaceHelper.IsRoom(folder.FolderType);
 
             var canEditRoom = await FilesSecurity.CanEditRoomAsync(folder);
+            var canReadByLink = await FilesSecurity.CanReadAsync(folder, FileConstant.ShareLinkId);
+            var canDownloadByLink = await FilesSecurity.CanDownloadAsync(folder, FileConstant.ShareLinkId);
 
             if (folder == null)
             {
                 Error = FilesCommonResource.ErrorMassage_FolderNotFound;
             }
-            else if (!await FilesSecurity.CanReadAsync(folder))
+            else if (!canReadByLink && !await FilesSecurity.CanReadAsync(folder))
             {
                 Error = FilesCommonResource.ErrorMassage_SecurityException_ReadFolder;
             }
@@ -240,7 +243,7 @@ class FileMoveCopyOperation<T> : FileOperation<FileMoveCopyOperationData<T>, T>
             {
                 Error = FilesCommonResource.ErrorMessage_UnarchiveRoom;
             }
-            else if (!await FilesSecurity.CanDownloadAsync(folder))
+            else if (!canDownloadByLink && !await FilesSecurity.CanDownloadAsync(folder))
             {
                 Error = FilesCommonResource.ErrorMassage_SecurityException;
             }
@@ -361,7 +364,7 @@ class FileMoveCopyOperation<T> : FileOperation<FileMoveCopyOperationData<T>, T>
                     }
                     else
                     {
-                        if (!isRoom && !await FilesSecurity.CanDeleteAsync(folder))
+                        if (!isRoom && !await FilesSecurity.CanDeleteAsync(folder) && !canReadByLink)
                         {
                             Error = FilesCommonResource.ErrorMassage_SecurityException_MoveFolder;
                         }
@@ -459,6 +462,8 @@ class FileMoveCopyOperation<T> : FileOperation<FileMoveCopyOperationData<T>, T>
 
             var file = await FileDao.GetFileAsync(fileId);
             var (isError, message) = await WithErrorAsync(scope, new[] { file });
+            var canReadByLink = await FilesSecurity.CanReadAsync(file, FileConstant.ShareLinkId);
+            var canDownloadByLink = await FilesSecurity.CanDownloadAsync(file, FileConstant.ShareLinkId);
 
             if (file == null)
             {
@@ -468,11 +473,11 @@ class FileMoveCopyOperation<T> : FileOperation<FileMoveCopyOperationData<T>, T>
             {
                 Error = FilesCommonResource.ErrorMassage_SecurityException_MoveFile;
             }
-            else if (!await FilesSecurity.CanReadAsync(file))
+            else if (!await FilesSecurity.CanReadAsync(file) && !canReadByLink)
             {
                 Error = FilesCommonResource.ErrorMassage_SecurityException_ReadFile;
             }
-            else if (!await FilesSecurity.CanDownloadAsync(file))
+            else if (!await FilesSecurity.CanDownloadAsync(file) && !canDownloadByLink)
             {
                 Error = FilesCommonResource.ErrorMassage_SecurityException;
             }
@@ -608,13 +613,13 @@ class FileMoveCopyOperation<T> : FileOperation<FileMoveCopyOperationData<T>, T>
 
                                 if (file.ThumbnailStatus == Thumbnail.Created)
                                 {
-                                        foreach (var size in _thumbnailSettings.Sizes)
+                                    foreach (var size in _thumbnailSettings.Sizes)
                                     {
-                                            using (var thumbnail = await FileDao.GetThumbnailAsync(file, size.Width, size.Height))
-                                            {
-                                                await fileDao.SaveThumbnailAsync(newFile, thumbnail, size.Width, size.Height);
-                                            }
+                                        using (var thumbnail = await FileDao.GetThumbnailAsync(file, size.Width, size.Height))
+                                        {
+                                            await fileDao.SaveThumbnailAsync(newFile, thumbnail, size.Width, size.Height);
                                         }
+                                    }
 
                                     newFile.ThumbnailStatus = Thumbnail.Created;
                                 }
@@ -696,7 +701,8 @@ class FileMoveCopyOperation<T> : FileOperation<FileMoveCopyOperationData<T>, T>
         string error = null;
         foreach (var file in files)
         {
-            if (!await FilesSecurity.CanDeleteAsync(file))
+            var canDeleteByLink = !await FilesSecurity.CanDeleteAsync(file, FileConstant.ShareLinkId);
+            if (!await FilesSecurity.CanDeleteAsync(file) && !canDeleteByLink)
             {
                 error = FilesCommonResource.ErrorMassage_SecurityException_MoveFile;
 

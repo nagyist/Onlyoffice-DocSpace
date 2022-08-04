@@ -401,9 +401,19 @@ public class FileSecurity : IFileSecurity
         return (await FilterAsync(entries, FilesSecurityActions.Read, _authContext.CurrentAccount.ID)).Cast<File<T>>();
     }
 
+    public async Task<IEnumerable<File<T>>> FilterReadAsync<T>(IEnumerable<File<T>> entries, Guid subject)
+    {
+        return (await FilterAsync(entries, FilesSecurityActions.Read, subject)).Cast<File<T>>();
+    }
+
     public async Task<IEnumerable<Folder<T>>> FilterReadAsync<T>(IEnumerable<Folder<T>> entries)
     {
         return (await FilterAsync(entries, FilesSecurityActions.Read, _authContext.CurrentAccount.ID)).Cast<Folder<T>>();
+    }
+
+    public async Task<IEnumerable<Folder<T>>> FilterReadAsync<T>(IEnumerable<Folder<T>> entries, Guid subject)
+    {
+        return (await FilterAsync(entries, FilesSecurityActions.Read, subject)).Cast<Folder<T>>();
     }
 
     public async Task<IEnumerable<File<T>>> FilterEditAsync<T>(IEnumerable<File<T>> entries)
@@ -503,7 +513,7 @@ public class FileSecurity : IFileSecurity
             List<Guid> subjects = null;
             foreach (var e in entries.Where(filter))
             {
-                if (!_authManager.GetAccountByID(_tenantManager.GetCurrentTenant().Id, userId).IsAuthenticated && userId != FileConstant.ShareLinkId && action != FilesSecurityActions.Read)
+                if (!_authManager.GetAccountByID(_tenantManager.GetCurrentTenant().Id, userId).IsAuthenticated && userId != FileConstant.ShareLinkId)
                 {
                     continue;
                 }
@@ -678,7 +688,7 @@ public class FileSecurity : IFileSecurity
 
                 if (subjects == null)
                 {
-                    subjects = GetUserSubjects(userId, true);
+                    subjects = GetUserSubjects(userId);
                     if (shares == null)
                     {
                         shares = await GetSharesAsync(entries);
@@ -1383,7 +1393,7 @@ public class FileSecurity : IFileSecurity
         return _daoFactory.GetSecurityDao<T>().RemoveSubjectAsync(subject);
     }
 
-    public List<Guid> GetUserSubjects(Guid userId, bool withLink = false)
+    public List<Guid> GetUserSubjects(Guid userId)
     {
         // priority order
         // User, Departments, admin, everyone
@@ -1401,11 +1411,6 @@ public class FileSecurity : IFileSecurity
         }
 
         result.Add(Constants.GroupEveryone.ID);
-
-        if (withLink)
-        {
-            result.Add(FileConstant.ShareLinkId);
-        }
 
         return result;
     }

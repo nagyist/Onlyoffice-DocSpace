@@ -436,9 +436,19 @@ public class FileSecurity : IFileSecurity
         return (await FilterReadAsync(entries)).Where(CheckDenyDownload).ToList();
     }
 
+    public async Task<IEnumerable<File<T>>> FilterDownloadAsync<T>(IEnumerable<File<T>> entries, Guid subject)
+    {
+        return (await FilterReadAsync(entries, subject)).Where(CheckDenyDownload).ToList();
+    }
+
     public async Task<IEnumerable<Folder<T>>> FilterDownloadAsync<T>(IEnumerable<Folder<T>> entries)
     {
         return (await FilterReadAsync(entries)).Where(CheckDenyDownload).ToList();
+    }
+
+    public async Task<IEnumerable<Folder<T>>> FilterDownloadAsync<T>(IEnumerable<Folder<T>> entries, Guid subject)
+    {
+        return (await FilterReadAsync(entries, subject)).Where(CheckDenyDownload).ToList();
     }
 
     private bool CheckDenyDownload<T>(FileEntry<T> entry)

@@ -1773,8 +1773,6 @@ public class FileStorageService<T> //: IFileStorageService
 
     public List<FileOperationResult> GetTasksStatuses()
     {
-        ErrorIf(!_authContext.IsAuthenticated, FilesCommonResource.ErrorMassage_SecurityException);
-
         return _fileOperationsManager.GetOperationResults(_authContext.CurrentAccount.ID);
     }
 

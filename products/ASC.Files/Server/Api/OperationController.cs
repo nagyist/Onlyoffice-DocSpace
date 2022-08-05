@@ -54,6 +54,7 @@ public class OperationController : ApiControllerBase
     /// <param name="folderIds">Folder ID list</param>
     /// <category>File operations</category>
     /// <returns>Operation result</returns>
+    [AllowAnonymous]
     [HttpPut("fileops/bulkdownload")]
     public Task<IEnumerable<FileOperationDto>> BulkDownload(DownloadRequestDto inDto)
     {
@@ -116,6 +117,7 @@ public class OperationController : ApiControllerBase
     /// <short>Get file operations list</short>
     /// <category>File operations</category>
     /// <returns>Operation result</returns>
+    [AllowAnonymous]
     [HttpGet("fileops")]
     public async Task<IEnumerable<FileOperationDto>> GetOperationStatuses()
     {

@@ -206,12 +206,6 @@ public class FileHandlerService
 
     private async Task BulkDownloadFile(HttpContext context)
     {
-        if (!_securityContext.IsAuthenticated)
-        {
-            context.Response.StatusCode = (int)HttpStatusCode.Forbidden;
-            return;
-        }
-
         var filename = context.Request.Query["filename"]; if (String.IsNullOrEmpty(filename))
         {
             var ext = _compressToArchive.GetExt(context.Request.Query["ext"]);

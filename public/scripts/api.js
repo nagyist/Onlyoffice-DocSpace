@@ -1,6 +1,6 @@
 (function () {
   const defaultConfig = {
-    src: `${window.location.protocol}//${window.location.hostname}:8092`,
+    src: new URL(document.currentScript.src).origin,
     rootPath: "/rooms/personal/",
     width: "100%",
     height: "100%",
@@ -37,7 +37,12 @@
       "fileId",
       "type",
       "editorType",
+      "mode",
     ],
+    events: {
+      onSelectCallback: (e) => console.log("onCloseCallback", e),
+      onCloseCallback: null,
+    },
   };
 
   const getConfigFromParams = () => {
@@ -46,6 +51,7 @@
     if (!src || !src.length) return null;
 
     const searchUrl = src.split("?")[1];
+
     let object = {};
 
     if (searchUrl && searchUrl.length) {
@@ -102,6 +108,11 @@
 
         case "viewer": {
           path = `/doceditor/?fileId=${config.fileId}&type=${config.editorType}&action=view`;
+          break;
+        }
+        case "folderSelector":
+        case "fileSelector": {
+          path = `/integration`;
           break;
         }
 
@@ -168,7 +179,7 @@
             break;
           }
           case "onCallCommand": {
-            this[frameData.commandName].call(this);
+            this[frameData.commandName].call(this, frameData.commandData);
             break;
           }
           default:

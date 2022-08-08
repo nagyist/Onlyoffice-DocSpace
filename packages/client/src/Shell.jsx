@@ -76,6 +76,8 @@ const PreparationPortal = React.lazy(() => import("./pages/PreparationPortal"));
 
 const FormGallery = React.lazy(() => import("./pages/FormGallery"));
 
+const Integration = React.lazy(() => import("./pages/Integration"));
+
 const PortalSettingsRoute = (props) => (
   <React.Suspense fallback={<AppLoader />}>
     <ErrorBoundary>
@@ -178,6 +180,14 @@ const FormGalleryRoute = (props) => (
   <React.Suspense fallback={<AppLoader />}>
     <ErrorBoundary>
       <FormGallery {...props} />
+    </ErrorBoundary>
+  </React.Suspense>
+);
+
+const IntegrationRoute = (props) => (
+  <React.Suspense fallback={<AppLoader />}>
+    <ErrorBoundary>
+      <Integration {...props} />
     </ErrorBoundary>
   </React.Suspense>
 );
@@ -528,6 +538,9 @@ const Shell = ({ items = [], page = "home", ...rest }) => {
               path={"/portal-settings"}
               component={PortalSettingsRoute}
             />
+
+            <PrivateRoute path={"/integration"} component={IntegrationRoute} />
+
             <PrivateRoute
               path={"/preparation-portal"}
               component={PreparationPortalRoute}

@@ -30,6 +30,7 @@ namespace ASC.Files.Core.Helpers;
 public class FilesLinkUtility
 {
     public const string FilesBaseVirtualPath = "~/products/files/";
+    public const string DocSpacePersonalVirtualPath = "~/rooms/personal/";
     public const string EditorPage = "doceditor";
     private readonly string _filesUploaderURL;
 
@@ -333,7 +334,9 @@ public class FilesLinkUtility
 
     public string GetFolderExternalUrl(object folderId)
     {
-        return $"{FilesBaseVirtualPath}filter?folder={folderId}";
+        var virtualPath = !_coreBaseSettings.DisableDocSpace ? DocSpacePersonalVirtualPath : FilesBaseAbsolutePath;
+
+        return $"{virtualPath}filter?folder={folderId}";
     }
 
     public string GetFileWebPreviewUrl(FileUtility fileUtility, string fileTitle, object fileId, int fileVersion = 0)

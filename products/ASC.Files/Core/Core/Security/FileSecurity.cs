@@ -730,7 +730,8 @@ public class FileSecurity : IFileSecurity
                                 .FirstOrDefault();
                 }
 
-                var defaultShare = userId == FileConstant.ShareLinkId
+                var defaultShare = !_authContext.IsAuthenticated ? FileShare.Restrict : 
+                    userId == FileConstant.ShareLinkId
                         ? FileShare.Restrict
                         : e.RootFolderType == FolderType.USER
                         ? DefaultMyShare
@@ -1196,7 +1197,7 @@ public class FileSecurity : IFileSecurity
             .First()
         });
 
-        foreach (var record in recordGroup.Where(r => r.firstRecord.Share != FileShare.Restrict))
+        foreach (var record in recordGroup.Where(r => r.firstRecord.Share != FileShare.Restrict && r.firstRecord.Subject != FileConstant.ShareLinkId))
         {
             if (!roomsIds.ContainsKey((T)record.firstRecord.EntryId))
             {

@@ -187,7 +187,7 @@ public class FileStorageService<T> //: IFileStorageService
         var folder = await folderDao.GetFolderAsync(folderId);
 
         ErrorIf(folder == null, FilesCommonResource.ErrorMassage_FolderNotFound);
-        ErrorIf(!await _fileSecurity.CanReadAsync(folder), FilesCommonResource.ErrorMassage_SecurityException_ReadFolder);
+        ErrorIf(!await _fileSecurity.CanReadAsync(folder) && !await _fileSecurity.CanReadAsync(folder, FileConstant.ShareLinkId), FilesCommonResource.ErrorMassage_SecurityException_ReadFolder);
         await _entryStatusManager.SetIsFavoriteFolderAsync(folder);
 
         return folder;
@@ -622,7 +622,7 @@ public class FileStorageService<T> //: IFileStorageService
                        ? await fileDao.GetFileAsync(fileId, version)
                        : await fileDao.GetFileAsync(fileId);
         ErrorIf(file == null, FilesCommonResource.ErrorMassage_FileNotFound);
-        ErrorIf(!await _fileSecurity.CanReadAsync(file), FilesCommonResource.ErrorMassage_SecurityException_ReadFile);
+        ErrorIf(!await _fileSecurity.CanReadAsync(file) && !await _fileSecurity.CanReadAsync(file, FileConstant.ShareLinkId), FilesCommonResource.ErrorMassage_SecurityException_ReadFile);
 
         await _entryStatusManager.SetFileStatusAsync(file);
 

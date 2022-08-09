@@ -197,6 +197,7 @@ public class SecurityControllerCommon : ApiControllerBase
         return result;
     }
 
+    [AllowAnonymous]
     [HttpPost("share")]
     public async Task<IEnumerable<FileShareDto>> GetSecurityInfoAsync(BaseBatchRequestDto inDto)
     {

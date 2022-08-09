@@ -24,9 +24,51 @@
 // content are licensed under the terms of the Creative Commons Attribution-ShareAlike 4.0
 // International. See the License terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
 
-global using ASC.Web.HealthChecks.UI;
-global using ASC.Api.Core.Extensions;
+namespace ASC.Api.Core.Core;
 
-global using Microsoft.AspNetCore.Diagnostics.HealthChecks;
-global using Microsoft.Extensions.Diagnostics.HealthChecks;
-global using Microsoft.Extensions.Hosting.WindowsServices;
+/// <summary>
+///     https://andrewlock.net/reducing-latency-by-pre-building-singletons-in-asp-net-core/
+/// </summary>
+public class WarmupServicesStartupTask : IStartupTask
+{
+    private readonly IServiceCollection _services;
+    private readonly IServiceProvider _provider;
+    public WarmupServicesStartupTask(IServiceCollection services, IServiceProvider provider)
+    {
+        _services = services;
+        _provider = provider;
+    }
+
+    public Task ExecuteAsync(CancellationToken cancellationToken)
+    {
+        using (var scope = _provider.CreateScope())
+        {
+            var tenantManager = scope.ServiceProvider.GetService<TenantManager>();
+
+            tenantManager.SetCurrentTenant("localhost");
+
+            foreach (var service in GetServices(_services))
+            {
+                try
+                {
+                    scope.ServiceProvider.GetServices(service);
+                }
+                catch(Exception ex)
+                {
+
+                }                
+            }
+        }
+
+        return Task.CompletedTask;
+    }
+
+    static IEnumerable<Type> GetServices(IServiceCollection services)
+    {
+        return services
+            .Where(descriptor => descriptor.ImplementationType != typeof(WarmupServicesStartupTask))
+            .Where(descriptor => descriptor.ServiceType.ContainsGenericParameters == false)
+            .Select(descriptor => descriptor.ServiceType)
+            .Distinct();
+    }
+}

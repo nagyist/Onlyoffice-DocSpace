@@ -523,11 +523,6 @@ public class FileSecurity : IFileSecurity
             List<Guid> subjects = null;
             foreach (var e in entries.Where(filter))
             {
-                if (!_authManager.GetAccountByID(_tenantManager.GetCurrentTenant().Id, userId).IsAuthenticated && userId != FileConstant.ShareLinkId)
-                {
-                    continue;
-                }
-
                 if (isOutsider && (e.RootFolderType == FolderType.USER
                                    || e.RootFolderType == FolderType.SHARE
                                    || e.RootFolderType == FolderType.Privacy))
@@ -781,6 +776,10 @@ public class FileSecurity : IFileSecurity
                 {
                     result.Add(e);
                 }
+                else if (e.Access != FileShare.Restrict && e.CreateBy == userId && (e.FileEntryType == FileEntryType.File || folder.FolderType != FolderType.COMMON))
+                {
+                    result.Add(e);
+                }
                 else if (action == FilesSecurityActions.Delete && (e.Access == FileShare.RoomManager || e.Access == FileShare.ReadWrite))
                 {
                     if (file != null && (file.RootFolderType == FolderType.VirtualRooms || file.RootFolderType == FolderType.Archive))
@@ -792,10 +791,6 @@ public class FileSecurity : IFileSecurity
                     {
                         result.Add(e);
                     }
-                }
-                else if (e.Access != FileShare.Restrict && e.CreateBy == userId && (e.FileEntryType == FileEntryType.File || folder.FolderType != FolderType.COMMON))
-                {
-                    result.Add(e);
                 }
 
                 if (e.CreateBy == userId)
@@ -1414,6 +1409,11 @@ public class FileSecurity : IFileSecurity
             return result;
         }
 
+        if (!_authContext.IsAuthenticated)
+        {
+            return new List<Guid> { FileConstant.ShareLinkId };
+        }
+
         result.AddRange(_userManager.GetUserGroups(userId).Select(g => g.ID));
         if (_fileSecurityCommon.IsAdministrator(userId))
         {
@@ -1421,6 +1421,11 @@ public class FileSecurity : IFileSecurity
         }
 
         result.Add(Constants.GroupEveryone.ID);
+
+        if (_filesSettingsHelper.ExternalShare)
+        {
+            result.Add(FileConstant.ShareLinkId);
+        }
 
         return result;
     }

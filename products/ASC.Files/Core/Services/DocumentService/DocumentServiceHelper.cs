@@ -141,8 +141,7 @@ public class DocumentServiceHelper
         var fileSecurity = _fileSecurity;
         rightToEdit = rightToEdit
                       && (linkRight == FileShare.ReadWrite || linkRight == FileShare.CustomFilter
-                          || await fileSecurity.CanEditAsync(file) || await fileSecurity.CanCustomFilterEditAsync(file) 
-                          || await fileSecurity.CanEditAsync(file, FileConstant.ShareLinkId) || await fileSecurity.CanCustomFilterEditAsync(file, FileConstant.ShareLinkId));
+                          || await fileSecurity.CanEditAsync(file) || await fileSecurity.CanCustomFilterEditAsync(file));
         if (editPossible && !rightToEdit)
         {
             editPossible = false;
@@ -150,13 +149,13 @@ public class DocumentServiceHelper
 
         rightModifyFilter = rightModifyFilter
             && (linkRight == FileShare.ReadWrite
-                || await fileSecurity.CanEditAsync(file) || await fileSecurity.CanEditAsync(file, FileConstant.ShareLinkId));
+                || await fileSecurity.CanEditAsync(file));
 
-        rightToRename = rightToRename && rightToEdit && (await fileSecurity.CanEditAsync(file) || await fileSecurity.CanEditAsync(file, FileConstant.ShareLinkId));
+        rightToRename = rightToRename && rightToEdit && (await fileSecurity.CanEditAsync(file));
 
         rightToReview = rightToReview
                         && (linkRight == FileShare.Review || linkRight == FileShare.ReadWrite
-                            || await fileSecurity.CanReviewAsync(file) || await fileSecurity.CanReviewAsync(file, FileConstant.ShareLinkId));
+                            || await fileSecurity.CanReviewAsync(file));
         if (reviewPossible && !rightToReview)
         {
             reviewPossible = false;
@@ -164,7 +163,7 @@ public class DocumentServiceHelper
 
         rightToFillForms = rightToFillForms
                            && (linkRight == FileShare.FillForms || linkRight == FileShare.Review || linkRight == FileShare.ReadWrite
-                               || await fileSecurity.CanFillFormsAsync(file) || await fileSecurity.CanFillFormsAsync(file, FileConstant.ShareLinkId));
+                               || await fileSecurity.CanFillFormsAsync(file));
         if (fillFormsPossible && !rightToFillForms)
         {
             fillFormsPossible = false;
@@ -172,7 +171,7 @@ public class DocumentServiceHelper
 
         rightToComment = rightToComment
                          && (linkRight == FileShare.Comment || linkRight == FileShare.Review || linkRight == FileShare.ReadWrite
-                             || await fileSecurity.CanCommentAsync(file) || await fileSecurity.CanCommentAsync(file, FileConstant.ShareLinkId));
+                             || await fileSecurity.CanCommentAsync(file));
         if (commentPossible && !rightToComment)
         {
             commentPossible = false;
@@ -180,7 +179,7 @@ public class DocumentServiceHelper
 
         if (linkRight == FileShare.Restrict
             && !(editPossible || reviewPossible || fillFormsPossible || commentPossible)
-            && !await fileSecurity.CanReadAsync(file) && !await fileSecurity.CanReadAsync(file, FileConstant.ShareLinkId))
+            && !await fileSecurity.CanReadAsync(file))
         {
             throw new SecurityException(FilesCommonResource.ErrorMassage_SecurityException_ReadFile);
         }

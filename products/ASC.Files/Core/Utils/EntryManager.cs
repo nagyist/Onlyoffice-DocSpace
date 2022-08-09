@@ -375,7 +375,7 @@ public class EntryManager
 
     public async Task<(IEnumerable<FileEntry> Entries, int Total)> GetEntriesAsync<T>(Folder<T> parent, int from, int count, FilterType filterType, bool subjectGroup, Guid subjectId, 
         string searchText, bool searchInContent, bool withSubfolders, OrderBy orderBy, SearchArea searchArea = SearchArea.Active, bool withoutTags = false, IEnumerable<string> tagNames = null, 
-        bool withoutMe = false, bool linkAccess = false)
+        bool withoutMe = false)
     {
         var total = 0;
 
@@ -564,11 +564,11 @@ public class EntryManager
             }
 
             var folders = await _daoFactory.GetFolderDao<T>().GetFoldersAsync(parent.Id, orderBy, filterType, subjectGroup, subjectId, searchText, withSubfolders).ToListAsync();
-            var filteredFolders = !linkAccess ? await fileSecurity.FilterReadAsync(folders) : await fileSecurity.FilterReadAsync(folders, FileConstant.ShareLinkId);
+            var filteredFolders = await fileSecurity.FilterReadAsync(folders);
             entries = entries.Concat(filteredFolders);
 
             var files = await _daoFactory.GetFileDao<T>().GetFilesAsync(parent.Id, orderBy, filterType, subjectGroup, subjectId, searchText, searchInContent, withSubfolders).ToListAsync();
-            var filteredFiles = !linkAccess ? await fileSecurity.FilterReadAsync(files) : await fileSecurity.FilterReadAsync(files, FileConstant.ShareLinkId);
+            var filteredFiles = await fileSecurity.FilterReadAsync(files);
             entries = entries.Concat(filteredFiles);
 
             if (filterType == FilterType.None || filterType == FilterType.FoldersOnly)
@@ -1655,7 +1655,7 @@ public class EntryManager
             throw new FileNotFoundException(FilesCommonResource.ErrorMassage_FileNotFound);
         }
 
-        if (checkRight && ((!await _fileSecurity.CanEditAsync(fileVersion) && !await _fileSecurity.CanEditAsync(fileVersion, FileConstant.ShareLinkId)) 
+        if (checkRight && ((!await _fileSecurity.CanEditAsync(fileVersion)) 
             || _userManager.GetUsers(_authContext.CurrentAccount.ID).IsVisitor(_userManager)))
         {
             throw new SecurityException(FilesCommonResource.ErrorMassage_SecurityException_EditFile);
@@ -1714,14 +1714,12 @@ public class EntryManager
             throw new FileNotFoundException(FilesCommonResource.ErrorMassage_FileNotFound);
         }
 
-        var canRenameByLink = await _fileSecurity.CanRenameAsync(file, FileConstant.ShareLinkId);
-
-        if (!await _fileSecurity.CanRenameAsync(file) && !canRenameByLink)
+        if (!await _fileSecurity.CanRenameAsync(file))
         {
             throw new SecurityException(FilesCommonResource.ErrorMassage_SecurityException_RenameFile);
         }
 
-        if (!await _fileSecurity.CanDeleteAsync(file) && !canRenameByLink && _userManager.GetUsers(_authContext.CurrentAccount.ID).IsVisitor(_userManager))
+        if (!await _fileSecurity.CanDeleteAsync(file) && _userManager.GetUsers(_authContext.CurrentAccount.ID).IsVisitor(_userManager))
         {
             throw new SecurityException(FilesCommonResource.ErrorMassage_SecurityException_RenameFile);
         }

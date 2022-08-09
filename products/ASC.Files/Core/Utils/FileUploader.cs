@@ -134,9 +134,8 @@ public class FileUploader
 
         var fileDao = _daoFactory.GetFileDao<T>();
         var file = await fileDao.GetFileAsync(folderId, fileName);
-        var canEditByLink = await _fileSecurity.CanEditAsync(file, FileConstant.ShareLinkId);
 
-        if (updateIfExists && (await CanEditAsync(file) || canEditByLink))
+        if (updateIfExists && await CanEditAsync(file))
         {
             file.Title = fileName;
             file.ConvertedType = null;
@@ -197,7 +196,7 @@ public class FileUploader
             throw new DirectoryNotFoundException(FilesCommonResource.ErrorMassage_FolderNotFound);
         }
 
-        if (!await _fileSecurity.CanCreateAsync(folder) && !await _fileSecurity.CanCreateAsync(folder, FileConstant.ShareLinkId))
+        if (!await _fileSecurity.CanCreateAsync(folder))
         {
             throw new SecurityException(FilesCommonResource.ErrorMassage_SecurityException_Create);
         }

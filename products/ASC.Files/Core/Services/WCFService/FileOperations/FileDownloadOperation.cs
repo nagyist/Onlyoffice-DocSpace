@@ -244,9 +244,7 @@ class FileDownloadOperation<T> : FileOperation<FileDownloadOperationData<T>, T>
 
         if (0 < Files.Count)
         {
-            var files = await FileDao.GetFilesAsync(Files).ToListAsync();
-            filesForSend = await FilesSecurity.FilterDownloadAsync(files);
-            filesForSend = filesForSend.Concat(await FilesSecurity.FilterDownloadAsync(files, FileConstant.ShareLinkId)).Distinct();
+            filesForSend = await FilesSecurity.FilterDownloadAsync(await FileDao.GetFilesAsync(Files).ToListAsync());
 
             foreach (var file in filesForSend)
             {
@@ -255,9 +253,7 @@ class FileDownloadOperation<T> : FileOperation<FileDownloadOperationData<T>, T>
         }
         if (0 < Folders.Count)
         {
-            var folders = await FolderDao.GetFoldersAsync(Folders).ToListAsync();
-            folderForSend = await FilesSecurity.FilterDownloadAsync(folders);
-            folderForSend = folderForSend.Concat(await FilesSecurity.FilterDownloadAsync(folders, FileConstant.ShareLinkId)).Distinct();
+            folderForSend = await FilesSecurity.FilterDownloadAsync(await FolderDao.GetFoldersAsync(Folders).ToListAsync());
 
             foreach (var folder in folderForSend)
             {
@@ -296,7 +292,7 @@ class FileDownloadOperation<T> : FileOperation<FileDownloadOperationData<T>, T>
             CancellationToken.ThrowIfCancellationRequested();
 
             var folder = await FolderDao.GetFolderAsync(folderId);
-            if (folder == null || !await FilesSecurity.CanDownloadAsync(folder) && !await FilesSecurity.CanDownloadAsync(folder, FileConstant.ShareLinkId))
+            if (folder == null || !await FilesSecurity.CanDownloadAsync(folder))
             {
                 continue;
             }
@@ -306,7 +302,6 @@ class FileDownloadOperation<T> : FileOperation<FileDownloadOperationData<T>, T>
             entriesPathId.Add(folderPath, default(T));
             var files = await FileDao.GetFilesAsync(folder.Id, null, FilterType.None, false, Guid.Empty, string.Empty, true).ToListAsync();
             var filteredFiles = await FilesSecurity.FilterDownloadAsync(files);
-            filteredFiles = filteredFiles.Concat(await FilesSecurity.FilterDownloadAsync(files, FileConstant.ShareLinkId)).Distinct();
             files = filteredFiles.ToList();
 
             foreach (var file in filteredFiles)
@@ -318,7 +313,6 @@ class FileDownloadOperation<T> : FileOperation<FileDownloadOperationData<T>, T>
 
             var nestedFolders = await FolderDao.GetFoldersAsync(folder.Id).ToListAsync();
             var filteredNestedFolders = await FilesSecurity.FilterDownloadAsync(nestedFolders);
-            filteredNestedFolders = filteredNestedFolders.Concat(await FilesSecurity.FilterDownloadAsync(nestedFolders, FileConstant.ShareLinkId)).Distinct();
             nestedFolders = filteredNestedFolders.ToList();
 
             var filesInFolder = await GetFilesInFoldersAsync(scope, nestedFolders.ConvertAll(f => f.Id), folderPath);

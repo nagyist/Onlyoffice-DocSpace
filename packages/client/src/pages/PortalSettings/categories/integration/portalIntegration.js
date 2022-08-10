@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { withTranslation } from "react-i18next";
 import styled from "styled-components";
 import Box from "@docspace/components/box";
 import TextInput from "@docspace/components/text-input";
 import Textarea from "@docspace/components/textarea";
+import Text from "@docspace/components/text";
 import Label from "@docspace/components/label";
 import Checkbox from "@docspace/components/checkbox";
 import Button from "@docspace/components/button";
@@ -13,9 +14,38 @@ import toastr from "@docspace/components/toast/toastr";
 import { tablet } from "@docspace/components/utils/device";
 import { objectToGetParams, loadScript } from "@docspace/common/utils";
 import { inject, observer } from "mobx-react";
+import Loaders from "@docspace/common/components/Loaders";
+
+const Container = styled(Box)`
+  width: 100%;
+  display: flex;
+  gap: 48px;
+`;
+
+const Description = styled(Text)`
+  line-height: 20px;
+`;
+
+const Category = styled(Text)`
+  margin-top: ${(props) => (props.marginTop ? props.marginTop : "20px")};
+  font-weight: ${(props) => (props.fontWeight ? props.fontWeight : "700")};
+  font-size: ${(props) => (props.fontSize ? props.fontSize : "16px")};
+  line-height: ${(props) => (props.lineHeight ? props.lineHeight : "22px")};
+`;
+
+const Frame = styled(Box)`
+  margin-top: 16px;
+
+  > div {
+    border: 1px solid #d0d5da;
+    border-radius: 6px;
+    width: 480px;
+    height: 280px;
+  }
+`;
 
 const Controls = styled(Box)`
-  width: 500px;
+  width: 350px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -32,44 +62,12 @@ const Controls = styled(Box)`
 const ControlsGroup = styled(Box)`
   display: flex;
   flex-direction: column;
-  gap: 8px;
-`;
-
-const Frame = styled(Box)`
-  margin-top: 16px;
-
-  > div {
-    border: 1px dashed gray;
-    border-radius: 3px;
-    min-width: 100%;
-    min-height: 400px;
-  }
-`;
-
-const Buttons = styled(Box)`
-  margin-top: 16px;
-  button {
-    margin-right: 16px;
-  }
-`;
-
-const Container = styled(Box)`
-  width: 100%;
-  display: flex;
-  gap: 16px;
+  gap: ${(props) => (props.gap ? props.gap : "6px")};
 `;
 
 const Preview = styled(Box)`
-  width: 50%;
+  width: 480px;
   flex-direction: row;
-
-  .frameStyle {
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-  }
 `;
 
 const PortalIntegration = (props) => {
@@ -96,11 +94,10 @@ const PortalIntegration = (props) => {
     { key: 4, label: "Presentations" },
     { key: 5, label: "Spreadsheets" },
     { key: 7, label: "Images" },
-    { key: 8, label: "By user" },
-    { key: 9, label: "By department" },
-    { key: 10, label: "Archive" },
-    { key: 11, label: "By Extension" },
+    { key: 10, label: "Archives" },
     { key: 12, label: "Media" },
+    { key: 8, label: "By user" },
+    { key: 11, label: "By extension" },
   ];
 
   const dataSortOrder = [
@@ -120,8 +117,9 @@ const PortalIntegration = (props) => {
     frameId: "ds-frame",
     showHeader: false,
     showTitle: true,
-    showArticle: false,
+    showMenu: false,
     showFilter: false,
+    showAction: false,
   });
 
   const [sortBy, setSortBy] = useState(dataSortBy[0]);
@@ -227,15 +225,21 @@ const PortalIntegration = (props) => {
     });
   };
 
-  const onChangeShowArticle = (e) => {
+  const onChangeShowMenu = (e) => {
     setConfig((config) => {
-      return { ...config, showArticle: !config.showArticle };
+      return { ...config, showMenu: !config.showMenu };
     });
   };
 
   const onChangeShowFilter = (e) => {
     setConfig((config) => {
       return { ...config, showFilter: !config.showFilter };
+    });
+  };
+
+  const onChangeShowAction = (e) => {
+    setConfig((config) => {
+      return { ...config, showAction: !config.showAction };
     });
   };
 
@@ -266,106 +270,101 @@ const PortalIntegration = (props) => {
   const codeBlock = `<div id="${frameId}">Fallback text</div>\n<script src="${scriptUrl}${params}"></script>`;
 
   return (
-    <Container>
-      <Controls>
-        <Heading level={1} size="small">
-          Frame options
-        </Heading>
-        <ControlsGroup>
-          <Label className="label" text="Frame id" />
-          <TextInput
-            scale={true}
-            onChange={onChangeFrameId}
-            placeholder="Frame id"
-            value={config.frameId}
-          />
-        </ControlsGroup>
-        <ControlsGroup>
-          <Label className="label" text="Frame width" />
-          <TextInput
-            scale={true}
-            onChange={onChangeWidth}
-            placeholder="Frame width"
-            value={config.width}
-          />
-        </ControlsGroup>
-        <ControlsGroup>
-          <Label className="label" text="Frame height" />
-          <TextInput
-            scale={true}
-            onChange={onChangeHeight}
-            placeholder="Frame height"
-            value={config.height}
-          />
-        </ControlsGroup>
-        {/* <ControlsGroup>
-          <Label className="label" text="Display mode: " />
-          <ComboBox
-            scale={true}
-            onSelect={onChangeDisplayType}
-            options={dataDisplayType}
-            scaled={true}
-            selectedOption={displayType}
-            displaySelectedOption
-          />
-        </ControlsGroup> */}
-        <Checkbox
-          label="Show header"
-          onChange={onChangeShowHeader}
-          isChecked={config.showHeader}
-        />
-        <Checkbox
-          label="Show title"
-          onChange={onChangeShowTitle}
-          isChecked={config.showTitle}
-        />
-        <Checkbox
-          label="Show article"
-          onChange={onChangeShowArticle}
-          isChecked={config.showArticle}
-        />
-        <Checkbox
-          label="Show filter"
-          onChange={onChangeShowFilter}
-          isChecked={config.showFilter}
-        />
-        <Heading level={1} size="small">
-          Filter options
-        </Heading>
-        <ControlsGroup>
-          <Label className="label" text="Folder id" />
-          <TextInput
-            scale={true}
-            onChange={onChangeFolderId}
-            placeholder="Folder id"
-            value={config.folder}
-          />
-        </ControlsGroup>
-        <ControlsGroup>
-          <Label className="label" text="Items count" />
-          <TextInput
-            scale={true}
-            onChange={onChangeCount}
-            placeholder="Items count"
-            value={config.count}
-          />
-        </ControlsGroup>
-        <ControlsGroup>
-          <Label className="label" text="Page" />
-          <TextInput
-            scale={true}
-            onChange={onChangePage}
-            placeholder="Page"
-            value={config.page}
-          />
-        </ControlsGroup>
-        <ControlsGroup>
-          <Label className="label" text="Search term" />
-          <Box style={{ flexDirection: "row", display: "flex", gap: "16px" }}>
+    <Box>
+      <Description color="#657077">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
+        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
+        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
+        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+        occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+        mollit anim id est laborum.
+      </Description>
+      <Container>
+        <Controls>
+          <Category>Setting up the integration window</Category>
+          <ControlsGroup>
+            <Label className="label" text="Frame id" />
+            <TextInput
+              scale={true}
+              onChange={onChangeFrameId}
+              placeholder="Enter frame id"
+              value={config.frameId}
+            />
+          </ControlsGroup>
+          <ControlsGroup>
+            <Label className="label" text="Width" />
+            <TextInput
+              scale={true}
+              onChange={onChangeWidth}
+              placeholder="Enter width"
+              value={config.width}
+            />
+          </ControlsGroup>
+          <ControlsGroup>
+            <Label className="label" text="Height" />
+            <TextInput
+              scale={true}
+              onChange={onChangeHeight}
+              placeholder="Enter height"
+              value={config.height}
+            />
+          </ControlsGroup>
+          <ControlsGroup gap="10px">
+            <Label className="label" text="Interface elements" />
+            <Checkbox
+              label="Header (only mobile devices)"
+              onChange={onChangeShowHeader}
+              isChecked={config.showHeader}
+            />
+            <Checkbox
+              label="Menu"
+              onChange={onChangeShowMenu}
+              isChecked={config.showMenu}
+            />
+            <Checkbox
+              label="Title"
+              onChange={onChangeShowTitle}
+              isChecked={config.showTitle}
+            />
+            <Checkbox
+              label="Action button"
+              onChange={onChangeShowAction}
+              isChecked={config.showAction}
+            />
+            <Checkbox
+              label="Filter"
+              onChange={onChangeShowFilter}
+              isChecked={config.showFilter}
+            />
+          </ControlsGroup>
+          <Category marginTop="10px">Setting the display of data</Category>
+          <ControlsGroup>
+            <Label className="label" text="Folder id" />
+            <TextInput
+              scale={true}
+              onChange={onChangeFolderId}
+              placeholder="Enter id"
+              value={config.folder}
+            />
+          </ControlsGroup>
+          <ControlsGroup>
+            <Label className="label" text="Filter" />
+            <ComboBox
+              onSelect={onChangeFilterType}
+              options={dataFilterType}
+              scaled={true}
+              scaledOptions={true}
+              selectedOption={filterType}
+              displaySelectedOption
+            />
+          </ControlsGroup>
+          <ControlsGroup>
+            <Label className="label" text="Search term" />
             <TextInput
               scale={true}
               onChange={onChangeSearch}
-              placeholder="Search term"
+              placeholder="Search"
               value={config.search}
             />
             <Checkbox
@@ -373,75 +372,73 @@ const PortalIntegration = (props) => {
               onChange={onChangeWithSubfolders}
               isChecked={withSubfolders}
             />
-          </Box>
-        </ControlsGroup>
-        <ControlsGroup>
-          <Label className="label" text="Author" />
-          <TextInput
-            scale={true}
-            onChange={onChangeAuthor}
-            placeholder="Author"
-            value={config.authorType}
-          />
-        </ControlsGroup>
-        <ControlsGroup>
-          <Label className="label" text="Filter type:" />
-          <ComboBox
-            onSelect={onChangeFilterType}
-            options={dataFilterType}
-            scaled={true}
-            selectedOption={filterType}
-            displaySelectedOption
-            directionY="top"
-          />
-        </ControlsGroup>
-        <ControlsGroup>
-          <Label className="label" text="Sort by:" />
-          <ComboBox
-            onSelect={onChangeSortBy}
-            options={dataSortBy}
-            scaled={true}
-            selectedOption={sortBy}
-            displaySelectedOption
-            directionY="top"
-          />
-        </ControlsGroup>
-        <ControlsGroup>
-          <Label className="label" text="Sort order:" />
-          <ComboBox
-            onSelect={onChangeSortOrder}
-            options={dataSortOrder}
-            scaled={true}
-            selectedOption={sortOrder}
-            displaySelectedOption
-            directionY="top"
-          />
-        </ControlsGroup>
-      </Controls>
-      <Preview>
-        <Frame>
-          <Box id={frameId} className="frameStyle">
-            Frame content
-          </Box>
-        </Frame>
-
-        <Buttons>
-          <Button primary size="normal" label="Preview" onClick={loadFrame} />
-          <Button
-            primary
-            size="normal"
-            label="Destroy"
-            onClick={destroyFrame}
-          />
-        </Buttons>
-
-        <Heading level={1} size="xsmall">
-          Paste this code block on page:
-        </Heading>
-
-        <Textarea value={codeBlock} />
-      </Preview>
-    </Container>
+          </ControlsGroup>
+          <ControlsGroup>
+            <Label className="label" text="Author" />
+            <TextInput
+              scale={true}
+              onChange={onChangeAuthor}
+              placeholder="Enter name"
+              value={config.authorType}
+            />
+          </ControlsGroup>
+          <ControlsGroup>
+            <Label className="label" text="Items count" />
+            <TextInput
+              scale={true}
+              onChange={onChangeCount}
+              placeholder="Enter count"
+              value={config.count}
+            />
+          </ControlsGroup>
+          <ControlsGroup>
+            <Label className="label" text="Page" />
+            <TextInput
+              scale={true}
+              onChange={onChangePage}
+              placeholder="Enter number page"
+              value={config.page}
+            />
+          </ControlsGroup>
+          <ControlsGroup>
+            <Label className="label" text="Sort by" />
+            <ComboBox
+              onSelect={onChangeSortBy}
+              options={dataSortBy}
+              scaled={true}
+              scaledOptions={true}
+              selectedOption={sortBy}
+              displaySelectedOption
+              directionY="top"
+            />
+          </ControlsGroup>
+          <ControlsGroup>
+            <Label className="label" text="Sort order" />
+            <ComboBox
+              onSelect={onChangeSortOrder}
+              options={dataSortOrder}
+              scaled={true}
+              scaledOptions={true}
+              selectedOption={sortOrder}
+              displaySelectedOption
+              directionY="top"
+            />
+          </ControlsGroup>
+        </Controls>
+        <Preview>
+          <Category>Preview</Category>
+          <Frame>
+            <Box id={frameId} className="frameStyle">
+              <Loaders.Rectangle height="100%" />
+            </Box>
+          </Frame>
+          <Category fontWeight="600" fontSize="13px" lineHeight="20px">
+            Paste this code block on page
+          </Category>
+          <Textarea value={codeBlock} isReadOnly disableScroll />
+        </Preview>
+      </Container>
+    </Box>
   );
 };
 

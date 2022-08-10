@@ -70,14 +70,22 @@ public class FileShareLink
         return _baseCommonLinkUtility.GetFullAbsolutePath(url);
     }
 
-    public string GetLink<T>(Folder<T> folder)
+    public string GetLink<T>(Folder<T> folder, bool withHash = true)
     {
-        return _baseCommonLinkUtility.GetFullAbsolutePath(_filesLinkUtility.GetFolderExternalUrl(folder.Id));
+        var url = _filesLinkUtility.GetFolderExternalUrl(folder.Id);
+        
+        if (withHash)
+        {
+            var linkParams = CreateKey(folder.Id);
+            url += "&" + FilesLinkUtility.FolderShareKey + "=" + HttpUtility.UrlEncode(linkParams);
+        }
+
+        return _baseCommonLinkUtility.GetFullAbsolutePath(url);
     }
 
-    public string CreateKey<T>(T fileId)
+    public string CreateKey<T>(T data)
     {
-        return Signature.Create(fileId, _global.GetDocDbKey());
+        return Signature.Create(data, _global.GetDocDbKey());
     }
 
     public string Parse(string doc)

@@ -39,6 +39,31 @@ StyledScrollbar.defaultProps = {
   theme: Base,
 };
 
+const StyledBorder = styled.div`
+  ${commonInputStyle};
+
+  :focus-within {
+    border-color: ${(props) =>
+      props.hasError
+        ? props.theme.textArea.focusErrorBorderColor
+        : props.theme.textArea.focusBorderColor};
+  }
+
+  :focus {
+    outline: ${(props) => props.theme.textArea.focusOutline};
+  }
+
+  width: 100%;
+  height: fit-content;
+
+  background-color: ${(props) =>
+    props.isDisabled && props.theme.textArea.disabledColor};
+`;
+
+StyledBorder.defaultProps = {
+  theme: Base,
+};
+
 // eslint-disable-next-line react/prop-types, no-unused-vars
 const ClearTextareaAutosize = React.forwardRef(
   ({ isDisabled, heightScale, hasError, color, ...props }, ref) => (
@@ -105,4 +130,4 @@ StyledTextarea.defaultProps = {
   theme: Base,
 };
 
-export { StyledTextarea, StyledScrollbar };
+export { StyledTextarea, StyledScrollbar, StyledBorder };

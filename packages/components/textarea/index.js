@@ -1,6 +1,10 @@
 import React, { useRef } from "react";
 import PropTypes from "prop-types";
-import { StyledTextarea, StyledScrollbar } from "./styled-textarea";
+import {
+  StyledTextarea,
+  StyledScrollbar,
+  StyledBorder,
+} from "./styled-textarea";
 
 // eslint-disable-next-line react/prop-types, no-unused-vars
 
@@ -24,6 +28,7 @@ const Textarea = ({
   theme,
   autoFocus,
   areaSelect,
+  disableScroll,
 }) => {
   const areaRef = useRef(null);
 
@@ -33,7 +38,39 @@ const Textarea = ({
     }
   }, [areaSelect]);
 
-  return (
+  const onChangeArea = (e) => {
+    onChange && onChange(e);
+  };
+
+  const textarea = (
+    <StyledTextarea
+      id={id}
+      placeholder={placeholder}
+      onChange={onChangeArea}
+      maxLength={maxLength}
+      name={name}
+      tabIndex={tabIndex}
+      isDisabled={isDisabled}
+      disabled={isDisabled}
+      readOnly={isReadOnly}
+      value={value}
+      fontSize={fontSize}
+      color={color}
+      autoFocus={autoFocus}
+      ref={areaRef}
+    />
+  );
+
+  return disableScroll ? (
+    <StyledBorder
+      className={className}
+      style={style}
+      isDisabled={isDisabled}
+      hasError={hasError}
+    >
+      {textarea}
+    </StyledBorder>
+  ) : (
     <StyledScrollbar
       className={className}
       style={style}
@@ -43,22 +80,7 @@ const Textarea = ({
       heightScale={heightScale}
       heighttextarea={heightTextArea}
     >
-      <StyledTextarea
-        id={id}
-        placeholder={placeholder}
-        onChange={(e) => onChange && onChange(e)}
-        maxLength={maxLength}
-        name={name}
-        tabIndex={tabIndex}
-        isDisabled={isDisabled}
-        disabled={isDisabled}
-        readOnly={isReadOnly}
-        value={value}
-        fontSize={fontSize}
-        color={color}
-        autoFocus={autoFocus}
-        ref={areaRef}
-      />
+      {textarea}
     </StyledScrollbar>
   );
 };
@@ -96,8 +118,12 @@ Textarea.propTypes = {
   heightTextArea: PropTypes.number,
   /** Specifies the text color */
   color: PropTypes.string,
+  /** Allow you to setting auto focus in component*/
   autoFocus: PropTypes.bool,
+  /** Allow you to control select parameter in component*/
   areaSelect: PropTypes.bool,
+  /** Allow you disable scrollbar wrapper in component*/
+  disableScroll: PropTypes.bool,
 };
 
 Textarea.defaultProps = {
@@ -112,6 +138,7 @@ Textarea.defaultProps = {
   fontSize: 13,
   isAutoFocussed: false,
   areaSelect: false,
+  disableScroll: false,
 };
 
 export default Textarea;

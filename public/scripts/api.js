@@ -11,9 +11,10 @@
     fileId: null,
     editorType: "embedded", //TODO: ["desktop", "embedded"]
     showHeader: false,
-    showArticle: false,
     showTitle: true,
+    showMenu: false,
     showFilter: false,
+    showAction: false,
     destroyText: "Frame container",
     viewAs: "row", //TODO: ["row", "table", "tile"]
     filter: {

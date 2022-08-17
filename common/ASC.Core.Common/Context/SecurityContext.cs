@@ -39,6 +39,7 @@ public class SecurityContext
     private readonly TenantManager _tenantManager;
     private readonly UserFormatter _userFormatter;
     private readonly CookieStorage _cookieStorage;
+    private readonly CoreBaseSettings _coreBaseSettings;
     private readonly TenantCookieSettingsHelper _tenantCookieSettingsHelper;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -50,6 +51,7 @@ public class SecurityContext
         UserFormatter userFormatter,
         CookieStorage cookieStorage,
         TenantCookieSettingsHelper tenantCookieSettingsHelper,
+        CoreBaseSettings coreBaseSettings,
         ILogger<SecurityContext> logger
         )
     {
@@ -61,6 +63,7 @@ public class SecurityContext
         _userFormatter = userFormatter;
         _cookieStorage = cookieStorage;
         _tenantCookieSettingsHelper = tenantCookieSettingsHelper;
+        _coreBaseSettings = coreBaseSettings;
     }
 
     public SecurityContext(
@@ -72,8 +75,9 @@ public class SecurityContext
         UserFormatter userFormatter,
         CookieStorage cookieStorage,
         TenantCookieSettingsHelper tenantCookieSettingsHelper,
+        CoreBaseSettings coreBaseSettings,
         ILogger<SecurityContext> logger
-        ) : this(userManager, authentication, authContext, tenantManager, userFormatter, cookieStorage, tenantCookieSettingsHelper, logger)
+        ) : this(userManager, authentication, authContext, tenantManager, userFormatter, cookieStorage, tenantCookieSettingsHelper, coreBaseSettings, logger)
     {
         _httpContextAccessor = httpContextAccessor;
     }
@@ -220,7 +224,7 @@ public class SecurityContext
             // for LDAP users only
             if (u.Sid != null)
             {
-                if (!_tenantManager.GetTenantQuota(tenant.Id).Ldap)
+                if (!(_coreBaseSettings.Standalone || _tenantManager.GetTenantQuota(tenant.Id).Ldap))
                 {
                     throw new BillingException("Your tariff plan does not support this option.", "Ldap");
                 }

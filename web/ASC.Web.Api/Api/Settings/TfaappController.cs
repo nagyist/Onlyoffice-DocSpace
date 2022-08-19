@@ -154,7 +154,7 @@ public class TfaappController : BaseSettingsController
     }
 
     [HttpPut("tfaapp")]
-    public bool TfaSettings(TfaRequestsDto inDto)
+    public async Task<bool> TfaSettings(TfaRequestsDto inDto)
     {
         _permissionContext.DemandPermissions(SecutiryConstants.EditPortalSettings);
 
@@ -166,7 +166,7 @@ public class TfaappController : BaseSettingsController
         switch (inDto.Type)
         {
             case "sms":
-                if (!_studioSmsNotificationSettingsHelper.IsVisibleSettings())
+                if (!_studioSmsNotificationSettingsHelper.IsVisibleAndAvailableSettings())
                 {
                     throw new Exception(Resource.SmsNotAvailable);
                 }
@@ -200,7 +200,7 @@ public class TfaappController : BaseSettingsController
 
                 action = MessageAction.TwoFactorAuthenticationEnabledByTfaApp;
 
-                if (_studioSmsNotificationSettingsHelper.IsVisibleSettings() && _studioSmsNotificationSettingsHelper.Enable)
+                if (_studioSmsNotificationSettingsHelper.IsVisibleAndAvailableSettings() && _studioSmsNotificationSettingsHelper.Enable)
                 {
                     _studioSmsNotificationSettingsHelper.Enable = false;
                 }
@@ -216,7 +216,7 @@ public class TfaappController : BaseSettingsController
                     _settingsManager.Save(settings);
                 }
 
-                if (_studioSmsNotificationSettingsHelper.IsVisibleSettings() && _studioSmsNotificationSettingsHelper.Enable)
+                if (_studioSmsNotificationSettingsHelper.IsVisibleAndAvailableSettings() && _studioSmsNotificationSettingsHelper.Enable)
                 {
                     _studioSmsNotificationSettingsHelper.Enable = false;
                 }
@@ -228,7 +228,7 @@ public class TfaappController : BaseSettingsController
 
         if (result)
         {
-            _cookiesManager.ResetTenantCookie();
+            await _cookiesManager.ResetTenantCookie();
         }
 
         _messageService.Send(action);
@@ -299,8 +299,9 @@ public class TfaappController : BaseSettingsController
     public object TfaAppNewApp(TfaRequestsDto inDto)
     {
         var id = inDto?.Id ?? Guid.Empty;
-        var isMe = id.Equals(Guid.Empty);
-        var user = _userManager.GetUsers(isMe ? _authContext.CurrentAccount.ID : id);
+        var isMe = id.Equals(Guid.Empty) || id.Equals(_authContext.CurrentAccount.ID);
+
+        var user = _userManager.GetUsers(id);
 
         if (!isMe && !_permissionContext.CheckPermissions(new UserSecurityProvider(user.Id), Constants.Action_EditUser))
         {

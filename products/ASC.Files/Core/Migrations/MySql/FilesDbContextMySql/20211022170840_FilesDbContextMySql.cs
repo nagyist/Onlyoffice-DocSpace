@@ -208,7 +208,10 @@ public partial class FilesDbContextMySql : Migration
                 create_on = table.Column<DateTime>(type: "datetime", nullable: false),
                 url = table.Column<string>(type: "text", nullable: true, collation: "utf8_general_ci")
                     .Annotation("MySql:CharSet", "utf8"),
-                tenant_id = table.Column<int>(type: "int", nullable: false)
+                tenant_id = table.Column<int>(type: "int", nullable: false),
+                folder_id = table.Column<string>(type: "text", nullable: true, collation: "utf8_general_ci")
+                    .Annotation("MySql:CharSet", "utf8"),
+                room_type = table.Column<int>(type: "int", nullable: false)
             },
             constraints: table =>
             {
@@ -315,6 +318,11 @@ public partial class FilesDbContextMySql : Migration
             name: "index_1",
             table: "files_thirdparty_id_mapping",
             columns: new[] { "tenant_id", "hash_id" });
+
+        migrationBuilder.CreateIndex(
+            name: "tenant_id",
+            table: "files_thirdparty_account",
+            column: "tenant_id");
     }
 
     protected override void Down(MigrationBuilder migrationBuilder)

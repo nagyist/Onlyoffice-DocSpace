@@ -2,6 +2,7 @@ import api from "@appserver/common/api";
 import { makeAutoObservable } from "mobx";
 const { Filter } = api;
 import SelectionStore from "./SelectionStore";
+import CommonStore from "./CommonStore";
 import authStore from "@appserver/common/store/AuthStore";
 import { combineUrl } from "@appserver/common/utils";
 import { AppServerConfig } from "@appserver/common/constants";
@@ -12,13 +13,6 @@ class SettingsSetupStore {
   authStore = null;
   isInit = false;
 
-  common = {
-    whiteLabel: {
-      logoSizes: [],
-      logoText: null,
-      logoUrls: [],
-    },
-  };
   security = {
     accessRight: {
       options: [],
@@ -59,6 +53,9 @@ class SettingsSetupStore {
     if (authStore.isAuthenticated) {
       await authStore.settingsStore.getPortalPasswordSettings();
       await authStore.tfaStore.getTfaType();
+      await authStore.settingsStore.getIpRestrictionsEnable();
+      await authStore.settingsStore.getIpRestrictions();
+      await authStore.settingsStore.getSessionLifetime();
     }
   };
 
@@ -92,18 +89,6 @@ class SettingsSetupStore {
 
   setFilter = (filter) => {
     this.security.accessRight.filter = filter;
-  };
-
-  setLogoText = (text) => {
-    this.common.whiteLabel.logoText = text;
-  };
-
-  setLogoSizes = (sizes) => {
-    this.common.whiteLabel.logoSizes = sizes;
-  };
-
-  setLogoUrls = (urls) => {
-    this.common.whiteLabel.logoUrls = urls;
   };
 
   setConsumers = (consumers) => {
@@ -211,21 +196,6 @@ class SettingsSetupStore {
     this.setFilter(filterData);
   };
 
-  getWhiteLabelLogoText = async () => {
-    const res = await api.settings.getLogoText();
-    this.setLogoText(res);
-  };
-
-  getWhiteLabelLogoSizes = async () => {
-    const res = await api.settings.getLogoSizes();
-    this.setLogoSizes(res);
-  };
-
-  getWhiteLabelLogoUrls = async () => {
-    const res = await api.settings.getLogoUrls();
-    this.setLogoUrls(Object.values(res));
-  };
-
   setWhiteLabelSettings = async (data) => {
     const response = await api.settings.setWhiteLabelSettings(data);
     return Promise.resolve(response);
@@ -247,22 +217,6 @@ class SettingsSetupStore {
 
   setDNSSettings = async (dnsName, enable) => {
     const res = await api.settings.setMailDomainSettings(dnsName, enable);
-  };
-
-  setIpRestrictions = async (data) => {
-    const res = await api.settings.setIpRestrictions(data);
-  };
-
-  setIpRestrictionsEnable = async (data) => {
-    const res = await api.settings.setIpRestrictionsEnable(data);
-  };
-
-  setMessageSettings = async (turnOn) => {
-    const res = await api.settings.setMessageSettings(turnOn);
-  };
-
-  setCookieSettings = async (lifeTime) => {
-    const res = await api.settings.setCookieSettings(lifeTime);
   };
 
   setLifetimeAuditSettings = async (data) => {

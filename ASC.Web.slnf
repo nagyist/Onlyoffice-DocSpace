@@ -16,6 +16,7 @@
       "common\\ASC.FederatedLogin\\ASC.FederatedLogin.csproj",
       "common\\ASC.Feed\\ASC.Feed.csproj",
       "common\\ASC.IPSecurity\\ASC.IPSecurity.csproj",
+      "common\\ASC.Identity\\ASC.Identity.csproj",
       "common\\ASC.MessagingSystem\\ASC.MessagingSystem.csproj",
       "common\\ASC.Migration\\ASC.Migration.csproj",
       "common\\ASC.Notify.Textile\\ASC.Notify.Textile.csproj",

@@ -101,6 +101,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASC.Migration", "common\ASC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASC.ActiveDirectory", "common\ASC.ActiveDirectory\ASC.ActiveDirectory.csproj", "{9F81862F-303D-467F-8DC9-044BE2CCF329}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASC.Identity", "common\ASC.Identity\ASC.Identity.csproj", "{BD5573AE-052B-4849-A544-65AE12DC784D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -287,6 +289,10 @@ Global
 		{9F81862F-303D-467F-8DC9-044BE2CCF329}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F81862F-303D-467F-8DC9-044BE2CCF329}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F81862F-303D-467F-8DC9-044BE2CCF329}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD5573AE-052B-4849-A544-65AE12DC784D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD5573AE-052B-4849-A544-65AE12DC784D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD5573AE-052B-4849-A544-65AE12DC784D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD5573AE-052B-4849-A544-65AE12DC784D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

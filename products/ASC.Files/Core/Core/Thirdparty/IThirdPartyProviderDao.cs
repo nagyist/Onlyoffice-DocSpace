@@ -214,7 +214,17 @@ internal abstract class ThirdPartyProviderDao
         return null;
     }
 
+    public IAsyncEnumerable<FolderWithShare> GetFeedsForRoomsAsync(int tenant, DateTime from, DateTime to)
+    {
+        throw new NotImplementedException();
+    }
+
     public IAsyncEnumerable<FolderWithShare> GetFeedsForFoldersAsync(int tenant, DateTime from, DateTime to)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IAsyncEnumerable<ParentRoomPair> GetParentRoomsAsync(IEnumerable<int> foldersIds)
     {
         throw new NotImplementedException();
     }
@@ -440,10 +450,10 @@ internal abstract class ThirdPartyProviderDao<T> : ThirdPartyProviderDao, IDispo
             FilterType.ReviewRooms => FolderType.ReviewRoom,
             FilterType.ReadOnlyRooms => FolderType.ReadOnlyRoom,
             FilterType.CustomRooms => FolderType.CustomRoom,
-            _ => FolderType.CustomRoom,
+            _ => FolderType.DEFAULT,
         };
 
-        return rooms.Where(f => f.FolderType == filter);
+        return rooms.Where(f => f.FolderType == filter || filter == FolderType.DEFAULT);
     }
 
     protected IAsyncEnumerable<Folder<string>> FilterByOwner(IAsyncEnumerable<Folder<string>> rooms, Guid ownerId, bool withoutMe)

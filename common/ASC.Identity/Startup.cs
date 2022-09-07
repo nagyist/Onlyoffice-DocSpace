@@ -1,5 +1,7 @@
 ﻿using ASC.Api.Core;
+using ASC.Common;
 using ASC.Common.Utils;
+using ASC.Identity.Controllers;
 
 namespace ASC.Identity;
 
@@ -81,11 +83,30 @@ public class Startup : BaseWorkerStartup
 
         services.AddTransient<IProfileService, ProfileService>();
 
+        DIHelper.TryAdd<IProfileService, ProfileService>();
+        DIHelper.TryAdd<AccountController>();
+        DIHelper.TryAdd<ConsentController>();
+
         //services.ConfigureApplicationCookie(options =>
         //{
         //    options.Cookie.Name = "identity";
         //    options.Events.OnValidatePrincipal = < method to execute on validating principal event>           
         //});
+    }
+
+    public override void Configure(IApplicationBuilder app)
+    {
+        base.Configure(app);
+
+        app.UseStaticFiles();
+      
+        app.UseIdentityServer();
+
+        app.UseAuthorization();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapDefaultControllerRoute();
+        });
     }
 }
 

@@ -38,16 +38,9 @@ var options = new WebApplicationOptions
 
 var builder = WebApplication.CreateBuilder(options);
 
-builder.Host.ConfigureDefault(args, (hostContext, config, env, path) => {
+builder.Host.ConfigureDefault();
 
-},
-(hostContext, services, diHelper) =>
-{
-    diHelper.TryAdd<IProfileService, ProfileService>();
-    diHelper.TryAdd<AccountController>();
-    diHelper.TryAdd<ConsentController>();
-});
-
+builder.Configuration.AddDefaultConfiguration(builder.Environment);
 builder.WebHost.ConfigureDefaultKestrel();
 
 var startup = new Startup(builder.Configuration, builder.Environment);
@@ -64,16 +57,6 @@ app.MigrateDbContext<PersistedGrantDbContext>((_, __) => { })
             .Wait();
     });
 
+startup.Configure(app);
 
-app.UseStaticFiles();
-app.UseRouting();
-
-app.UseIdentityServer();
-
-app.UseAuthorization();
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapDefaultControllerRoute();
-});
-
-await app.RunAsync();
+await app.RunWithTasksAsync();

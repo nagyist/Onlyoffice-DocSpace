@@ -1,12 +1,6 @@
-using System;
-
 using ASC.Identity.Models.AccountViewModels;
 
-using IdentityServer4.Models;
-
-using Microsoft.AspNetCore.Mvc;
-
-namespace ASC.Identity;
+namespace ASC.Identity.Classes;
 
 public static class Extensions
 {

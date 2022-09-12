@@ -1,12 +1,10 @@
 using System.Data.SqlClient;
-
 using Polly;
 
-namespace Microsoft.AspNetCore.Hosting;
+namespace ASC.Identity;
 
 public static class HostExtension
 {
-
     public static WebApplication MigrateDbContext<TContext>(this WebApplication webHost, Action<TContext, IServiceProvider> seeder) where TContext : DbContext
     {
         using var scope = webHost.Services.CreateScope();

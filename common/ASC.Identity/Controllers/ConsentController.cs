@@ -2,6 +2,8 @@
 // Licensed under the Apache License, Version 2.0. See LICENSE in the project root for license information.
 
 
+using ASC.Identity.Classes;
+using ASC.Identity.Log;
 using ASC.Identity.Models.ConsentViewModels;
 
 using IdentityServer4.Events;
@@ -163,7 +165,7 @@ public class ConsentController : Controller
         }
         else
         {
-            _logger.LogError("No consent request matching request: {0}", returnUrl);
+            _logger.RequestConsentError(returnUrl);
         }
 
         return null;

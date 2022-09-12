@@ -2,13 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
-  <ItemGroup>
-    <None Remove="Certificate\idsrv3test.pfx" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Certificate\idsrv3test.pfx" />
-  </ItemGroup>
-  <ItemGroup>
+   <ItemGroup>
     <None Include="Views\Shared\Error.cshtml" />
     <None Include="Views\Shared\Redirect.cshtml" />
     <None Include="Views\Shared\_Layout.cshtml" />
@@ -30,8 +24,5 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ASC.Api.Core\ASC.Api.Core.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Data\" />
   </ItemGroup>
 </Project>

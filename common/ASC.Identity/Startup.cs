@@ -1,7 +1,10 @@
-﻿using ASC.Api.Core;
-using ASC.Common;
+﻿using System.Security.Cryptography;
+
+using ASC.Api.Core;
 using ASC.Common.Utils;
 using ASC.Identity.Controllers;
+
+using Microsoft.IdentityModel.Tokens;
 
 namespace ASC.Identity;
 
@@ -9,7 +12,7 @@ public class Startup : BaseWorkerStartup
 {
     private readonly IConfiguration _configuration;
 
-    public Startup(IConfiguration configuration, IHostEnvironment hostEnvironment):base(configuration, hostEnvironment)
+    public Startup(IConfiguration configuration, IHostEnvironment hostEnvironment) : base(configuration, hostEnvironment)
     {
         _configuration = configuration;
     }
@@ -17,6 +20,19 @@ public class Startup : BaseWorkerStartup
     public override void ConfigureServices(IServiceCollection services)
     {
         base.ConfigureServices(services);
+
+        var certificatePath = _configuration["oidc:certificate:path"];
+        var certificatePassword = _configuration["oidc:certificate:password"];
+        var certificateAlg = _configuration["oidc:certificate:alg"];
+
+        if (certificateAlg != SecurityAlgorithms.EcdsaSha512)
+        {
+            throw new Exception(String.Format("unsupported {0}  certificate algoritm", certificateAlg));
+        }
+        
+        var ecdsa = ECDsa.Create();
+
+        ecdsa.ImportFromEncryptedPem(File.ReadAllText(certificatePath), certificatePassword);
 
         var migrationsAssembly = typeof(Startup).GetTypeInfo().Assembly.GetName().Name;
         var configurationExtension = new ConfigurationExtension(_configuration);
@@ -31,7 +47,7 @@ public class Startup : BaseWorkerStartup
             x.IssuerUri = "null";
             x.Authentication.CookieLifetime = TimeSpan.FromHours(2);
         })
-        .AddSigningCredential(Certificate.Get())
+        .AddSigningCredential(new ECDsaSecurityKey(ecdsa), IdentityServerConstants.ECDsaSigningAlgorithm.ES512)
         .AddConfigurationStore(options =>
         {
             options.ApiResource.Name = "identity_api_resources";
@@ -83,9 +99,10 @@ public class Startup : BaseWorkerStartup
 
         services.AddTransient<IProfileService, ProfileService>();
 
-        DIHelper.TryAdd<IProfileService, ProfileService>();
+        DIHelper.TryAdd<ProfileService>();
         DIHelper.TryAdd<AccountController>();
         DIHelper.TryAdd<ConsentController>();
+
 
         //services.ConfigureApplicationCookie(options =>
         //{
@@ -99,7 +116,7 @@ public class Startup : BaseWorkerStartup
         base.Configure(app);
 
         app.UseStaticFiles();
-      
+
         app.UseIdentityServer();
 
         app.UseAuthorization();
@@ -109,11 +126,3 @@ public class Startup : BaseWorkerStartup
         });
     }
 }
-
-
-//services.AddBaseDbContextPool<PersistedGrantDbContext>();
-//services.AddBaseDbContextPool<ConfigurationDbContext>();
-//.AddInMemoryIdentityResources(Config.IdentityResources)
-//.AddInMemoryApiScopes(Config.ApiScopes)
-//.AddInMemoryApiResources(Config.ApiResources)
-//.AddInMemoryClients(Config.Clients);

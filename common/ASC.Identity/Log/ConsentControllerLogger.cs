@@ -24,38 +24,11 @@
 // content are licensed under the terms of the Creative Commons Attribution-ShareAlike 4.0
 // International. See the License terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
 
-using ASC.Identity;
-using ASC.Identity.Models.AccountViewModels;
+using ASC.Identity.Controllers;
 
-using IdentityServer4.EntityFramework.DbContexts;
-
-var options = new WebApplicationOptions
+namespace ASC.Identity.Log;
+internal static partial class ConsentControllerLogger
 {
-    Args = args,
-    ContentRootPath = WindowsServiceHelpers.IsWindowsService() ? AppContext.BaseDirectory : default
-};
-
-var builder = WebApplication.CreateBuilder(options);
-
-builder.Host.ConfigureDefault();
-
-builder.Configuration.AddDefaultConfiguration(builder.Environment);
-builder.WebHost.ConfigureDefaultKestrel();
-
-var startup = new Startup(builder.Configuration, builder.Environment);
-
-startup.ConfigureServices(builder.Services);
-
-var app = builder.Build();
-
-app.MigrateDbContext<PersistedGrantDbContext>((_, __) => { })
-    .MigrateDbContext<ConfigurationDbContext>((context, services) =>
-    {
-        new ConfigurationDbContextSeed()
-            .SeedAsync(context, builder.Configuration)
-            .Wait();
-    });
-
-startup.Configure(app);
-
-await app.RunWithTasksAsync();
+    [LoggerMessage(Level = LogLevel.Error, Message = "No consent request matching request: {ReturnUrl}")]
+    public static partial void RequestConsentError(this ILogger<ConsentController> logger, string returnUrl);
+}

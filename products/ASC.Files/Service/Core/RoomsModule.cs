@@ -69,29 +69,14 @@ public class RoomsModule : FeedModule
         var folder = folderWithShare.Folder;
         var shareRecord = folderWithShare.ShareRecord;
 
-        bool targetCond;
-        if (feed.Target != null)
-        {
-            if (shareRecord != null && shareRecord.Owner == userId)
-            {
-                return false;
-            }
+        var visible = true;
 
-            var owner = (Guid)feed.Target;
-            var groupUsers = _userManager.GetUsersByGroup(owner).Select(x => x.Id).ToList();
-            if (groupUsers.Count == 0)
-            {
-                groupUsers.Add(owner);
-            }
-
-            targetCond = groupUsers.Contains(userId);
-        }
-        else
+        if (feed.Target != null && shareRecord != null && shareRecord.Owner == userId)
         {
-            targetCond = true;
+            visible = false;
         }
 
-        return targetCond && _fileSecurity.CanReadAsync(folder, userId).Result;
+        return visible && _fileSecurity.CanReadAsync(folder, userId).Result;
     }
 
     public override IEnumerable<Tuple<Feed.Aggregator.Feed, object>> GetFeeds(FeedFilter filter)

@@ -280,6 +280,37 @@ public class FeedAggregateDataProvider
         return count.Take(1001).Select(r => r.agg.Id).Count();
     }
 
+    public int GetNewFeedsCount(string module, string id, DateTime lastReadedTime)
+    {
+        ArgumentNullOrEmptyException.ThrowIfNullOrEmpty(module);
+        ArgumentNullOrEmptyException.ThrowIfNullOrEmpty(id);
+
+        using var feedDbContext = _dbContextFactory.CreateDbContext();
+
+        var q = feedDbContext.FeedAggregates
+            .Where(r => r.Tenant == _tenantManager.GetCurrentTenant().Id)
+            .Where(r => r.ModifiedBy != _authContext.CurrentAccount.ID);
+
+        var exp = GetIdSearchExpression(id, module, true);
+
+        if (exp == null)
+        {
+            throw new InvalidDataException();
+        }
+
+        q = q.Where(exp);
+
+        var q1 = q.Join(feedDbContext.FeedUsers, r => r.Id, u => u.FeedId, (agg, user) => new { agg, user })
+            .Where(r => r.user.UserId == _authContext.CurrentAccount.ID);
+
+        if (1 < lastReadedTime.Year)
+        {
+            q1 = q1.Where(r => r.agg.AggregateDate >= lastReadedTime);
+        }
+
+        return q1.Take(1001).Select(r => r.agg.Id).Count();
+    }
+
     public IEnumerable<int> GetTenants(TimeInterval interval)
     {
         using var feedDbContext = _dbContextFactory.CreateDbContext();

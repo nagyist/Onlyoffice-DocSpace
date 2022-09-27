@@ -52,12 +52,20 @@ public class FeedReadedDataProvider
 
     public DateTime GetTimeReaded(Guid user, string module, int tenant)
     {
-        using var feedDbContext = _dbContextFactory.CreateDbContext();
-        return feedDbContext.FeedReaded
-            .Where(r => r.Tenant == tenant)
-            .Where(r => r.UserId == user)
-            .Where(r => r.Module == module)
-            .Max(r => r.TimeStamp);
+        try
+        {
+            using var feedDbContext = _dbContextFactory.CreateDbContext();
+            return feedDbContext.FeedReaded
+                .Where(r => r.Tenant == tenant)
+                .Where(r => r.UserId == user)
+                .Where(r => r.Module == module)
+                .Select(r => r.TimeStamp)
+                .Max();
+        }
+        catch (InvalidOperationException)
+        {
+            return default;
+        }
     }
 
     public void SetTimeReaded()

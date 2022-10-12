@@ -80,7 +80,7 @@ public class FeedAggregateDataProvider
         foreach (var feed in feeds)
         {
             feedsPortion.Add(feed);
-            if (feedsPortion.Sum(f => f.Users.Count) <= 1)
+            if (feedsPortion.Sum(f => f.Users.Count) <= portionSize)
             {
                 continue;
             }

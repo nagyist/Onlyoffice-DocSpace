@@ -231,34 +231,6 @@ public class AuditEventsRepository
     }
 }
 
-internal static class PredicateBuilder
-{
-    internal static Expression<Func<T, bool>> Or<T>(this Expression<Func<T, bool>> a, Expression<Func<T, bool>> b)
-    {
-        var p = a.Parameters[0];
-
-        var visitor = new SubstExpressionVisitor();
-        visitor.Subst[b.Parameters[0]] = p;
-
-        Expression body = Expression.OrElse(a.Body, visitor.Visit(b.Body));
-        return Expression.Lambda<Func<T, bool>>(body, p);
-    }
-}
-
-internal class SubstExpressionVisitor : System.Linq.Expressions.ExpressionVisitor
-{
-    internal Dictionary<Expression, Expression> Subst = new Dictionary<Expression, Expression>();
-
-    protected override Expression VisitParameter(ParameterExpression node)
-    {
-        if (Subst.TryGetValue(node, out var newValue))
-        {
-            return newValue;
-        }
-        return node;
-    }
-}
-
 public static class AuditEventsRepositoryExtensions
 {
     public static void Register(DIHelper services)

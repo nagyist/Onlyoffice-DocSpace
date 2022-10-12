@@ -40,4 +40,6 @@ public class FeedApiFilter
     public bool OnlyNew { get; set; }
     public bool WithoutMe { get; set; }
     public bool WithRelated { get; set; }
+    public IEnumerable<int> FilesIds { get; set; }
+    public IEnumerable<int> FoldersIds { get; set; }
 }

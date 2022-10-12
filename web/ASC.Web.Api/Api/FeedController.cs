@@ -24,6 +24,8 @@
 // content are licensed under the terms of the Creative Commons Attribution-ShareAlike 4.0
 // International. See the License terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
 
+using ASC.Files.Core;
+
 namespace ASC.Web.Api.Controllers;
 
 [Scope]
@@ -38,6 +40,7 @@ public class FeedController : ControllerBase
     private readonly TenantUtil _tenantUtil;
     private readonly SecurityContext _securityContext;
     private readonly IMapper _mapper;
+    private readonly IDaoFactory _daoFactory;
 
     public FeedController(
         FeedReadedDataProvider feedReadedDataProvider,
@@ -46,7 +49,8 @@ public class FeedController : ControllerBase
         FeedAggregateDataProvider feedAggregateDataProvider,
         TenantUtil tenantUtil,
         SecurityContext securityContext,
-        IMapper mapper)
+        IMapper mapper,
+        IDaoFactory daoFactory)
     {
         _feedReadedDataProvider = feedReadedDataProvider;
         _apiContext = apiContext;
@@ -55,6 +59,7 @@ public class FeedController : ControllerBase
         _tenantUtil = tenantUtil;
         _securityContext = securityContext;
         _mapper = mapper;
+        _daoFactory = daoFactory;
     }
 
     private string Key => $"newfeedscount/{_securityContext.CurrentAccount.ID}";
@@ -144,6 +149,24 @@ public class FeedController : ControllerBase
         {
             _feedReadedDataProvider.SetTimeReaded();
             _newFeedsCountCache.Remove(Key);
+        }
+
+        if (module == Feed.Constants.FoldersModule)
+        {
+            var folderDao = _daoFactory.GetFolderDao<int>();
+            var fileDao = _daoFactory.GetFileDao<int>();
+
+            var parent = Convert.ToInt32(id);
+
+            var foldersIds = folderDao.GetFoldersAsync(Convert.ToInt32(id), null, FilterType.None, false, Guid.Empty, string.Empty, true)
+                .Select(f => f.Id).ToListAsync().Result;
+            foldersIds.Add(parent);
+
+            var filesIds = fileDao.GetFilesAsync(foldersIds, FilterType.None, false, Guid.Empty, string.Empty, false)
+                .Select(f => f.Id).ToListAsync().Result;
+
+            filter.FoldersIds = foldersIds;
+            filter.FilesIds = filesIds;
         }
 
         var feeds = _feedAggregateDataProvider

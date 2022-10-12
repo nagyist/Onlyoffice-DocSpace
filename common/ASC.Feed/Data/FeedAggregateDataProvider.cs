@@ -80,7 +80,7 @@ public class FeedAggregateDataProvider
         foreach (var feed in feeds)
         {
             feedsPortion.Add(feed);
-            if (feedsPortion.Sum(f => f.Users.Count) <= portionSize)
+            if (feedsPortion.Sum(f => f.Users.Count) <= 1)
             {
                 continue;
             }
@@ -203,7 +203,7 @@ public class FeedAggregateDataProvider
         var q = feedDbContext.FeedAggregates.AsNoTracking()
             .Where(r => r.Tenant == _tenantManager.GetCurrentTenant().Id);
 
-        var exp = GetIdSearchExpression(filter.Id, filter.Module, filter.WithRelated);
+        var exp = GetIdSearchExpression(filter.Id, filter.Module, filter.FoldersIds, filter.FilesIds, filter.WithRelated);
 
         if (exp != null)
         {
@@ -322,7 +322,7 @@ public class FeedAggregateDataProvider
         });
     }
 
-    private Expression<Func<FeedAggregate, bool>> GetIdSearchExpression(string id, string module, bool withRelated)
+    private Expression<Func<FeedAggregate, bool>> GetIdSearchExpression(string id, string module, IEnumerable<int> foldersIds, IEnumerable<int> filesIds, bool withRelated)
     {
         Expression<Func<FeedAggregate, bool>> exp = null;
 
@@ -346,12 +346,42 @@ public class FeedAggregateDataProvider
 
         if (module == Constants.FilesModule)
         {
-            exp = f => f.Id.StartsWith($"{Constants.FileItem}_{id}") || f.Id.StartsWith($"{Constants.SharedFileItem}_{id}");
+            if (!withRelated)
+            {
+                exp = f => f.Id.StartsWith($"{Constants.FileItem}_{id}") || f.Id.StartsWith($"{Constants.SharedFileItem}_{id}");
+            }
+
+            exp = f => f.Id.StartsWith($"{Constants.FileItem}_{id}");
         }
 
         if (module == Constants.FoldersModule)
         {
-            exp = f => f.Id == $"{Constants.FolderItem}_{id}" || f.Id.StartsWith($"{Constants.SharedFolderItem}_{id}");
+            if (!withRelated)
+            {
+                exp = f => f.Id == $"{Constants.FolderItem}_{id}" || f.Id.StartsWith($"{Constants.SharedFolderItem}_{id}");
+            }
+            else
+            {
+                if (!foldersIds.Any())
+                {
+                    return exp;
+                }
+
+                exp = f => false;
+
+                var folderFeedIds = foldersIds.Select(id => $"{Constants.FolderItem}_{id}");
+                var filesFeedIds = filesIds.Select(id => $"{Constants.FileItem}_{id}");
+
+                foreach (var folderId in folderFeedIds)
+                {
+                    exp = exp.Or(f => f.Id.StartsWith(folderId));
+                }
+
+                foreach (var filesId in filesFeedIds)
+                {
+                    exp = exp.Or(f => f.Id.StartsWith(filesId));
+                }
+            }
         }
 
         return exp;

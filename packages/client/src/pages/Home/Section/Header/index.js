@@ -4,7 +4,11 @@ import styled, { css } from "styled-components";
 import { withRouter } from "react-router";
 import toastr from "@docspace/components/toast/toastr";
 import Loaders from "@docspace/common/components/Loaders";
-import { AppServerConfig } from "@docspace/common/constants";
+import {
+  AppServerConfig,
+  FolderType,
+  RoomSearchArea,
+} from "@docspace/common/constants";
 import { withTranslation } from "react-i18next";
 import { isMobile, isTablet, isMobileOnly } from "react-device-detect";
 import DropDownItem from "@docspace/components/drop-down-item";
@@ -60,7 +64,10 @@ const StyledContainer = styled.div`
 
   .header-container {
     min-height: 33px;
-    height: 60px;
+
+    @media ${tablet} {
+      height: 60px;
+    }
   }
 `;
 
@@ -543,16 +550,22 @@ class SectionHeaderContent extends React.Component {
       setAlreadyFetchingRooms,
 
       categoryType,
+
+      rootFolderType,
     } = this.props;
 
     setIsLoading(true);
 
     setAlreadyFetchingRooms(true);
 
-    fetchRooms(null, null)
-      .then(() => {
-        const filter = RoomsFilter.getDefault();
+    const filter = RoomsFilter.getDefault();
 
+    if (rootFolderType === FolderType.Archive) {
+      filter.searchArea = RoomSearchArea.Archive;
+    }
+
+    fetchRooms(null, filter)
+      .then(() => {
         const filterParamsStr = filter.toUrlParams();
 
         const url = getCategoryUrl(categoryType, filter.folder);
@@ -592,7 +605,7 @@ class SectionHeaderContent extends React.Component {
       showText,
       isRoomsFolder,
       isEmptyPage,
-      isVisitor,
+      canCreateFiles,
     } = this.props;
     const menuItems = this.getMenuItems();
     const isLoading = !title || !tReady;
@@ -621,7 +634,7 @@ class SectionHeaderContent extends React.Component {
                     sectionWidth={context.sectionWidth}
                     showText={showText}
                     isRootFolder={isRootFolder}
-                    canCreate={canCreate && !isVisitor}
+                    canCreate={canCreate && canCreateFiles}
                     title={title}
                     isDesktop={isDesktop}
                     isTabletView={isTabletView}
@@ -666,7 +679,7 @@ export default inject(
     treeFoldersStore,
     filesActionsStore,
     settingsStore,
-
+    accessRightsStore,
     contextOptionsStore,
   }) => {
     const {
@@ -729,6 +742,7 @@ export default inject(
       roomType,
       pathParts,
       navigationPath,
+      rootFolderType,
     } = selectedFolderStore;
 
     const selectedFolder = { ...selectedFolderStore };
@@ -745,6 +759,8 @@ export default inject(
       onClickReconnectStorage,
     } = contextOptionsStore;
 
+    const { canCreateFiles } = accessRightsStore;
+
     return {
       showText: auth.settingsStore.showText,
       isDesktop: auth.settingsStore.isDesktopClient,
@@ -756,6 +772,7 @@ export default inject(
       pathParts: pathParts,
       navigationPath: navigationPath,
       canCreate,
+      canCreateFiles,
       setIsInfoPanelVisible: setIsVisible,
       isInfoPanelVisible: isVisible,
       isHeaderVisible,
@@ -815,6 +832,8 @@ export default inject(
       onClickInviteUsers,
       onShowInfoPanel,
       onClickArchive,
+
+      rootFolderType,
     };
   }
 )(

@@ -477,6 +477,7 @@ public enum MessageAction
     RoomLogoCreated = 5080,
     RoomLogoDeleted = 5081,
     UserDeletedFromRoom = 5082,
+    InvitationLinkUpdated = 5083,
 
     #endregion
 

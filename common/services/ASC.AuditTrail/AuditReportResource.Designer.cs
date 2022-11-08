@@ -1852,6 +1852,15 @@ namespace ASC.AuditTrail {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Link updated. Name {0}, access: {1}.
+        /// </summary>
+        public static string InvitationLinkUpdated {
+            get {
+                return ResourceManager.GetString("InvitationLinkUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invoice Created: {0}.
         /// </summary>
         public static string InvoiceCreated {
@@ -3810,6 +3819,15 @@ namespace ASC.AuditTrail {
         public static string TimeZoneSettingsUpdated {
             get {
                 return ResourceManager.GetString("TimeZoneSettingsUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trash emptied.
+        /// </summary>
+        public static string TrashEmptied {
+            get {
+                return ResourceManager.GetString("TrashEmptied", resourceCulture);
             }
         }
         

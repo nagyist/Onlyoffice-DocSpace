@@ -714,6 +714,9 @@
   <data name="ImportActionType" xml:space="preserve">
     <value>Import</value>
   </data>
+  <data name="InvitationLinkUpdated" xml:space="preserve">
+    <value>Link updated. Name {0}, access: {1}</value>
+  </data>
   <data name="InvoiceCreated" xml:space="preserve">
     <value>Invoice Created: {0}</value>
   </data>
@@ -1367,6 +1370,9 @@
   </data>
   <data name="TimeZoneSettingsUpdated" xml:space="preserve">
     <value>Time Zone Settings Updated</value>
+  </data>
+  <data name="TrashEmptied" xml:space="preserve">
+    <value>Trash emptied</value>
   </data>
   <data name="TrustedMailDomainSettingsUpdated" xml:space="preserve">
     <value>Trusted mail domain settings updated</value>

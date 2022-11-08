@@ -142,7 +142,7 @@ internal class RoomsActionMapper : IModuleActionMapper
                 {
                     { ActionType.Update, new[] { MessageAction.RoomRenamed, MessageAction.RoomLogoCreated, MessageAction.RoomLogoDeleted, MessageAction.AddedRoomTag,
                         MessageAction.DeletedRoomTag, MessageAction.RoomArchived, MessageAction.RoomUnarchived } },
-                    { ActionType.UpdateAccess, new[] { MessageAction.UserAppointedAccess, MessageAction.RoomInviteLinkUsed, MessageAction.UserDeletedFromRoom } }
+                    { ActionType.UpdateAccess, new[] { MessageAction.UserAppointedAccess, MessageAction.RoomInviteLinkUsed, MessageAction.UserDeletedFromRoom, MessageAction.InvitationLinkUpdated } }
                 },
                 new Dictionary<ActionType, MessageAction>
                 {

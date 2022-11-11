@@ -312,20 +312,23 @@ public class UserManager
         return findUsers.ToArray();
     }
 
-    public UserInfo SaveUserInfo(UserInfo u, bool isUser = false, bool syncCardDav = false)
+    public UserInfo SaveUserInfo(UserInfo u, bool isUser = false, bool syncCardDav = false, bool checkPermissions = true)
     {
         if (IsSystemUser(u.Id))
         {
             return SystemUsers[u.Id];
         }
 
-        if (u.Id == Guid.Empty)
+        if (checkPermissions)
         {
-            _permissionContext.DemandPermissions(Constants.Action_AddRemoveUser);
-        }
-        else
-        {
-            _permissionContext.DemandPermissions(new UserSecurityProvider(u.Id), Constants.Action_EditUser);
+            if (u.Id == Guid.Empty)
+            {
+                _permissionContext.DemandPermissions(Constants.Action_AddRemoveUser);
+            }
+            else
+            {
+                _permissionContext.DemandPermissions(new UserSecurityProvider(u.Id), Constants.Action_EditUser);
+            }
         }
 
         if (!_coreBaseSettings.Personal)

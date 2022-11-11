@@ -111,18 +111,13 @@ public sealed class UserManagerWrapper
         return Equals(foundUser, Constants.LostUser) || foundUser.Id == userId;
     }
 
-    public async Task<UserInfo> AddInvitedUserAsync(string email, EmployeeType type)
+    public UserInfo AddInvitedUser(string email, EmployeeType type)
     {
         var mail = new MailAddress(email);
 
         if (_userManager.GetUserByEmail(mail.Address).Id != Constants.LostUser.Id)
         {
             throw new InvalidOperationException($"User with email {mail.Address} already exists or is invited");
-        }
-
-        if (type is EmployeeType.RoomAdmin or EmployeeType.DocSpaceAdmin)
-        {
-            await _countManagerChecker.CheckAppend();
         }
 
         var user = new UserInfo
@@ -135,7 +130,7 @@ public sealed class UserManagerWrapper
             Status = EmployeeStatus.Active,
         };
 
-        var newUser = _userManager.SaveUserInfo(user);
+        var newUser = _userManager.SaveUserInfo(user, type is EmployeeType.User, checkPermissions: false);
 
         var groupId = type switch
         {

@@ -117,7 +117,7 @@ public class FileSharingAceHelper<T>
                 continue;
             }
 
-            if (!await ProcessEmailAceAsync(w))
+            if (!ProcessEmailAce(w))
             {
                 continue;
             }
@@ -271,7 +271,7 @@ public class FileSharingAceHelper<T>
         await _fileMarker.RemoveMarkAsNewAsync(entry);
     }
 
-    private async Task<bool> ProcessEmailAceAsync(AceWrapper ace)
+    private bool ProcessEmailAce(AceWrapper ace)
     {
         if (string.IsNullOrEmpty(ace.Email))
         {
@@ -279,11 +279,11 @@ public class FileSharingAceHelper<T>
         }
 
         var type = DocSpaceHelper.PaidRights.Contains(ace.Access) ? EmployeeType.RoomAdmin : EmployeeType.User;
-        UserInfo user = null;
+        UserInfo user;
 
         try
         {
-            user = await _userManagerWrapper.AddInvitedUserAsync(ace.Email, type);
+            user = _userManagerWrapper.AddInvitedUser(ace.Email, type);
         }
         catch
         {

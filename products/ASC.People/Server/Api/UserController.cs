@@ -300,9 +300,22 @@ public class UserController : PeopleControllerBase
     [HttpPost("invite")]
     public async IAsyncEnumerable<EmployeeDto> InviteUsersAsync(InviteUsersRequestDto inDto)
     {
+        var userType = _userManager.IsDocSpaceAdmin(_authContext.CurrentAccount.ID) ? EmployeeType.DocSpaceAdmin :
+            _userManager.IsUser(_authContext.CurrentAccount.ID) ? EmployeeType.User : EmployeeType.RoomAdmin;
+
+        if (userType == EmployeeType.User)
+        {
+            throw new SecurityException();
+        }
+
         foreach (var invite in inDto.Invitations)
         {
-            var user = await _userManagerWrapper.AddInvitedUserAsync(invite.Email, invite.Type);
+            if (invite.Type == EmployeeType.DocSpaceAdmin && userType != EmployeeType.DocSpaceAdmin)
+            {
+                throw new SecurityException();
+            }
+
+            var user = _userManagerWrapper.AddInvitedUser(invite.Email, invite.Type);
             var link = _roomLinkService.GetInvitationLink(user.Email, invite.Type, _authContext.CurrentAccount.ID);
 
             _studioNotifyService.SendDocSpaceInvite(user.Email, link);

@@ -4,7 +4,7 @@ import { StyledUser } from "../../styles/members";
 import Avatar from "@docspace/components/avatar";
 import { ComboBox } from "@docspace/components";
 import { ShareAccessRights } from "@docspace/common/constants";
-import { DeleteProfileEverDialog } from "SRC_DIR/components/dialogs";
+import DeleteProfileEverDialog from "@docspace/client/src/components/dialogs/DeleteProfileEverDialog";
 
 const User = ({
   t,
@@ -23,6 +23,8 @@ const User = ({
 
   const [userIsRemoved, setUserIsRemoved] = useState(false);
   if (userIsRemoved) return null;
+
+  const [showDeleteModalDialog, setShowDeleteModalDialog] = useState(false);
 
   const fullRoomRoleOptions = membersHelper.getOptionsByRoomType(
     selectionParentRoom.roomType,
@@ -75,7 +77,11 @@ const User = ({
 
   return (
     <>
-      <DeleteProfileEverDialog />
+      <DeleteProfileEverDialog
+        visible={showDeleteModalDialog}
+        user={user}
+        onClose={() => setShowDeleteModalDialog(false)}
+      />
       <StyledUser isExpect={isExpect} key={user.id}>
         <Avatar
           role="user"
@@ -106,7 +112,7 @@ const User = ({
                 modernView
               />
             ) : isArchiveRoot ? (
-              <div onClick={onDelete}>X</div>
+              <div onClick={() => setShowDeleteModalDialog(true)}>X</div>
             ) : (
               <div className="disabled-role-combobox">{userRole.label}</div>
             )}

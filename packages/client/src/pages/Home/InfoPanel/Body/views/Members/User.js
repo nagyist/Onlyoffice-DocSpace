@@ -4,6 +4,7 @@ import { StyledUser } from "../../styles/members";
 import Avatar from "@docspace/components/avatar";
 import { ComboBox } from "@docspace/components";
 import { ShareAccessRights } from "@docspace/common/constants";
+import { DeleteProfileEverDialog } from "SRC_DIR/components/dialogs";
 
 const User = ({
   t,
@@ -73,41 +74,46 @@ const User = ({
     userRole.access !== ShareAccessRights.FullAccess;
 
   return (
-    <StyledUser isExpect={isExpect} key={user.id}>
-      <Avatar
-        role="user"
-        className="avatar"
-        size="min"
-        source={isExpect ? "/static/images/@.react.svg" : user.avatar || ""}
-        userName={isExpect ? "" : user.displayName}
-      />
+    <>
+      <DeleteProfileEverDialog />
+      <StyledUser isExpect={isExpect} key={user.id}>
+        <Avatar
+          role="user"
+          className="avatar"
+          size="min"
+          source={isExpect ? "/static/images/@.react.svg" : user.avatar || ""}
+          userName={isExpect ? "" : user.displayName}
+        />
 
-      <div className="name">
-        {isExpect ? user.email : user.displayName || user.email}
-      </div>
-      {currentMember?.id === user.id && (
-        <div className="me-label">&nbsp;{`(${t("Common:MeLabel")})`}</div>
-      )}
-
-      {userRole && userRoleOptions && (
-        <div className="role-wrapper">
-          {isAvailable ? (
-            <ComboBox
-              className="role-combobox"
-              selectedOption={userRole}
-              options={userRoleOptions}
-              onSelect={onOptionClick}
-              scaled={false}
-              withBackdrop={false}
-              size="content"
-              modernView
-            />
-          ) : (
-            <div className="disabled-role-combobox">{userRole.label}</div>
-          )}
+        <div className="name">
+          {isExpect ? user.email : user.displayName || user.email}
         </div>
-      )}
-    </StyledUser>
+        {currentMember?.id === user.id && (
+          <div className="me-label">&nbsp;{`(${t("Common:MeLabel")})`}</div>
+        )}
+
+        {userRole && userRoleOptions && (
+          <div className="role-wrapper">
+            {isAvailable ? (
+              <ComboBox
+                className="role-combobox"
+                selectedOption={userRole}
+                options={userRoleOptions}
+                onSelect={onOptionClick}
+                scaled={false}
+                withBackdrop={false}
+                size="content"
+                modernView
+              />
+            ) : isArchiveRoot ? (
+              <div onClick={onDelete}>X</div>
+            ) : (
+              <div className="disabled-role-combobox">{userRole.label}</div>
+            )}
+          </div>
+        )}
+      </StyledUser>
+    </>
   );
 };
 

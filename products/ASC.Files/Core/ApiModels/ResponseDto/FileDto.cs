@@ -110,7 +110,7 @@ public class FileDtoHelper : FileEntryDtoHelper
 
     public async Task<FileDto<T>> GetAsync<T>(File<T> file, List<Tuple<FileEntry<T>, bool>> folders = null)
     {
-        var result = await GetFileWrapperAsync(file);
+        var result = await GetFileWrapperAsync(file); 
 
         result.FolderId = file.ParentId;
         if (file.RootFolderType == FolderType.USER
@@ -160,6 +160,7 @@ public class FileDtoHelper : FileEntryDtoHelper
         result.CanFillForms = await _fileSecurity.CanFillFormsAsync(file);
         result.DenyDownload = file.DenyDownload;
         result.DenySharing = file.DenySharing;
+        result.Access = file.Access;
 
         try
         {

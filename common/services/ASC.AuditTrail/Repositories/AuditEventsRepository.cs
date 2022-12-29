@@ -45,36 +45,7 @@ public class AuditEventsRepository
         _dbContextFactory = dbContextFactory;
         _mapper = mapper;
     }
-
-    private IEnumerable<AuditEventDto> Get(int tenant, DateTime? fromDate, DateTime? to, int? limit)
-    {
-        using var auditTrailContext = _dbContextFactory.CreateDbContext();
-        var query =
-           (from q in auditTrailContext.AuditEvents
-            from p in auditTrailContext.Users.Where(p => q.UserId == p.Id).DefaultIfEmpty()
-            where q.TenantId == tenant
-            orderby q.Date descending
-            select new AuditEventQuery
-            {
-                Event = q,
-                FirstName = p.FirstName,
-                LastName = p.LastName,
-                UserName = p.UserName
-            });
-
-        if (fromDate.HasValue && to.HasValue)
-        {
-            query = query.Where(q => q.Event.Date >= fromDate & q.Event.Date <= to);
-        }
-
-        if (limit.HasValue)
-        {
-            query = query.Take((int)limit);
-        }
-
-        return _mapper.Map<List<AuditEventQuery>, IEnumerable<AuditEventDto>>(query.ToList());
-    }
-
+    
     public IEnumerable<AuditEventDto> GetByFilter(
         Guid? userId = null,
         ProductType? productType = null,

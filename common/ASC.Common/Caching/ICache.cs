@@ -39,11 +39,5 @@ public interface ICache
 
     void Remove(Regex pattern);
 
-    ConcurrentDictionary<string, T> HashGetAll<T>(string key);
-
-    T HashGet<T>(string key, string field);
-
-    void HashSet<T>(string key, string field, T value);
-
     void Reset();
 }

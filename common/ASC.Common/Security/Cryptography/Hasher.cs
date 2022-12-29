@@ -55,42 +55,9 @@ public static class Hasher
         return ComputeHash64(data, hashAlg);
     }
 
-    public static string Base64Hash(string data)
-    {
-        return Base64Hash(data, DefaultAlg);
-    }
-
     public static string Base64Hash(byte[] data, HashAlg hashAlg)
     {
         return ComputeHash64(data, hashAlg);
-    }
-
-    public static string Base64Hash(byte[] data)
-    {
-        return Base64Hash(data, DefaultAlg);
-    }
-
-    public static bool EqualHash(byte[] dataToCompare, byte[] hash)
-    {
-        return EqualHash(dataToCompare, hash, DefaultAlg);
-    }
-
-    public static bool EqualHash(string dataToCompare, string hash, HashAlg hashAlg)
-    {
-        return EqualHash(S2B(dataToCompare), S642B(hash), hashAlg);
-    }
-
-    public static bool EqualHash(string dataToCompare, string hash)
-    {
-        return EqualHash(dataToCompare, hash, DefaultAlg);
-    }
-
-    public static bool EqualHash(byte[] dataToCompare, byte[] hash, HashAlg hashAlg)
-    {
-        return string.Equals(
-            ComputeHash64(dataToCompare, hashAlg),
-            B2S64(hash)
-            );
     }
 
     private static HashAlgorithm GetAlg(HashAlg hashAlg)
@@ -110,20 +77,6 @@ public static class Hasher
         ArgumentNullException.ThrowIfNull(str);
 
         return Encoding.UTF8.GetBytes(str);
-    }
-
-    private static string B2S(byte[] data)
-    {
-        ArgumentNullException.ThrowIfNull(data);
-
-        return Encoding.UTF8.GetString(data);
-    }
-
-    private static byte[] S642B(string str)
-    {
-        ArgumentNullException.ThrowIfNull(str);
-
-        return Convert.FromBase64String(str);
     }
 
     private static string B2S64(byte[] data)

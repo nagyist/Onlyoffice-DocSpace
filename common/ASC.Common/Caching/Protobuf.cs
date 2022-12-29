@@ -48,10 +48,3 @@ public class ProtobufDeserializer<T> : IDeserializer<T> where T : IMessage<T>, n
         return _parser.ParseFrom(data.ToArray());
     }
 }
-
-public static class GuidExtension
-{
-    public static ByteString ToByteString(this Guid id) => ByteString.CopyFrom(id.ToByteArray());
-
-    public static Guid FromByteString(this ByteString id) => new Guid(id.ToByteArray());
-}

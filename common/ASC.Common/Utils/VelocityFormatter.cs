@@ -26,29 +26,6 @@
 
 namespace ASC.Common.Utils;
 
-public class TextLoader : ResourceLoader
-{
-    public override void Init(Commons.Collections.ExtendedProperties configuration)
-    {
-        //nothing to configure
-    }
-
-    public override Stream GetResourceStream(string source)
-    {
-        return new MemoryStream(Encoding.UTF8.GetBytes(source));
-    }
-
-    public override long GetLastModified(NVelocity.Runtime.Resource.Resource resource)
-    {
-        return 1;
-    }
-
-    public override bool IsSourceModified(NVelocity.Runtime.Resource.Resource resource)
-    {
-        return false;
-    }
-}
-
 public static class VelocityFormatter
 {
     private static bool _initialized;

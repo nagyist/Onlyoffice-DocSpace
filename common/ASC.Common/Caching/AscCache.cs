@@ -103,50 +103,7 @@ public class AscCache : ICache
 
         _resetCacheToken = new CancellationTokenSource();
     }
-
-    public ConcurrentDictionary<string, T> HashGetAll<T>(string key) =>
-        _memoryCache.GetOrCreate(key, r => new ConcurrentDictionary<string, T>());
-
-    public T HashGet<T>(string key, string field)
-    {
-        if (_memoryCache.TryGetValue<ConcurrentDictionary<string, T>>(key, out var dic)
-            && dic.TryGetValue(field, out var value))
-        {
-            return value;
-        }
-
-        return default;
-    }
-
-    public void HashSet<T>(string key, string field, T value)
-    {
-        var options = new MemoryCacheEntryOptions()
-                .SetAbsoluteExpiration(DateTime.MaxValue)
-                .AddExpirationToken(new CancellationChangeToken(_resetCacheToken.Token));
-
-        var dic = HashGetAll<T>(key);
-
-        if (value != null)
-        {
-            dic.AddOrUpdate(field, value, (k, v) => value);
-
-            _memoryCache.Set(key, dic, options);
-        }
-        else if (dic != null)
-        {
-            dic.TryRemove(field, out _);
-
-            if (dic.IsEmpty)
-            {
-                _memoryCache.Remove(key);
-            }
-            else
-            {
-                _memoryCache.Set(key, dic, options);
-            }
-        }
-    }
-
+    
     private void Insert(string key, object value, TimeSpan? sligingExpiration = null, DateTime? absolutExpiration = null, Action<object, object, EvictionReason, object> evictionCallback = null)
     {
         var options = new MemoryCacheEntryOptions()

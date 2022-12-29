@@ -63,16 +63,6 @@ public class DefaultDistributedTaskQueueFactory : IDistributedTaskQueueFactory
         _options = options;
     }
 
-    public DistributedTaskQueue CreateQueue<T>() where T : DistributedTask
-    {
-        return CreateQueue(typeof(T).FullName);
-    }
-
-    public DistributedTaskQueue CreateQueue(Type type)
-    {
-        return CreateQueue(type.FullName);
-    }
-
     public DistributedTaskQueue CreateQueue(string name = default(string))
     {
         var option = _options.Get(name);

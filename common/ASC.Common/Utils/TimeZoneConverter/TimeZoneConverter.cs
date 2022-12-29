@@ -66,48 +66,6 @@ public class TimeZoneConverter
         return displayName;
     }
 
-    public string OlsonTzId2WindowsTzId(string olsonTimeZoneId, bool defaultIfNoMatch = true)
-    {
-        var mapZone = GetMapZoneByWindowsTzId(olsonTimeZoneId);
-
-        if (mapZone != null)
-        {
-            return olsonTimeZoneId; //already Windows
-        }
-
-        mapZone = GetMapZoneByOlsonTzId(olsonTimeZoneId);
-
-        if (mapZone != null)
-        {
-            return mapZone.WindowsTimeZoneId;
-        }
-
-        _logger.ErrorOlsonTimeZoneNotFound(olsonTimeZoneId);
-
-        return defaultIfNoMatch ? "UTC" : null;
-    }
-
-    public string WindowsTzId2OlsonTzId(string windowsTimeZoneId, bool defaultIfNoMatch = true)
-    {
-        var mapZone = GetMapZoneByOlsonTzId(windowsTimeZoneId);
-
-        if (mapZone != null)
-        {
-            return windowsTimeZoneId; //already Olson
-        }
-
-        mapZone = GetMapZoneByWindowsTzId(windowsTimeZoneId);
-
-        if (mapZone != null)
-        {
-            return mapZone.OlsonTimeZoneId;
-        }
-
-        _logger.ErrorWindowsTimeZoneNotFound(windowsTimeZoneId);
-
-        return defaultIfNoMatch ? "Etc/GMT" : null;
-    }
-
     public TimeZoneInfo GetTimeZone(string timeZoneId, bool defaultIfNoMatch = true)
     {
         var defaultTimezone = GetTimeZoneDefault();

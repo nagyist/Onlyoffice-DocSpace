@@ -167,13 +167,6 @@ public static class HttpRequestExtensions
                 || !string.IsNullOrEmpty(request.Headers[HeaderNames.UserAgent]) && request.Headers[HeaderNames.UserAgent].ToString().Contains("AscDesktopEditor"));
     }
 
-    public static bool SailfishApp(this HttpRequest request)
-    {
-        return request != null
-               && (!string.IsNullOrEmpty(request.Headers["sailfish"])
-                   || !string.IsNullOrEmpty(request.Headers[HeaderNames.UserAgent]) && request.Headers[HeaderNames.UserAgent].ToString().Contains("SailfishOS"));
-    }
-
     public static bool MobileApp(this HttpRequest request)
     {
         return !string.IsNullOrEmpty(request.Headers[HeaderNames.UserAgent]) && (request.Headers[HeaderNames.UserAgent].Contains("iOS") || request.Headers[HeaderNames.UserAgent].Contains("Android"));

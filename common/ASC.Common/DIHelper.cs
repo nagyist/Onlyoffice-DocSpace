@@ -433,19 +433,6 @@ public class DIHelper
         return this;
     }
 
-    public DIHelper TryAddSingleton<TService, TImplementation>() where TService : class where TImplementation : class, TService
-    {
-        var serviceName = $"{typeof(TService)}{typeof(TImplementation)}";
-
-        if (!Services[DIAttributeEnum.Singletone].Contains(serviceName))
-        {
-            Services[DIAttributeEnum.Singletone].Add(serviceName);
-            ServiceCollection.TryAddSingleton<TService, TImplementation>();
-        }
-
-        return this;
-    }
-
     public DIHelper Configure<TOptions>(Action<TOptions> configureOptions) where TOptions : class
     {
         var serviceName = $"{typeof(TOptions)}";

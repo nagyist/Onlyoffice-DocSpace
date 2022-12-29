@@ -90,28 +90,4 @@ public static class HtmlUtil
 
         return HttpUtility.HtmlDecode(unformatedText);//TODO:!!!
     }
-
-    public static string ToPlainText(string html)
-    {
-        return GetText(html);
-    }
-
-    /// <summary>
-    /// The function highlight all words in htmlText by searchText.
-    /// </summary>
-    /// <param name="searchText">the space separated string</param>
-    /// <param name="htmlText">html for highlight</param>
-    /// <param name="withoutLink"></param>
-    /// <returns>highlighted html</returns>
-    public static string SearchTextHighlight(string searchText, string htmlText, bool withoutLink = false)
-    {
-        if (string.IsNullOrEmpty(searchText) || string.IsNullOrEmpty(htmlText))
-        {
-            return htmlText;
-        }
-
-        var regexpstr = _worder.Matches(searchText).Select(m => m.Value).Distinct().Aggregate((r, n) => r + "|" + n);
-        var wordsFinder = new Regex(Regex.Escape(regexpstr), RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant | RegexOptions.Multiline);
-        return wordsFinder.Replace(htmlText, m => "<span class='searchTextHighlight" + (withoutLink ? " bold" : string.Empty) + "'>" + m.Value + "</span>");
-    }
 }

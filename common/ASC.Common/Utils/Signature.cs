@@ -83,11 +83,4 @@ public class Signature
 
         return Convert.ToBase64String(sha256.ComputeHash(Encoding.UTF8.GetBytes(str)));
     }
-
-    private static string GetHashBase64MD5(string str)
-    {
-        using var md5 = MD5.Create();
-
-        return Convert.ToBase64String(md5.ComputeHash(Encoding.UTF8.GetBytes(str)));
-    }
 }

@@ -67,11 +67,6 @@ public abstract class CachedDictionaryBase<T>
         Add(string.Empty, key, newValue);
     }
 
-    public bool HasItem(string key)
-    {
-        return !Equals(Get(key), default(T));
-    }
-
     public T Get(Func<T> @default)
     {
         var key = string.Format("func {0} {2}.{1}({3})", @default.Method.ReturnType, @default.Method.Name,

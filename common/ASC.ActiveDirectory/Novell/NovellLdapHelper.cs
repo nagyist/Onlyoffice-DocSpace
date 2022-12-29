@@ -225,42 +225,6 @@ public class NovellLdapHelper : LdapHelper
         return list;
     }
 
-    public override LdapObject GetUserBySid(string sid)
-    {
-        try
-        {
-            var ldapUniqueIdAttribute = _configuration["ldap:unique:id"];
-
-            Criteria criteria;
-
-            if (ldapUniqueIdAttribute == null)
-            {
-                criteria = Criteria.Any(
-                    Expression.Equal(LdapConstants.RfcLDAPAttributes.ENTRY_UUID, sid),
-                    Expression.Equal(LdapConstants.RfcLDAPAttributes.NS_UNIQUE_ID, sid),
-                    Expression.Equal(LdapConstants.RfcLDAPAttributes.GUID, sid),
-                    Expression.Equal(LdapConstants.ADSchemaAttributes.OBJECT_SID, sid)
-                    );
-            }
-            else
-            {
-                criteria = Criteria.All(Expression.Equal(ldapUniqueIdAttribute, sid));
-            }
-
-            var searchfilter = string.Format("(&{0}{1})", Settings.UserFilter, criteria);
-
-            var list = _lDAPSearcher.Search(Settings.UserDN, NovellLdapSearcher.LdapScope.Sub, searchfilter, limit: 1);
-
-            return list.FirstOrDefault();
-        }
-        catch (Exception e)
-        {
-            _logger.ErrorGetUserBySidFailed(sid, e);
-        }
-
-        return null;
-    }
-
     public override List<LdapObject> GetGroups(Criteria criteria = null)
     {
         var list = new List<LdapObject>();

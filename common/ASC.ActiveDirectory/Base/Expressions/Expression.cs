@@ -185,16 +185,6 @@ public class Expression : ICloneable
     }
 
     /// <summary>
-    /// Negation
-    /// </summary>
-    /// <returns>Self</returns>
-    public Expression Negative()
-    {
-        _negative = !_negative;
-        return this;
-    }
-
-    /// <summary>
     /// Existence
     /// </summary>
     /// <param name="attrbuteName"></param>
@@ -224,17 +214,7 @@ public class Expression : ICloneable
     {
         return new Expression(attrbuteName, Op.Equal, attrbuteValue);
     }
-
-    /// <summary>
-    /// Not equality
-    /// </summary>
-    /// <param name="attrbuteName"></param>
-    /// <param name="attrbuteValue"></param>
-    /// <returns></returns>
-    public static Expression NotEqual(string attrbuteName, string attrbuteValue)
-    {
-        return new Expression(attrbuteName, Op.NotEqual, attrbuteValue);
-    }
+    
 
     public static Expression Parse(string origin)
     {

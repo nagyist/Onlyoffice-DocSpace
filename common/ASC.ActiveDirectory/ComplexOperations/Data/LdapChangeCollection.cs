@@ -98,14 +98,6 @@ public class LdapChangeCollection : List<LdapChange>
         Add(change);
     }
 
-    public void SetRemoveUserChange(UserInfo user)
-    {
-        var change = new LdapChange(user.Sid,
-                            _userFormatter.GetUserName(user, DisplayUserNameFormat.Default), user.Email,
-                            LdapChangeType.User, LdapChangeAction.Remove);
-
-        Add(change);
-    }
     #endregion
 
     #region Group

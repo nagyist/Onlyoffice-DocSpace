@@ -72,11 +72,8 @@ public class LdapUserImporter : IDisposable
     private readonly ILogger<LdapUserImporter> _logger;
     private readonly LdapObjectExtension _ldapObjectExtension;
 
-    private UserManager UserManager { get; set; }
-
     public LdapUserImporter(
         ILogger<LdapUserImporter> logger,
-        UserManager userManager,
         IConfiguration configuration,
         NovellLdapHelper novellLdapHelper,
         LdapObjectExtension ldapObjectExtension)
@@ -89,7 +86,6 @@ public class LdapUserImporter : IDisposable
 
         LdapHelper = novellLdapHelper;
         _logger = logger;
-        UserManager = userManager;
 
         _watchedNestedGroups = new List<string>();
         _ldapObjectExtension = ldapObjectExtension;
@@ -362,66 +358,6 @@ public class LdapUserImporter : IDisposable
             }
         }
         return result;
-    }
-
-    public async Task<bool> TrySyncUserGroupMembership(Tuple<UserInfo, LdapObject> ldapUserInfo)
-    {
-        if (ldapUserInfo == null ||
-            !Settings.GroupMembership)
-        {
-            return false;
-        }
-
-        var userInfo = ldapUserInfo.Item1;
-        var ldapUser = ldapUserInfo.Item2;
-
-        var portalUserLdapGroups =
-            UserManager.GetUserGroups(userInfo.Id, IncludeType.All)
-                .Where(g => !string.IsNullOrEmpty(g.Sid))
-                .ToList();
-
-        var ldapUserGroupList = new List<LdapObject>();
-
-        ldapUserGroupList.AddRange(GetLdapUserGroups(ldapUser));
-
-        if (!LdapHelper.IsConnected)
-        {
-            LdapHelper.Connect();
-        }
-
-        var actualPortalLdapGroups = GetAndCheckCurrentGroups(ldapUser, portalUserLdapGroups).ToList();
-
-        foreach (var ldapUserGroup in ldapUserGroupList)
-        {
-            var groupInfo = UserManager.GetGroupInfoBySid(ldapUserGroup.Sid);
-
-            if (Equals(groupInfo, Constants.LostGroupInfo))
-            {
-                _logger.DebugTrySyncUserGroupMembershipCreatingPortalGroup(ldapUserGroup.DistinguishedName, ldapUserGroup.Sid);
-                groupInfo = UserManager.SaveGroupInfo(_ldapObjectExtension.ToGroupInfo(ldapUserGroup, Settings));
-
-                _logger.DebugTrySyncUserGroupMembershipAddingUserToGroup(userInfo.UserName, ldapUser.Sid, groupInfo.Name, groupInfo.Sid);
-                await UserManager.AddUserIntoGroup(userInfo.Id, groupInfo.ID);
-            }
-            else if (!portalUserLdapGroups.Contains(groupInfo))
-            {
-                _logger.DebugTrySyncUserGroupMembershipAddingUserToGroup(userInfo.UserName, ldapUser.Sid, groupInfo.Name, groupInfo.Sid);
-                await UserManager.AddUserIntoGroup(userInfo.Id, groupInfo.ID);
-            }
-
-            actualPortalLdapGroups.Add(groupInfo);
-        }
-
-        foreach (var portalUserLdapGroup in portalUserLdapGroups)
-        {
-            if (!actualPortalLdapGroups.Contains(portalUserLdapGroup))
-            {
-                _logger.DebugTrySyncUserGroupMembershipRemovingUserFromGroup(userInfo.UserName, ldapUser.Sid, portalUserLdapGroup.Name, portalUserLdapGroup.Sid);
-                UserManager.RemoveUserFromGroup(userInfo.Id, portalUserLdapGroup.ID);
-            }
-        }
-
-        return actualPortalLdapGroups.Count != 0;
     }
 
     public bool TryLoadLDAPUsers()
@@ -817,42 +753,6 @@ public class LdapUserImporter : IDisposable
         }
 
         return listResults;
-    }
-
-    public List<LdapObject> FindUsersByAttribute(string key, string value, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)
-    {
-        var users = new List<LdapObject>();
-
-        if (!AllDomainUsers.Any() && !TryLoadLDAPUsers())
-        {
-            return users;
-        }
-
-        return users.Where(us => !us.IsDisabled && string.Equals((string)us.GetValue(key), value, comparison)).ToList();
-    }
-
-    public List<LdapObject> FindUsersByAttribute(string key, IEnumerable<string> value, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)
-    {
-        var users = new List<LdapObject>();
-
-        if (!AllDomainUsers.Any() && !TryLoadLDAPUsers())
-        {
-            return users;
-        }
-
-        return AllDomainUsers.Where(us => !us.IsDisabled && value.Any(val => string.Equals(val, (string)us.GetValue(key), comparison))).ToList();
-    }
-
-    public List<LdapObject> FindGroupsByAttribute(string key, string value, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)
-    {
-        var gr = new List<LdapObject>();
-
-        if (!AllDomainGroups.Any() && !TryLoadLDAPGroups())
-        {
-            return gr;
-        }
-
-        return gr.Where(g => !g.IsDisabled && string.Equals((string)g.GetValue(key), value, comparison)).ToList();
     }
 
     public List<LdapObject> FindGroupsByAttribute(string key, IEnumerable<string> value, StringComparison comparison = StringComparison.InvariantCultureIgnoreCase)

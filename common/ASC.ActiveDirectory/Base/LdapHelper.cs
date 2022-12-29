@@ -61,8 +61,6 @@ public abstract class LdapHelper : IDisposable
 
     public abstract List<LdapObject> GetUsers(string filter = null, int limit = -1);
 
-    public abstract LdapObject GetUserBySid(string sid);
-
     public abstract bool CheckGroupDn(string groupDn);
 
     public abstract List<LdapObject> GetGroups(Criteria criteria = null);

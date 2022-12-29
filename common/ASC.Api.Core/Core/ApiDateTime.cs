@@ -174,13 +174,6 @@ public sealed class ApiDateTime : IComparable<ApiDateTime>, IComparable
         return dateString + offsetString;
     }
 
-    public static ApiDateTime FromDate(TenantManager tenantManager, TimeZoneConverter timeZoneConverter, DateTime d)
-    {
-        var date = new ApiDateTime(tenantManager, timeZoneConverter, d);
-
-        return date;
-    }
-
     public static ApiDateTime FromDate(TenantManager tenantManager, TimeZoneConverter timeZoneConverter, DateTime? d)
     {
         if (d.HasValue)
@@ -337,11 +330,6 @@ public sealed class ApiDateTime : IComparable<ApiDateTime>, IComparable
         }
 
         return ToRoundTripString(localUtcTime, TimeZoneOffset);
-    }
-
-    public static ApiDateTime GetSample()
-    {
-        return new ApiDateTime(DateTime.UtcNow, TimeSpan.Zero);
     }
 }
 

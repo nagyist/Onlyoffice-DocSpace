@@ -106,8 +106,6 @@ public class ApiContext : ICloneable
     /// Gets value to filter from request parameter "updatedSince"
     /// </summary>
     public DateTime UpdatedSince { get; set; }
-
-    internal long SpecifiedCount { get; private set; }
     internal long SpecifiedStartIndex { get; set; }
 
     private Tenant _tenant;
@@ -170,13 +168,6 @@ public class ApiContext : ICloneable
     {
         //Count = 0;//We always ask for +1 count so smart list should cut it
         StartIndex = 0;
-
-        return this;
-    }
-
-    public ApiContext SetDataSorted()
-    {
-        SortBy = string.Empty;
 
         return this;
     }

@@ -39,8 +39,6 @@ public abstract class BaseStartup
     private readonly string _corsOrigin;
 
     protected virtual JsonConverter[] Converters { get; }
-    protected virtual bool AddControllersAsServices { get; }
-    protected virtual bool ConfirmAddScheme { get; }
     protected virtual bool AddAndUseSession { get; }
     protected DIHelper DIHelper { get; }
     protected bool LoadProducts { get; set; } = true;

@@ -29,15 +29,6 @@ public class TaskProgressDto
 {
     public bool IsCompleted { get; set; }
     public int Progress { get; set; }
-
-    public static TaskProgressDto GetSample()
-    {
-        return new TaskProgressDto
-        {
-            IsCompleted = true,
-            Progress = 0
-        };
-    }
 }
 
 

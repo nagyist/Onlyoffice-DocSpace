@@ -58,38 +58,6 @@ public class EmployeeFullDto : EmployeeDto
     public DarkThemeSettingsEnum? Theme { get; set; }
     public long QuotaLimit { get; set; }
     public double UsedSpace { get; set; }
-
-    public static new EmployeeFullDto GetSample()
-    {
-        return new EmployeeFullDto
-        {
-            Avatar = "url to big avatar",
-            AvatarSmall = "url to small avatar",
-            AvatarMax = "url to max avatar",
-            Contacts = new List<Contact> { Contact.GetSample() },
-            Email = "my@gmail.com",
-            FirstName = "Mike",
-            Id = Guid.Empty,
-            IsAdmin = false,
-            ListAdminModules = new List<string> { "projects", "crm" },
-            UserName = "Mike.Zanyatski",
-            LastName = "Zanyatski",
-            Title = "Manager",
-            Groups = new List<GroupSummaryDto> { GroupSummaryDto.GetSample() },
-            AvatarMedium = "url to medium avatar",
-            Birthday = ApiDateTime.GetSample(),
-            Department = "Marketing",
-            Location = "Palo Alto",
-            Notes = "Notes to worker",
-            Sex = "male",
-            Status = EmployeeStatus.Active,
-            WorkFrom = ApiDateTime.GetSample(),
-            Terminated = ApiDateTime.GetSample(),
-            CultureName = "en-EN",
-            IsLDAP = false,
-            IsSSO = false
-        };
-    }
 }
 
 [Scope]

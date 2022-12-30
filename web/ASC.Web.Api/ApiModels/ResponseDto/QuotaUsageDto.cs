@@ -111,22 +111,9 @@ public class QuotaUsageDto
         set { throw new NotImplementedException(); }
     }
 
-    public int AvailableUsersCount
-    {
-        get { return Math.Max(0, MaxRoomAdminsCount - RoomAdminCount); }
-        set { throw new NotImplementedException(); }
-    }
-
     public IList<QuotaUsage> StorageUsage { get; set; }
     public long UserStorageSize { get; set; }
     public long UserUsedSize { get; set; }
-
-    public long UserAvailableSize
-    {
-        get { return Math.Max(0, UserStorageSize - UserUsedSize); }
-        set { throw new NotImplementedException(); }
-    }
-
     public long MaxUsers { get; set; }
     public long UsersCount { get; set; }
 }

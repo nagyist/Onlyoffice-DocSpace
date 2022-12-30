@@ -54,18 +54,4 @@ public class SettingsDto
     public string HelpLink { get; set; }
 
     public PluginsDto Plugins { get; set; }
-
-    public static SettingsDto GetSample()
-    {
-        return new SettingsDto
-        {
-            Culture = "en-US",
-            Timezone = TimeZoneInfo.Utc.ToString(),
-            TrustedDomains = new List<string> { "mydomain.com" },
-            UtcHoursOffset = -8.5,
-            UtcOffset = TimeSpan.FromHours(-8.5),
-            GreetingSettings = "Web Office Applications",
-            OwnerId = new Guid()
-        };
-    }
 }

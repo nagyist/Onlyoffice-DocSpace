@@ -35,17 +35,4 @@ public class AuthenticationTokenDto
     public bool Tfa { get; set; }
     public string TfaKey { get; set; }
     public string ConfirmUrl { get; set; }
-
-    public static AuthenticationTokenDto GetSample()
-    {
-        return new AuthenticationTokenDto
-        {
-            Expires = DateTime.UtcNow,
-            Token = "abcde12345",
-            Sms = false,
-            PhoneNoise = null,
-            Tfa = false,
-            TfaKey = null
-        };
-    }
 }

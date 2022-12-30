@@ -28,8 +28,6 @@ namespace ASC.Web.Api.Controllers.Settings;
 
 public class LicenseController : BaseSettingsController
 {
-    private Tenant Tenant { get { return ApiContext.Tenant; } }
-
     private readonly MessageService _messageService;
     private readonly FirstTimeTenantSettings _firstTimeTenantSettings;
     private readonly UserManager _userManager;

@@ -28,7 +28,6 @@ global using System.Collections.Specialized;
 global using System.Globalization;
 global using System.Net;
 global using System.Net.Mail;
-global using System.Net.Sockets;
 global using System.Security;
 global using System.ServiceModel.Security;
 global using System.Text;
@@ -46,7 +45,6 @@ global using ASC.Api.Core.Convention;
 global using ASC.Api.Core.Extensions;
 global using ASC.Api.Core.Security;
 global using ASC.Api.Settings;
-global using ASC.Api.Settings.Smtp;
 global using ASC.Api.Utils;
 global using ASC.AuditTrail;
 global using ASC.AuditTrail.Mappers;
@@ -59,8 +57,6 @@ global using ASC.Common.Log;
 global using ASC.Common.Mapping;
 global using ASC.Common.Radicale;
 global using ASC.Common.Radicale.Core;
-global using ASC.Common.Security.Authorizing;
-global using ASC.Common.Threading;
 global using ASC.Common.Utils;
 global using ASC.Common.Web;
 global using ASC.Core;
@@ -143,16 +139,12 @@ global using AutoMapper;
 
 global using Google.Authenticator;
 
-global using MailKit.Security;
-
 global using Microsoft.AspNetCore.Authorization;
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.Extensions.Caching.Memory;
 global using Microsoft.Extensions.Hosting.WindowsServices;
 global using Microsoft.Extensions.Primitives;
-
-global using MimeKit;
 
 global using static ASC.ActiveDirectory.Base.Settings.LdapSettings;
 global using static ASC.Security.Cryptography.EmailValidationKeyProvider;

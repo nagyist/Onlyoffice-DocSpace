@@ -37,15 +37,4 @@ public class CapabilitiesDto
     /// if empty sso is disabled
     /// </summary>
     public string SsoUrl { get; set; }
-
-    public static CapabilitiesDto GetSample()
-    {
-        return new CapabilitiesDto
-        {
-            LdapEnabled = false,
-            // Providers = AccountLinkControl.AuthProviders,
-            SsoLabel = string.Empty,
-            SsoUrl = string.Empty,
-        };
-    }
 }

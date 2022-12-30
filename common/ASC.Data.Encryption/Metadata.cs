@@ -240,11 +240,6 @@ public class Metadata
         stream.Seek(metadataLength, SeekOrigin.Begin); // Move position to encrypted data
     }
 
-    public byte GetCryptoVersion()
-    {
-        return Version[0];
-    }
-
     public long GetFileSize()
     {
         return ByteArrayToLong(Size);

@@ -122,12 +122,6 @@ public partial class InMemoryEventBusSubscriptionsManager : IEventBusSubscriptio
 
         }
     }
-
-    public IEnumerable<SubscriptionInfo> GetHandlersForEvent<T>() where T : IntegrationEvent
-    {
-        var key = GetEventKey<T>();
-        return GetHandlersForEvent(key);
-    }
     public IEnumerable<SubscriptionInfo> GetHandlersForEvent(string eventName) => _handlers[eventName];
 
     private void RaiseOnEventRemoved(string eventName)
@@ -163,11 +157,6 @@ public partial class InMemoryEventBusSubscriptionsManager : IEventBusSubscriptio
 
     }
 
-    public bool HasSubscriptionsForEvent<T>() where T : IntegrationEvent
-    {
-        var key = GetEventKey<T>();
-        return HasSubscriptionsForEvent(key);
-    }
     public bool HasSubscriptionsForEvent(string eventName) => _handlers.ContainsKey(eventName);
 
     public Type GetEventTypeByName(string eventName) => _eventTypes.SingleOrDefault(t => t.Name == eventName);

@@ -45,7 +45,6 @@ public class ConfigureNotifyServiceCfg : IConfigureOptions<NotifyServiceCfg>
 [Singletone(typeof(ConfigureNotifyServiceCfg))]
 public class NotifyServiceCfg
 {
-    public string ConnectionStringName { get; set; }
     public int StoreMessagesDays { get; set; }
     public string ServerRoot { get; set; }
     public NotifyServiceCfgProcess Process { get; set; }

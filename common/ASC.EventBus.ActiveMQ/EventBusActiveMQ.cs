@@ -28,7 +28,6 @@ namespace ASC.EventBus.ActiveMQ;
 
 public class EventBusActiveMQ : IEventBus, IDisposable
 {
-    const string EXCHANGE_NAME = "asc_event_bus";
     const string AUTOFAC_SCOPE_NAME = "asc_event_bus";
 
     private readonly ILogger<EventBusActiveMQ> _logger;
@@ -138,15 +137,6 @@ public class EventBusActiveMQ : IEventBus, IDisposable
         _logger.InformationSubscribing(eventName, typeof(TH).GetGenericTypeName());
 
         _subsManager.AddSubscription<T, TH>();
-
-        StartBasicConsume(eventName);
-    }
-
-    public void SubscribeDynamic<TH>(string eventName) where TH : IDynamicIntegrationEventHandler
-    {
-        _logger.InformationSubscribingDynamic(eventName, typeof(TH).GetGenericTypeName());
-
-        _subsManager.AddDynamicSubscription<TH>(eventName);
 
         StartBasicConsume(eventName);
     }
@@ -265,23 +255,6 @@ public class EventBusActiveMQ : IEventBus, IDisposable
         var integrationEvent = (IntegrationEvent)_serializer.Deserialize(serializedMessage, eventType);
 
         return integrationEvent;
-    }
-
-
-    public void Unsubscribe<T, TH>()
-        where T : IntegrationEvent
-        where TH : IIntegrationEventHandler<T>
-    {
-        var eventName = _subsManager.GetEventKey<T>();
-
-        _logger.InformationUnsubscribing(eventName);
-
-        _subsManager.RemoveSubscription<T, TH>();
-    }
-
-    public void UnsubscribeDynamic<TH>(string eventName) where TH : IDynamicIntegrationEventHandler
-    {
-        _subsManager.RemoveDynamicSubscription<TH>(eventName);
     }
 
     private void PreProcessEvent(IntegrationEvent @event)

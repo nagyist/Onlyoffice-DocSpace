@@ -31,7 +31,6 @@ public abstract class FeedModule : IFeedModule
     public abstract string Name { get; }
     public abstract string Product { get; }
     public abstract Guid ProductID { get; }
-    protected abstract string DbId { get; }
     protected int Tenant => _tenantManager.GetCurrentTenant().Id;
 
     protected readonly TenantManager _tenantManager;
@@ -68,20 +67,7 @@ public abstract class FeedModule : IFeedModule
     {
         return _webItemSecurity.IsAvailableForUser(ProductID, userId);
     }
-
-    protected static Guid ToGuid(object guid)
-    {
-        try
-        {
-            var str = guid as string;
-            return !string.IsNullOrEmpty(str) ? new Guid(str) : Guid.Empty;
-        }
-        catch (Exception)
-        {
-            return Guid.Empty;
-        }
-    }
-
+    
     protected string GetGroupId(string item, Guid author, string rootId = null, int action = -1)
     {
         const int interval = 2;

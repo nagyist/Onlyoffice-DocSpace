@@ -90,14 +90,6 @@ public partial class TextileFormatter
     /// </summary>
     public IOutputter Output { get; }
 
-    /// <summary>
-    /// The offset for the header tags.
-    /// </summary>
-    /// When the formatted text is inserted into another page
-    /// there might be a need to offset all headers (h1 becomes
-    /// h4, for instance). The header offset allows this.
-    public int HeaderOffset { get; set; }
-
     #endregion
 
     #region Properties for Conversion
@@ -106,32 +98,6 @@ public partial class TextileFormatter
     {
         get { return IsBlockModifierEnabled(typeof(ImageBlockModifier)); }
         set { SwitchBlockModifier(typeof(ImageBlockModifier), value); }
-    }
-
-    public bool FormatLinks
-    {
-        get { return IsBlockModifierEnabled(typeof(HyperLinkBlockModifier)); }
-        set { SwitchBlockModifier(typeof(HyperLinkBlockModifier), value); }
-    }
-
-    public bool FormatLists
-    {
-        get { return IsBlockModifierEnabled(typeof(OrderedListFormatterState)); }
-        set
-        {
-            SwitchBlockModifier(typeof(OrderedListFormatterState), value);
-            SwitchBlockModifier(typeof(UnorderedListFormatterState), value);
-        }
-    }
-
-    public bool FormatFootNotes
-    {
-        get { return IsBlockModifierEnabled(typeof(FootNoteReferenceBlockModifier)); }
-        set
-        {
-            SwitchBlockModifier(typeof(FootNoteReferenceBlockModifier), value);
-            SwitchFormatterState(typeof(FootNoteFormatterState), value);
-        }
     }
 
     public bool FormatTables

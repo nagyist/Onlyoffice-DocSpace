@@ -68,20 +68,6 @@ public abstract class SimpleBlockFormatterState : FormatterState
     {
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <returns></returns>
-    protected string FormattedAlignment()
-    {
-        return BlockAttributesParser.ParseBlockAttributes(AlignInfo);
-    }
-
-    protected string FormattedStyles(string element)
-    {
-        return BlockAttributesParser.ParseBlockAttributes(AttInfo, element);
-    }
-
     protected string FormattedStylesAndAlignment(string element)
     {
         return BlockAttributesParser.ParseBlockAttributes(AlignInfo + AttInfo, element);

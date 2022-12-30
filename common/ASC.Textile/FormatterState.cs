@@ -135,14 +135,4 @@ public abstract class FormatterState
             return typeof(ParagraphFormatterState);
         }
     }
-
-    protected FormatterState CurrentFormatterState
-    {
-        get { return this.Formatter.CurrentState; }
-    }
-
-    protected void ChangeFormatterState(FormatterState formatterState)
-    {
-        this.Formatter.ChangeState(formatterState);
-    }
 }

@@ -87,19 +87,7 @@ public class LoginProfile
         get => GetField(WellKnownFields.LastName);
         internal set => SetField(WellKnownFields.LastName, value);
     }
-
-    public string MiddleName
-    {
-        get => GetField(WellKnownFields.MiddleName);
-        internal set => SetField(WellKnownFields.MiddleName, value);
-    }
-
-    public string Salutation
-    {
-        get => GetField(WellKnownFields.Salutation);
-        internal set => SetField(WellKnownFields.Salutation, value);
-    }
-
+    
     public string BirthDay
     {
         get => GetField(WellKnownFields.BirthDay);
@@ -117,13 +105,7 @@ public class LoginProfile
         get => GetField(WellKnownFields.Timezone);
         internal set => SetField(WellKnownFields.Timezone, value);
     }
-
-    public string AuthorizationResult
-    {
-        get => GetField(WellKnownFields.Auth);
-        internal set => SetField(WellKnownFields.Auth, value);
-    }
-
+    
     public string AuthorizationError
     {
         get => GetField(WellKnownFields.AuthError);
@@ -135,13 +117,7 @@ public class LoginProfile
         get => GetField(WellKnownFields.Provider);
         internal set => SetField(WellKnownFields.Provider, value);
     }
-
-    public string RealmUrl
-    {
-        get => GetField(WellKnownFields.RealmUrl);
-        internal set => SetField(WellKnownFields.RealmUrl, value);
-    }
-
+    
     public string Hash
     {
         get => _signature?.Create(HashId);
@@ -153,32 +129,9 @@ public class LoginProfile
         get => Transport();
         set => throw new NotImplementedException();
     }
-
-    public string UserDisplayName
-    {
-        get
-        {
-            if (!string.IsNullOrEmpty(DisplayName))
-            {
-                return DisplayName;
-            }
-
-            var combinedName = string.Join(" ",
-                                           new[] { FirstName, MiddleName, LastName }.Where(
-                                               x => !string.IsNullOrEmpty(x)).ToArray());
-            if (string.IsNullOrEmpty(combinedName))
-            {
-                combinedName = Name;
-            }
-
-            return combinedName;
-        }
-    }
-
+    
     public string UniqueId => $"{Provider}/{Id}";
     public string HashId => HashHelper.MD5(UniqueId);
-    public bool IsFailed => !string.IsNullOrEmpty(AuthorizationError);
-    public bool IsAuthorized => !IsFailed;
 
     private const char KeyValueSeparator = '→';
     private const char PairSeparator = '·';

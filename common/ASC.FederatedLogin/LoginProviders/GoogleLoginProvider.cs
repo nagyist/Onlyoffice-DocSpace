@@ -32,8 +32,6 @@ public class GoogleLoginProvider : BaseLoginProvider<GoogleLoginProvider>
     public const string GoogleScopeContacts = "https://www.googleapis.com/auth/contacts.readonly";
     public const string GoogleScopeDrive = "https://www.googleapis.com/auth/drive";
     //https://developers.google.com/gmail/imap/xoauth2-protocol
-    public const string GoogleScopeMail = "https://mail.google.com/";
-    public const string GoogleUrlContacts = "https://www.google.com/m8/feeds/contacts/default/full/";
     public const string GoogleUrlFile = "https://www.googleapis.com/drive/v3/files/";
     public const string GoogleUrlFileUpload = "https://www.googleapis.com/upload/drive/v3/files";
     public const string GoogleUrlProfile = "https://people.googleapis.com/v1/people/me";

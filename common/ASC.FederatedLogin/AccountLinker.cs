@@ -73,16 +73,6 @@ public class AccountLinker
         _accountLinkContextManager = accountLinkContextManager;
     }
 
-    public IEnumerable<string> GetLinkedObjects(string id, string provider)
-    {
-        return GetLinkedObjects(new LoginProfile(_signature, _instanceCrypto) { Id = id, Provider = provider });
-    }
-
-    public IEnumerable<string> GetLinkedObjects(LoginProfile profile)
-    {
-        return GetLinkedObjectsByHashId(profile.HashId);
-    }
-
     public IEnumerable<string> GetLinkedObjectsByHashId(string hashid)
     {
         using var accountLinkContext = _accountLinkContextManager.CreateDbContext();
@@ -130,17 +120,7 @@ public class AccountLinker
     {
         AddLink(obj, new LoginProfile(_signature, _instanceCrypto) { Id = id, Provider = provider });
     }
-
-    public void RemoveLink(string obj, string id, string provider)
-    {
-        RemoveLink(obj, new LoginProfile(_signature, _instanceCrypto) { Id = id, Provider = provider });
-    }
-
-    public void RemoveLink(string obj, LoginProfile profile)
-    {
-        RemoveProvider(obj, hashId: profile.HashId);
-    }
-
+    
     public void RemoveProvider(string obj, string provider = null, string hashId = null)
     {
         using var accountLinkContext = _accountLinkContextManager.CreateDbContext();

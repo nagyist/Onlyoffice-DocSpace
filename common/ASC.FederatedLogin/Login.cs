@@ -29,7 +29,6 @@ namespace ASC.FederatedLogin;
 [Scope]
 public class Login
 {
-    public bool IsReusable => false;
     protected string Callback => _params.Get("callback") ?? "loginCallback";
     protected string Auth => _params.Get("auth");
     protected string ReturnUrl => _params.Get("returnurl"); //TODO?? FormsAuthentication.LoginUrl;
@@ -44,21 +43,6 @@ public class Login
             }
 
             return LoginMode.Popup;
-        }
-    }
-
-    protected bool Minimal
-    {
-        get
-        {
-            if (_params.ContainsKey("min"))
-            {
-                bool.TryParse(_params.Get("min"), out var result);
-
-                return result;
-            }
-
-            return false;
         }
     }
 

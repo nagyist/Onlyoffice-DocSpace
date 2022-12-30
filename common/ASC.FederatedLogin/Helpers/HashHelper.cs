@@ -28,17 +28,6 @@ namespace ASC.FederatedLogin.Helpers;
 
 public static class HashHelper
 {
-    public static int CombineHashCodes(int hash1, int hash2)
-    {
-        return hash2 == 0 ? hash1 : ((hash1 << 5) + hash1) ^ hash2;
-    }
-
-    //Use this luke!!!
-    public static int StringHash(string text)
-    {
-        return text.GetHashCode();
-    }
-
     public static string MD5(string text)
     {
         return MD5(text, Encoding.Default);

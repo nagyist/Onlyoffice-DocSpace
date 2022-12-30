@@ -28,16 +28,6 @@ namespace ASC.FederatedLogin.Profile;
 
 public static class LoginProfileExtensions
 {
-    public static Uri AddProfile(this Uri uri, LoginProfile profile)
-    {
-        return profile.AppendProfile(uri);
-    }
-
-    public static Uri AddProfileCache(this Uri uri, LoginProfile profile, IMemoryCache memoryCache)
-    {
-        return profile.AppendCacheProfile(uri, memoryCache);
-    }
-
     public static LoginProfile GetProfile(this Uri uri, HttpContext context, IMemoryCache memoryCache, Signature signature, InstanceCrypto instanceCrypto)
     {
         var profile = new LoginProfile(signature, instanceCrypto);

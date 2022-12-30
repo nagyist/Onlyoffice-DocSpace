@@ -117,46 +117,4 @@ internal class FileDataProvider
 
         return result;
     }
-
-    private IEnumerable<FileData<int>> GetFileData(Expression<Func<DbFile, bool>> where)
-    {
-        using var filesDbContext = _dbContextFactory.CreateDbContext();
-        var search = filesDbContext.Files
-            .AsQueryable()
-            .Where(r => r.CurrentVersion && r.ThumbnailStatus == Core.Thumbnail.Waiting && !r.Encrypted)
-            .OrderByDescending(r => r.ModifiedOn)
-            .Take(_thumbnailSettings.SqlMaxResults);
-
-        if (where != null)
-        {
-            search = search.Where(where);
-        }
-
-        return search
-            .Join(filesDbContext.Tenants, r => r.TenantId, r => r.Id, (f, t) => new FileTenant { DbFile = f, DbTenant = t })
-            .Where(r => r.DbTenant.Status == TenantStatus.Active)
-            .Select(r => new FileData<int>(r.DbFile.TenantId, r.DbFile.Id, ""))
-            .ToList();
-    }
-
-    public IEnumerable<FileData<int>> GetFilesWithoutThumbnails()
-    {
-        IEnumerable<FileData<int>> result;
-
-        var premiumTenants = GetPremiumTenants();
-
-        if (premiumTenants.Length > 0)
-        {
-            result = GetFileData(r => premiumTenants.Contains(r.TenantId));
-
-            if (result.Any())
-            {
-                return result;
-            }
-        }
-
-        result = GetFileData(null);
-
-        return result;
-    }
 }

@@ -50,26 +50,9 @@ class NotifyClientImpl : INotifyClient
         SendNoticeToAsync(action, objectID, recipients, senderNames, false, args);
     }
 
-    public void SendNoticeToAsync(INotifyAction action, string objectID, IRecipient[] recipients, params ITagValue[] args)
-    {
-        SendNoticeToAsync(action, objectID, recipients, null, false, args);
-    }
-
-    public void SendNoticeToAsync(INotifyAction action, string objectID, IRecipient[] recipients, bool checkSubscription, params ITagValue[] args)
-    {
-        SendNoticeToAsync(action, objectID, recipients, null, checkSubscription, args);
-    }
-
     public void SendNoticeAsync(INotifyAction action, string objectID, IRecipient recipient, params ITagValue[] args)
     {
         SendNoticeToAsync(action, objectID, new[] { recipient }, null, false, args);
-    }
-
-    public void SendNoticeAsync(int tenantId, INotifyAction action, string objectID, params ITagValue[] args)
-    {
-        var subscriptionSource = _notifySource.GetSubscriptionProvider();
-        var recipients = subscriptionSource.GetRecipients(action, objectID);
-        SendNoticeToAsync(action, objectID, recipients, null, false, args);
     }
 
     public void SendNoticeAsync(INotifyAction action, string objectID, IRecipient recipient, bool checkSubscription, params ITagValue[] args)
@@ -82,19 +65,9 @@ class NotifyClientImpl : INotifyClient
         _interceptors.Add(new SingleRecipientInterceptor(name));
     }
 
-    public void EndSingleRecipientEvent(string name)
-    {
-        _interceptors.Remove(name);
-    }
-
     public void AddInterceptor(ISendInterceptor interceptor)
     {
         _interceptors.Add(interceptor);
-    }
-
-    public void RemoveInterceptor(string name)
-    {
-        _interceptors.Remove(name);
     }
 
     public void SendNoticeToAsync(INotifyAction action, string objectID, IRecipient[] recipients, string[] senderNames, bool checkSubsciption, params ITagValue[] args)

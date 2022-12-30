@@ -94,13 +94,6 @@ public class SocketServiceClient
         return null;
     }
 
-    public async Task<T> MakeRequest<T>(string method, object data)
-    {
-        var resultMakeRequest = await MakeRequest(method, data);
-
-        return JsonConvert.DeserializeObject<T>(resultMakeRequest);
-    }
-
     private bool IsAvailable()
     {
         return _enableSocket && _lastErrorTime + _timeout < DateTime.Now;

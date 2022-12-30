@@ -207,18 +207,7 @@ public class TopSubscriptionProvider : ISubscriptionProvider
 
         return parents;
     }
-
-    private void MergeActions(List<INotifyAction> result, IEnumerable<INotifyAction> additions)
-    {
-        foreach (var addition in additions)
-        {
-            if (!result.Contains(addition))
-            {
-                result.Add(addition);
-            }
-        }
-    }
-
+    
     private void MergeObjects(List<string> result, IEnumerable<string> additions)
     {
         foreach (var addition in additions)

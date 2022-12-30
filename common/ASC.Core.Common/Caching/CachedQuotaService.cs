@@ -31,7 +31,6 @@ class QuotaServiceCache
 {
     internal const string KeyQuota = "quota";
     internal const string KeyQuotaRows = "quotarows";
-    internal const string KeyUserQuotaRows = "userquotarows";
     internal readonly ICache Cache;
     internal readonly ICacheNotify<QuotaCacheItem> CacheNotify;
     internal readonly bool QuotaCacheEnabled;
@@ -113,11 +112,6 @@ class CachedQuotaService : IQuotaService
         CacheNotify.Publish(new QuotaCacheItem { Key = QuotaServiceCache.KeyQuota }, CacheNotifyAction.Any);
 
         return q;
-    }
-
-    public void RemoveTenantQuota(int tenant)
-    {
-        throw new NotImplementedException();
     }
 
     public void SetTenantQuotaRow(TenantQuotaRow row, bool exchange)

@@ -65,24 +65,6 @@ public class DbSubscriptionService : ISubscriptionService
         return GetSubscriptions(q, tenant);
     }
 
-    public IEnumerable<SubscriptionRecord> GetSubscriptions(int tenant, string sourceId, string actionId, string recipientId, string objectId)
-    {
-        using var userDbContext = _dbContextFactory.CreateDbContext();
-
-        var q = GetQuery(userDbContext, tenant, sourceId, actionId);
-
-        if (recipientId != null)
-        {
-            q = q.Where(r => r.Recipient == recipientId);
-        }
-        else
-        {
-            q = q.Where(r => r.Object == (objectId ?? string.Empty));
-        }
-
-        return GetSubscriptions(q, tenant);
-    }
-
     public SubscriptionRecord GetSubscription(int tenant, string sourceId, string actionId, string recipientId, string objectId)
     {
         ArgumentNullException.ThrowIfNull(recipientId);

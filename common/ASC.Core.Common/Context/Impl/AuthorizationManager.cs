@@ -99,11 +99,6 @@ public class AuthorizationManager
         }
     }
 
-    private IEnumerable<AzRecord> GetAcesInternal()
-    {
-        return _service.GetAces(_tenantManager.GetCurrentTenant().Id, default);
-    }
-
     private IEnumerable<AzRecord> DistinctAces(IEnumerable<AzRecord> inheritAces)
     {
         var aces = new Dictionary<string, AzRecord>();

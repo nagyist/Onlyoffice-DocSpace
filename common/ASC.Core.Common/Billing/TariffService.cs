@@ -495,116 +495,7 @@ public class TariffService : ITariffService
                                .Replace("__BackUrl__", HttpUtility.UrlEncode(backUrl ?? "")));
         return result;
     }
-
-    public Uri GetShoppingUri(int? tenant, int quotaId, string affiliateId, string currency = null, string language = null, string customerId = null, string quantity = null)
-    {
-        var quota = _quotaService.GetTenantQuota(quotaId);
-        if (quota == null)
-        {
-            return null;
-        }
-
-        var key = tenant.HasValue
-                      ? GetBillingUrlCacheKey(tenant.Value)
-                      : string.Format($"notenant{(!string.IsNullOrEmpty(affiliateId) ? "_" + affiliateId : "")}");
-        key += quota.Visible ? "" : "0";
-        if (_cache.Get<Dictionary<string, Uri>>(key) is not IDictionary<string, Uri> urls)
-        {
-            urls = new Dictionary<string, Uri>();
-            if (_billingClient.Configured)
-            {
-                try
-                {
-                    var products = _quotaService.GetTenantQuotas()
-                                               .Where(q => !string.IsNullOrEmpty(q.ProductId) && q.Visible == quota.Visible)
-                                               .Select(q => q.ProductId)
-                                               .ToArray();
-
-                    urls =
-                        _billingClient.GetPaymentUrls(
-                            tenant.HasValue ? GetPortalId(tenant.Value) : null,
-                            products,
-                            tenant.HasValue ? GetAffiliateId(tenant.Value) : affiliateId,
-                            tenant.HasValue ? GetCampaign(tenant.Value) : null,
-                            !string.IsNullOrEmpty(currency) ? "__Currency__" : null,
-                            !string.IsNullOrEmpty(language) ? "__Language__" : null,
-                            !string.IsNullOrEmpty(customerId) ? "__CustomerID__" : null,
-                            !string.IsNullOrEmpty(quantity) ? "__Quantity__" : null
-                            );
-                }
-                catch (Exception error)
-                {
-                    _logger.ErrorGetShoppingUri(error);
-                }
-            }
-            _cache.Insert(key, urls, DateTime.UtcNow.Add(TimeSpan.FromMinutes(10)));
-        }
-
-        _tariffServiceStorage.ResetCacheExpiration();
-
-        if (!string.IsNullOrEmpty(quota.ProductId) && urls.TryGetValue(quota.ProductId, out var url))
-        {
-            if (url == null)
-            {
-                return null;
-            }
-
-            url = new Uri(url.ToString()
-                                   .Replace("__Currency__", HttpUtility.UrlEncode(currency ?? ""))
-                                   .Replace("__Language__", HttpUtility.UrlEncode((language ?? "").ToLower()))
-                                   .Replace("__CustomerID__", HttpUtility.UrlEncode(customerId ?? ""))
-                                   .Replace("__Quantity__", HttpUtility.UrlEncode(quantity ?? "")));
-            return url;
-        }
-        return null;
-    }
-
-    public Uri GetShoppingUri(string[] productIds, string affiliateId = null, string currency = null, string language = null, string customerId = null, string quantity = null)
-    {
-        var key = "shopingurl" + string.Join("_", productIds) + (!string.IsNullOrEmpty(affiliateId) ? "_" + affiliateId : "");
-        var url = _cache.Get<string>(key);
-        if (url == null)
-        {
-            url = string.Empty;
-            if (_billingClient.Configured)
-            {
-                try
-                {
-                    url =
-                        _billingClient.GetPaymentUrl(
-                            null,
-                            productIds,
-                            affiliateId,
-                            null,
-                            !string.IsNullOrEmpty(currency) ? "__Currency__" : null,
-                            !string.IsNullOrEmpty(language) ? "__Language__" : null,
-                            !string.IsNullOrEmpty(customerId) ? "__CustomerID__" : null,
-                            !string.IsNullOrEmpty(quantity) ? "__Quantity__" : null
-                            );
-                }
-                catch (Exception error)
-                {
-                    _logger.ErrorWithException(error);
-                }
-            }
-            _cache.Insert(key, url, DateTime.UtcNow.Add(TimeSpan.FromMinutes(10)));
-        }
-
-        _tariffServiceStorage.ResetCacheExpiration();
-
-        if (string.IsNullOrEmpty(url))
-        {
-            return null;
-        }
-
-        var result = new Uri(url.ToString()
-                               .Replace("__Currency__", HttpUtility.UrlEncode(currency ?? ""))
-                               .Replace("__Language__", HttpUtility.UrlEncode((language ?? "").ToLower()))
-                               .Replace("__CustomerID__", HttpUtility.UrlEncode(customerId ?? ""))
-                               .Replace("__Quantity__", HttpUtility.UrlEncode(quantity ?? "")));
-        return result;
-    }
-
+    
     public IDictionary<string, Dictionary<string, decimal>> GetProductPriceInfo(params string[] productIds)
     {
         ArgumentNullException.ThrowIfNull(productIds);
@@ -866,16 +757,6 @@ public class TariffService : ITariffService
     private string GetPortalId(int tenant)
     {
         return _coreSettings.GetKey(tenant);
-    }
-
-    private string GetAffiliateId(int tenant)
-    {
-        return _coreSettings.GetAffiliateId(tenant);
-    }
-
-    private string GetCampaign(int tenant)
-    {
-        return _coreSettings.GetCampaign(tenant);
     }
 
     private Tariff CreateDefault(bool empty = false)

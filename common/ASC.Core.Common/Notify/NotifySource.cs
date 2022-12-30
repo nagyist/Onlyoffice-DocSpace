@@ -30,11 +30,9 @@ public abstract class NotifySource : INotifySource
 {
     private readonly IDictionary<CultureInfo, IActionProvider> _actions = new Dictionary<CultureInfo, IActionProvider>();
     private readonly IDictionary<CultureInfo, IPatternProvider> _patterns = new Dictionary<CultureInfo, IPatternProvider>();
-
-    protected ISubscriptionProvider _subscriprionProvider;
+    
     protected IRecipientProvider _recipientsProvider;
     protected IActionProvider ActionProvider => GetActionProvider();
-    protected IPatternProvider PatternProvider => GetPatternProvider();
     public string Id { get; private set; }
 
     private readonly UserManager _userManager;

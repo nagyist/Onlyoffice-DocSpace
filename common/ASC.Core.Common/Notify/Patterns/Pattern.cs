@@ -29,8 +29,6 @@ namespace ASC.Notify.Patterns;
 public class Pattern : IPattern
 {
     public const string HtmlContentType = "html";
-    public const string TextContentType = "text";
-    public const string RtfContentType = "rtf";
 
 
     public string ID { get; private set; }

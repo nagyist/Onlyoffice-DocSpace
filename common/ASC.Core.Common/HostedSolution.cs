@@ -182,27 +182,6 @@ public class HostedSolution
         TenantService.RemoveTenant(tenant.Id);
     }
 
-    public string CreateAuthenticationCookie(CookieStorage cookieStorage, int tenantId, Guid userId)
-    {
-        var u = UserService.GetUser(tenantId, userId);
-
-        return CreateAuthenticationCookie(cookieStorage, tenantId, u);
-    }
-
-    private string CreateAuthenticationCookie(CookieStorage cookieStorage, int tenantId, UserInfo user)
-    {
-        if (user == null)
-        {
-            return null;
-        }
-
-        var tenantSettings = SettingsManager.LoadSettingsFor<TenantCookieSettings>(tenantId, Guid.Empty);
-        var expires = tenantSettings.IsDefault() ? DateTime.UtcNow.AddYears(1) : DateTime.UtcNow.AddMinutes(tenantSettings.LifeTime);
-        var userSettings = SettingsManager.LoadSettingsFor<TenantCookieSettings>(tenantId, user.Id);
-
-        return cookieStorage.EncryptCookie(tenantId, user.Id, tenantSettings.Index, expires, userSettings.Index, 0);
-    }
-
     public Tariff GetTariff(int tenant, bool withRequestToPaymentSystem = true)
     {
         return TariffService.GetTariff(tenant, withRequestToPaymentSystem);
@@ -221,15 +200,6 @@ public class HostedSolution
     public TenantQuota SaveTenantQuota(TenantQuota quota)
     {
         return ClientTenantManager.SaveTenantQuota(quota);
-    }
-
-    public void SetTariff(int tenant, bool paid)
-    {
-        var quota = QuotaService.GetTenantQuotas().FirstOrDefault(q => paid ? q.NonProfit : q.Trial);
-        if (quota != null)
-        {
-            TariffService.SetTariff(tenant, new Tariff { Quotas = new List<Quota> { new Quota(quota.Tenant, 1) }, DueDate = DateTime.MaxValue, });
-        }
     }
 
     public void SetTariff(int tenant, Tariff tariff)

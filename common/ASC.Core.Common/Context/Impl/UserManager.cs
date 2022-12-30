@@ -210,11 +210,6 @@ public class UserManager
         return GetUsersInternal()
             .FirstOrDefault(u => !string.IsNullOrEmpty(u.SsoNameId) && string.Equals(u.SsoNameId, nameId, StringComparison.CurrentCultureIgnoreCase)) ?? Constants.LostUser;
     }
-    public bool IsUserNameExists(string username)
-    {
-        return GetUserNames(EmployeeStatus.All)
-            .Contains(username, StringComparer.CurrentCultureIgnoreCase);
-    }
 
     public UserInfo GetUsers(Guid id)
     {
@@ -554,12 +549,7 @@ public class UserManager
     {
         return GetUserGroups(id, IncludeType.Distinct, Guid.Empty);
     }
-
-    public List<GroupInfo> GetUserGroups(Guid id, Guid categoryID)
-    {
-        return GetUserGroups(id, IncludeType.Distinct, categoryID);
-    }
-
+    
     public List<GroupInfo> GetUserGroups(Guid userID, IncludeType includeType)
     {
         return GetUserGroups(userID, includeType, null);
@@ -723,18 +713,6 @@ public class UserManager
                 Tenant.Id,
                 new UserGroupRef(userID, deparmentID, UserGroupRefType.Manager));
         }
-    }
-
-    public UserInfo GetCompanyCEO()
-    {
-        var id = GetDepartmentManager(Guid.Empty);
-
-        return id != Guid.Empty ? GetUsers(id) : null;
-    }
-
-    public void SetCompanyCEO(Guid userId)
-    {
-        SetDepartmentManager(Guid.Empty, userId);
     }
 
     #endregion Company

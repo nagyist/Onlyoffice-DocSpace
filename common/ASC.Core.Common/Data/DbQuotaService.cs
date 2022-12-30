@@ -65,30 +65,6 @@ class DbQuotaService : IQuotaService
         return quota;
     }
 
-    public void RemoveTenantQuota(int id)
-    {
-        using var coreDbContext = _dbContextFactory.CreateDbContext();
-        var strategy = coreDbContext.Database.CreateExecutionStrategy();
-
-        strategy.Execute(() =>
-        {
-            using var coreDbContext = _dbContextFactory.CreateDbContext();
-            using var tr = coreDbContext.Database.BeginTransaction();
-            var d = coreDbContext.Quotas
-                 .Where(r => r.Tenant == id)
-                 .SingleOrDefault();
-
-            if (d != null)
-            {
-                coreDbContext.Quotas.Remove(d);
-                coreDbContext.SaveChanges();
-            }
-
-            tr.Commit();
-        });
-    }
-
-
     public void SetTenantQuotaRow(TenantQuotaRow row, bool exchange)
     {
         ArgumentNullException.ThrowIfNull(row);

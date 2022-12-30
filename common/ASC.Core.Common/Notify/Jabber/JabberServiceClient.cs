@@ -86,74 +86,7 @@ public class JabberServiceClient
 
         return null;
     }
-
-    public int GetNewMessagesCount()
-    {
-        const int result = 0;
-        if (IsServiceProbablyNotAvailable())
-        {
-            return result;
-        }
-
-        using (var service = GetService())
-        {
-            try
-            {
-                return service.GetNewMessagesCount(GetCurrentTenantId(), GetCurrentUserName());
-            }
-            catch (Exception error)
-            {
-                ProcessError(error);
-            }
-        }
-
-        return result;
-    }
-
-    public byte AddXmppConnection(string connectionId, byte state)
-    {
-        byte result = 4;
-        if (IsServiceProbablyNotAvailable())
-        {
-            throw new Exception();
-        }
-
-        using var service = GetService();
-        try
-        {
-            result = service.AddXmppConnection(connectionId, GetCurrentUserName(), state, GetCurrentTenantId());
-        }
-        catch (Exception error)
-        {
-            ProcessError(error);
-        }
-
-        return result;
-    }
-
-    public byte RemoveXmppConnection(string connectionId)
-    {
-        const byte result = 4;
-        if (IsServiceProbablyNotAvailable())
-        {
-            return result;
-        }
-
-        using (var service = GetService())
-        {
-            try
-            {
-                return service.RemoveXmppConnection(connectionId, GetCurrentUserName(), GetCurrentTenantId());
-            }
-            catch (Exception error)
-            {
-                ProcessError(error);
-            }
-        }
-
-        return result;
-    }
-
+    
     public byte GetState(string userName)
     {
         const byte defaultState = 0;
@@ -176,28 +109,7 @@ public class JabberServiceClient
 
         return defaultState;
     }
-
-    public byte SendState(byte state)
-    {
-        try
-        {
-            if (IsServiceProbablyNotAvailable())
-            {
-                throw new Exception();
-            }
-
-            using var service = GetService();
-
-            return service.SendState(GetCurrentTenantId(), GetCurrentUserName(), state);
-        }
-        catch (Exception error)
-        {
-            ProcessError(error);
-        }
-
-        return 4;
-    }
-
+    
     public Dictionary<string, byte> GetAllStates()
     {
         Dictionary<string, byte> states = null;
@@ -218,28 +130,7 @@ public class JabberServiceClient
 
         return states;
     }
-
-    public MessageClass[] GetRecentMessages(string to, int id)
-    {
-        MessageClass[] messages = null;
-        try
-        {
-            if (IsServiceProbablyNotAvailable())
-            {
-                throw new Exception();
-            }
-
-            using var service = GetService();
-            messages = service.GetRecentMessages(GetCurrentTenantId(), GetCurrentUserName(), to, id);
-        }
-        catch (Exception error)
-        {
-            ProcessError(error);
-        }
-
-        return messages;
-    }
-
+    
     public void Ping(byte state)
     {
         try

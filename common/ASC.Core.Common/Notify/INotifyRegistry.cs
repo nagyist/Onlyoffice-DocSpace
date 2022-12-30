@@ -31,5 +31,4 @@ public interface INotifyRegistry
     INotifyClient RegisterClient(NotifyEngineQueue notifyEngine, INotifySource source);
     ISenderChannel GetSender(string senderName);
     void RegisterSender(DispatchEngine dispatchEngine, string senderName, ISink senderSink);
-    void UnregisterSender(string senderName);
 }

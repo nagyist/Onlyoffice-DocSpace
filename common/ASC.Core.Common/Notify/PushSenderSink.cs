@@ -68,13 +68,6 @@ class PushSenderSink : Sink
             return new SendResponse(message, Constants.NotifyPushSenderSysName, error);
         }
     }
-
-    private T GetTagValue<T>(INoticeMessage message, string tagName)
-    {
-        var tag = message.Arguments.FirstOrDefault(arg => arg.Tag == tagName);
-
-        return tag != null ? (T)tag.Value : default;
-    }
 }
 public class LowerCaseNamingPolicy : JsonNamingPolicy
 {

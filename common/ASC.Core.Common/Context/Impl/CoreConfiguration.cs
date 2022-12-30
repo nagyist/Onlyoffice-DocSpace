@@ -178,28 +178,6 @@ public class CoreSettings
             return Configuration["core:payment:region"] + tenant;
         }
     }
-
-    public string GetAffiliateId(int tenant)
-    {
-        var t = TenantService.GetTenant(tenant);
-        if (t != null && !string.IsNullOrWhiteSpace(t.AffiliateId))
-        {
-            return t.AffiliateId;
-        }
-
-        return null;
-    }
-
-    public string GetCampaign(int tenant)
-    {
-        var t = TenantService.GetTenant(tenant);
-        if (t != null && !string.IsNullOrWhiteSpace(t.Campaign))
-        {
-            return t.Campaign;
-        }
-
-        return null;
-    }
 }
 
 [Scope]

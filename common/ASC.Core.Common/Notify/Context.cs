@@ -52,14 +52,6 @@ public sealed class Context : INotifyRegistry
         }
     }
 
-    public void UnregisterSender(string senderName)
-    {
-        lock (_channels)
-        {
-            _channels.Remove(senderName);
-        }
-    }
-
     public ISenderChannel GetSender(string senderName)
     {
         lock (_channels)

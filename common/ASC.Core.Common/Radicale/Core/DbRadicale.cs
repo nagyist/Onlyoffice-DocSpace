@@ -53,11 +53,4 @@ public class DbRadicale
             await userDbContext.SaveChangesAsync();
         }
     }
-
-    public async Task<bool> IsExistCardDavUser(int tenant, Guid id)
-    {
-        using var userDbContext = _dbContextFactory.CreateDbContext();
-        return await userDbContext.UsersDav.AnyAsync(r => r.TenantId == tenant && r.UserId == id);
-    }
-
 }

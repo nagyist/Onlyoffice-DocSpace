@@ -122,15 +122,6 @@ public class CachedSubscriptionService : ISubscriptionService
         }
     }
 
-    public IEnumerable<SubscriptionRecord> GetSubscriptions(int tenant, string sourceId, string actionId, string recipientId, string objectId)
-    {
-        var store = GetSubsciptionsStore(tenant, sourceId, actionId);
-        lock (store)
-        {
-            return store.GetSubscriptions(recipientId, objectId);
-        }
-    }
-
     public string[] GetRecipients(int tenant, string sourceID, string actionID, string objectID)
     {
         return _service.GetRecipients(tenant, sourceID, actionID, objectID);
@@ -224,13 +215,6 @@ internal class SubsciptionsStore
     public IEnumerable<SubscriptionRecord> GetSubscriptions()
     {
         return _records.ToList();
-    }
-
-    public IEnumerable<SubscriptionRecord> GetSubscriptions(string recipientId, string objectId)
-    {
-        return recipientId != null ?
-            _recordsByRec.ContainsKey(recipientId) ? _recordsByRec[recipientId].ToList() : new List<SubscriptionRecord>() :
-            _recordsByObj.ContainsKey(objectId ?? string.Empty) ? _recordsByObj[objectId ?? string.Empty].ToList() : new List<SubscriptionRecord>();
     }
 
     public SubscriptionRecord GetSubscription(string recipientId, string objectId)

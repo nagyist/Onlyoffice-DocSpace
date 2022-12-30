@@ -77,60 +77,6 @@ public class BillingClient
         return payments;
     }
 
-    public IDictionary<string, Uri> GetPaymentUrls(string portalId, string[] products, string affiliateId = null, string campaign = null, string currency = null, string language = null, string customerId = null, string quantity = null)
-    {
-        var urls = new Dictionary<string, Uri>();
-
-        var additionalParameters = new List<Tuple<string, string>>() { Tuple.Create("PaymentSystemId", StripePaymentSystemId.ToString()) };
-        if (!string.IsNullOrEmpty(affiliateId))
-        {
-            additionalParameters.Add(Tuple.Create("AffiliateId", affiliateId));
-        }
-        if (!string.IsNullOrEmpty(campaign))
-        {
-            additionalParameters.Add(Tuple.Create("campaign", campaign));
-        }
-        if (!string.IsNullOrEmpty(currency))
-        {
-            additionalParameters.Add(Tuple.Create("Currency", currency));
-        }
-        if (!string.IsNullOrEmpty(language))
-        {
-            additionalParameters.Add(Tuple.Create("Language", language));
-        }
-        if (!string.IsNullOrEmpty(customerId))
-        {
-            additionalParameters.Add(Tuple.Create("CustomerID", customerId));
-        }
-        if (!string.IsNullOrEmpty(quantity))
-        {
-            additionalParameters.Add(Tuple.Create("Quantity", quantity));
-        }
-
-        var parameters = products
-            .Distinct()
-            .Select(p => Tuple.Create("ProductId", p))
-            .Concat(additionalParameters)
-            .ToArray();
-
-        //max 100 products
-        var result = Request("GetPaymentUrl", portalId, parameters);
-        var paymentUrls = JsonSerializer.Deserialize<Dictionary<string, string>>(result);
-
-        foreach (var p in products)
-        {
-            string url;
-            var paymentUrl = (Uri)null;
-            if (paymentUrls.TryGetValue(p, out url) && !string.IsNullOrEmpty(url = ToUrl(url)))
-            {
-                paymentUrl = new Uri(url);
-            }
-            urls[p] = paymentUrl;
-        }
-
-        return urls;
-    }
-
     public string GetPaymentUrl(string portalId, string[] products, string affiliateId = null, string campaign = null, string currency = null, string language = null, string customerEmail = null, string quantity = null, string backUrl = null)
     {
         var additionalParameters = new List<Tuple<string, string>>() { Tuple.Create("PaymentSystemId", StripePaymentSystemId.ToString()) };
@@ -294,22 +240,6 @@ public class BillingClient
         }
 
         throw new BillingException(result, info);
-    }
-
-    private string ToUrl(string s)
-    {
-        s = s.Trim();
-        if (s.StartsWith("error", StringComparison.InvariantCultureIgnoreCase))
-        {
-            return string.Empty;
-        }
-
-        if (_configuration.Test && !s.Contains("&DOTEST = 1"))
-        {
-            s += "&DOTEST=1";
-        }
-
-        return s;
     }
 }
 

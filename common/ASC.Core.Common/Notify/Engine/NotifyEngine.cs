@@ -224,8 +224,7 @@ public class NotifyEngine : INotifyEngine, IDisposable
             _logger.ErrorNotifySender(e);
         }
     }
-
-
+    
     private async Task<NotifyResult> SendNotify(NotifyRequest request, IServiceScope serviceScope)
     {
         var sendResponces = new List<SendResponse>();

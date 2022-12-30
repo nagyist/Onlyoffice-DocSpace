@@ -200,19 +200,6 @@ public class CoreModuleSpecifics : ModuleSpecificsBase
         return base.TryPrepareValue(dump, connection, columnMapper, table, columnName, relationList, ref value);
     }
 
-    private static bool ValidateSource(Guid expectedValue, DataRowInfo row)
-    {
-        var source = Convert.ToString(row["source"]);
-        try
-        {
-            return expectedValue == new Guid(source);
-        }
-        catch
-        {
-            return false;
-        }
-    }
-
     private static bool IsDocumentsStorageType(string strStorageType)
     {
         var storageType = int.Parse(strStorageType);

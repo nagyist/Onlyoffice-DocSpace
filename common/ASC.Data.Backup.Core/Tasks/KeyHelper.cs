@@ -45,11 +45,6 @@ public static class KeyHelper
         return $"{Databases}/data";
     }
 
-    public static string GetDatabaseSchema(string table)
-    {
-        return $"{GetDatabaseSchema()}/{table}";
-    }
-
     public static string GetDatabaseData(string table)
     {
         return $"{GetDatabaseData()}/{table}";

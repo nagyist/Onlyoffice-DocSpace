@@ -69,11 +69,6 @@ public class TableInfo
         return !string.IsNullOrEmpty(IdColumn);
     }
 
-    public bool HasDateColumns()
-    {
-        return DateColumns.Count > 0;
-    }
-
     public bool HasTenantColumn()
     {
         return !string.IsNullOrEmpty(TenantColumn);

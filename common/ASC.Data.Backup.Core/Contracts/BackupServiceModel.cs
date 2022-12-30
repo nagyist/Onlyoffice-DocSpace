@@ -55,20 +55,6 @@ public class BackupHistoryRecord
     public DateTime ExpiresOn { get; set; }
 }
 
-public class StartTransferRequest
-{
-    public int TenantId { get; set; }
-    public string TargetRegion { get; set; }
-    public bool NotifyUsers { get; set; }
-}
-
-public class TransferRegion
-{
-    public string Name { get; set; }
-    public string BaseDomain { get; set; }
-    public bool IsCurrentRegion { get; set; }
-}
-
 public class StartRestoreRequest
 {
     public int TenantId { get; set; }

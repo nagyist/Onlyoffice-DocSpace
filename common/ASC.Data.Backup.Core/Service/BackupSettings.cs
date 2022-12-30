@@ -30,23 +30,16 @@ public class BackupSettings
 {
     public string UpgradesPath { get; set; }
     public int Limit { get; set; }
-    public ServiceConfigurationElement Service { get; set; }
     public SchedulerConfigurationElement Scheduler { get; set; }
     public CleanerConfigurationElement Cleaner { get; set; }
 
     public class SchedulerConfigurationElement
     {
         public TimeSpan Period { get; set; }
-        public int WorkerCount { get; set; }
     }
 
     public class CleanerConfigurationElement
     {
         public TimeSpan Period { get; set; }
-    }
-
-    public class ServiceConfigurationElement
-    {
-        public int WorkerCount { get; set; }
     }
 }

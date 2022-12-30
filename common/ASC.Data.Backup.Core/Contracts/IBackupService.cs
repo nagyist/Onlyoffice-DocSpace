@@ -26,12 +26,10 @@
 
 namespace ASC.Data.Backup.Contracts;
 
-[ServiceContract]
 public interface IBackupService
 {
     BackupProgress GetBackupProgress(int tenantId);
     BackupProgress GetRestoreProgress(int tenantId);
-    BackupProgress GetTransferProgress(int tenantId);
     Task<List<BackupHistoryRecord>> GetBackupHistory(int tenantId);
     ScheduleResponse GetSchedule(int tenantId);
     string GetTmpFolder();
@@ -41,5 +39,4 @@ public interface IBackupService
     void DeleteSchedule(int tenantId);
     void StartBackup(StartBackupRequest request);
     void StartRestore(StartRestoreRequest request);
-    void StartTransfer(StartTransferRequest request);
 }

@@ -124,15 +124,6 @@ public class BackupService : IBackupService
         return backupHistory;
     }
 
-    public void StartTransfer(StartTransferRequest request)
-    {
-        var progress = _backupWorker.StartTransfer(request.TenantId, request.TargetRegion, request.NotifyUsers);
-        if (!string.IsNullOrEmpty(progress.Error))
-        {
-            throw new FaultException();
-        }
-    }
-
     public void StartRestore(StartRestoreRequest request)
     {
         if (request.StorageType == BackupStorageType.Local)
@@ -166,11 +157,6 @@ public class BackupService : IBackupService
     public BackupProgress GetBackupProgress(int tenantId)
     {
         return _backupWorker.GetBackupProgress(tenantId);
-    }
-
-    public BackupProgress GetTransferProgress(int tenantId)
-    {
-        return _backupWorker.GetTransferProgress(tenantId);
     }
 
     public BackupProgress GetRestoreProgress(int tenantId)

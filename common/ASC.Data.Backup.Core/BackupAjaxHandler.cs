@@ -328,43 +328,6 @@ public class BackupAjaxHandler
 
     #endregion
 
-    #region transfer
-
-    public void StartTransfer(string targetRegion, bool notifyUsers)
-    {
-        DemandPermissionsTransfer();
-
-        _messageService.Send(MessageAction.StartTransferSetting);
-        _backupService.StartTransfer(
-            new StartTransferRequest
-            {
-                TenantId = GetCurrentTenantId(),
-                TargetRegion = targetRegion,
-                NotifyUsers = notifyUsers
-            });
-
-    }
-
-    public BackupProgress GetTransferProgress()
-    {
-        return _backupService.GetTransferProgress(GetCurrentTenantId());
-    }
-
-    private void DemandPermissionsTransfer()
-    {
-        _permissionContext.DemandPermissions(SecutiryConstants.EditPortalSettings);
-
-        var currentUser = _userManager.GetUsers(_securityContext.CurrentAccount.ID);
-        if (!SetupInfo.IsVisibleSettings(nameof(ManagementType.Migration))
-        || !currentUser.IsOwner(_tenantManager.GetCurrentTenant())
-        || !SetupInfo.IsSecretEmail(currentUser.Email) && !_tenantManager.GetCurrentTenantQuota().AutoBackupRestore)
-        {
-            throw new InvalidOperationException(Resource.ErrorNotAllowedOption);
-        }
-    }
-
-    #endregion
-
     public string GetTmpFolder()
     {
         return _backupService.GetTmpFolder();

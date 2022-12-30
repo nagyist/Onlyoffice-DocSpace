@@ -133,43 +133,11 @@ public class BackupWorker
         }
     }
 
-    public BackupProgress GetTransferProgress(int tenantId)
-    {
-        lock (_synchRoot)
-        {
-            return ToBackupProgress(_progressQueue.GetAllTasks<TransferProgressItem>().FirstOrDefault(t => t.TenantId == tenantId && t.BackupProgressItemEnum == BackupProgressItemEnum.Transfer));
-        }
-    }
-
     public BackupProgress GetRestoreProgress(int tenantId)
     {
         lock (_synchRoot)
         {
             return ToBackupProgress(_progressQueue.GetAllTasks<RestoreProgressItem>().FirstOrDefault(t => t.TenantId == tenantId && t.BackupProgressItemEnum == BackupProgressItemEnum.Restore));
-        }
-    }
-
-    public void ResetBackupError(int tenantId)
-    {
-        lock (_synchRoot)
-        {
-            var progress = _progressQueue.GetAllTasks<BackupProgressItem>().FirstOrDefault(t => t.TenantId == tenantId);
-            if (progress != null)
-            {
-                progress.Exception = null;
-            }
-        }
-    }
-
-    public void ResetRestoreError(int tenantId)
-    {
-        lock (_synchRoot)
-        {
-            var progress = _progressQueue.GetAllTasks<RestoreProgressItem>().FirstOrDefault(t => t.TenantId == tenantId);
-            if (progress != null)
-            {
-                progress.Exception = null;
-            }
         }
     }
 
@@ -190,29 +158,6 @@ public class BackupWorker
 
                 _progressQueue.EnqueueTask(item);
             }
-            return ToBackupProgress(item);
-        }
-    }
-
-    public BackupProgress StartTransfer(int tenantId, string targetRegion, bool notify)
-    {
-        lock (_synchRoot)
-        {
-            var item = _progressQueue.GetAllTasks<TransferProgressItem>().FirstOrDefault(t => t.TenantId == tenantId);
-            if (item != null && item.IsCompleted)
-            {
-                _progressQueue.DequeueTask(item.Id);
-                item = null;
-            }
-
-            if (item == null)
-            {
-                item = _serviceProvider.GetService<TransferProgressItem>();
-                item.Init(targetRegion, tenantId, TempFolder, _limit, notify);
-
-                _progressQueue.EnqueueTask(item);
-            }
-
             return ToBackupProgress(item);
         }
     }

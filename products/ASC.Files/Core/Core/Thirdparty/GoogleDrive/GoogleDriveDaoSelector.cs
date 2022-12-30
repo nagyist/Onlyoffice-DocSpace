@@ -51,11 +51,6 @@ internal class GoogleDriveDaoSelector : RegexDaoSelectorBase<GoogleDriveProvider
     {
         return base.GetTagDao<GoogleDriveTagDao>(id);
     }
-
-    public ISecurityDao<string> GetSecurityDao(string id)
-    {
-        return base.GetSecurityDao<GoogleDriveSecurityDao>(id);
-    }
 }
 
 public static class GoogleDriveDaoSelectorExtension

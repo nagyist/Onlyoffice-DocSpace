@@ -109,12 +109,7 @@ public class ChunkedUploadSessionHolder
     {
         await CommonSessionHolder().AbortAsync(uploadSession);
     }
-
-    public Stream UploadSingleChunk<T>(ChunkedUploadSession<T> uploadSession, Stream stream, long chunkLength)
-    {
-        return CommonSessionHolder().UploadSingleChunk(uploadSession, stream, chunkLength);
-    }
-
+    
     public Task<Stream> UploadSingleChunkAsync<T>(ChunkedUploadSession<T> uploadSession, Stream stream, long chunkLength)
     {
         return CommonSessionHolder().UploadSingleChunkAsync(uploadSession, stream, chunkLength);

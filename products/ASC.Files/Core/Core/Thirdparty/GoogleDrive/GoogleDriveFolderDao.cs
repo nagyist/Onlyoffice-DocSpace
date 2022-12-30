@@ -503,12 +503,7 @@ internal class GoogleDriveFolderDao : GoogleDriveDaoBase, IFolderDao<string>
     {
         return true;
     }
-
-    public bool UseRecursiveOperation(string folderId, int toRootFolderId)
-    {
-        return true;
-    }
-
+    
     public bool CanCalculateSubitems(string entryId)
     {
         return false;

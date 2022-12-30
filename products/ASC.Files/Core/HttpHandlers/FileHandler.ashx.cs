@@ -46,11 +46,6 @@ public class FileHandlerService
 {
     private readonly ThumbnailSettings _thumbnailSettings;
 
-    public string FileHandlerPath
-    {
-        get { return _filesLinkUtility.FileHandlerPath; }
-    }
-
     private readonly CompressToArchive _compressToArchive;
     private readonly InstanceCrypto _instanceCrypto;
     private readonly FilesLinkUtility _filesLinkUtility;

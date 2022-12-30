@@ -41,29 +41,6 @@ public class FolderDto<T> : FileEntryDto<T>
     public bool Private { get; set; }
 
     protected internal override FileEntryType EntryType { get => FileEntryType.Folder; }
-
-    public FolderDto() { }
-
-    public static FolderDto<int> GetSample()
-    {
-        return new FolderDto<int>
-        {
-            Access = FileShare.ReadWrite,
-            //Updated = ApiDateTime.GetSample(),
-            //Created = ApiDateTime.GetSample(),
-            //CreatedBy = EmployeeWraper.GetSample(),
-            Id = 10,
-            RootFolderType = FolderType.BUNCH,
-            Shared = false,
-            Title = "Some titile",
-            //UpdatedBy = EmployeeWraper.GetSample(),
-            FilesCount = 5,
-            FoldersCount = 7,
-            ParentId = 10,
-            IsShareable = null,
-            IsFavorite = null
-        };
-    }
 }
 
 [Scope]

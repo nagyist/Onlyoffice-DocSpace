@@ -367,14 +367,6 @@ internal class SecurityDao<T> : AbstractDao, ISecurityDao<T>
         return q;
     }
 
-    protected async IAsyncEnumerable<FileShareRecord> FromQueryAsync(IQueryable<DbFilesSecurity> filesSecurities)
-    {
-        await foreach (var e in filesSecurities.AsAsyncEnumerable())
-        {
-            yield return await ToFileShareRecordAsync(e);
-        }
-    }
-
     private async Task<FileShareRecord> ToFileShareRecordAsync(DbFilesSecurity r)
     {
         var result = _mapper.Map<DbFilesSecurity, FileShareRecord>(r);

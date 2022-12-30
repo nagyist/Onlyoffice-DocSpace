@@ -307,7 +307,7 @@ internal class SharpBoxFileDao : SharpBoxDaoBase, IFileDao<string>
         return Task.FromResult(false);
     }
 
-    public override Task<Stream> GetFileStreamAsync(File<string> file)
+    public Task<Stream> GetFileStreamAsync(File<string> file)
     {
         return GetFileStreamAsync(file, 0);
     }

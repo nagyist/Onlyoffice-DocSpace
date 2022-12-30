@@ -149,22 +149,6 @@ public abstract class FileEntry<T> : FileEntry, ICloneable, IFileEntry<T>
         set => _folderIdDisplay = value;
     }
 
-    public string DeletedPermanentlyOnString
-    {
-        get
-        {
-            if (!ModifiedOn.Equals(default(DateTime)) && Equals(FolderIdDisplay, _globalFolderHelper.FolderTrash) && _filesSettingsHelper.AutomaticallyCleanUp.IsAutoCleanUp)
-            {
-                var deletedPermanentlyOn = _fileDateTime.GetModifiedOnWithAutoCleanUp(ModifiedOn, _filesSettingsHelper.AutomaticallyCleanUp.Gap);
-                return deletedPermanentlyOn.ToString("g");
-            }
-            else
-            {
-                return null;
-            }
-        }
-    }
-
     public bool DenyDownload { get; set; }
 
     public bool DenySharing { get; set; }

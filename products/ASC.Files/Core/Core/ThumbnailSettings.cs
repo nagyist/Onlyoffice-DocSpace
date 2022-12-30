@@ -56,11 +56,6 @@ public class ThumbnailSettings
     #region data privider settings
 
     private string _connectionStringName;
-    public string ConnectionStringName
-    {
-        get => _connectionStringName ?? "default";
-        set => _connectionStringName = value;
-    }
 
     private string _formats;
     public string Formats

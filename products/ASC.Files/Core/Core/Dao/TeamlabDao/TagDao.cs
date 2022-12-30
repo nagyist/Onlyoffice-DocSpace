@@ -142,39 +142,7 @@ internal class TagDao<T> : AbstractDao, ITagDao<T>
 
         return new Dictionary<object, IEnumerable<Tag>>();
     }
-
-    public async Task<IDictionary<object, IEnumerable<Tag>>> GetTagsAsync(Guid subject, IEnumerable<TagType> tagType, IAsyncEnumerable<FileEntry<T>> fileEntries)
-    {
-        var filesId = new HashSet<string>();
-        var foldersId = new HashSet<string>();
-
-        await foreach (var f in fileEntries)
-        {
-            var idObj = await MappingIDAsync(f.Id);
-            var id = idObj.ToString();
-            if (f.FileEntryType == FileEntryType.File)
-            {
-                filesId.Add(id);
-            }
-            else if (f.FileEntryType == FileEntryType.Folder)
-            {
-                foldersId.Add(id);
-            }
-        }
-
-        if (filesId.Any() || foldersId.Any())
-        {
-            using var filesDbContext = _dbContextFactory.CreateDbContext();
-            var fromQuery = await FromQueryAsync(_getTagsQuery(filesDbContext, TenantID, subject, tagType, filesId, foldersId)).ToListAsync();
-
-            return fromQuery
-                .GroupBy(r => r.EntryId)
-                .ToDictionary(r => r.Key, r => r.AsEnumerable());
-        }
-
-        return new Dictionary<object, IEnumerable<Tag>>();
-    }
-
+    
     public IAsyncEnumerable<Tag> GetTagsAsync(TagType tagType, IEnumerable<FileEntry<T>> fileEntries)
     {
         return GetTagsAsync(Guid.Empty, tagType, fileEntries);

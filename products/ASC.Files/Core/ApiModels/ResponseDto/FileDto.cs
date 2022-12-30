@@ -49,32 +49,6 @@ public class FileDto<T> : FileEntryDto<T>
     public IDictionary<Accessability, bool> ViewAccessability { get; set; }
 
     protected internal override FileEntryType EntryType { get => FileEntryType.File; }
-
-    public FileDto() { }
-
-    public static FileDto<int> GetSample()
-    {
-        return new FileDto<int>
-        {
-            Access = FileShare.ReadWrite,
-            //Updated = ApiDateTime.GetSample(),
-            //Created = ApiDateTime.GetSample(),
-            //CreatedBy = EmployeeWraper.GetSample(),
-            Id = 10,
-            RootFolderType = FolderType.BUNCH,
-            Shared = false,
-            Title = "Some titile.txt",
-            FileExst = ".txt",
-            FileType = FileType.Document,
-            //UpdatedBy = EmployeeWraper.GetSample(),
-            ContentLength = 12345.ToString(CultureInfo.InvariantCulture),
-            FileStatus = FileStatus.IsNew,
-            FolderId = 12334,
-            Version = 3,
-            VersionGroup = 1,
-            ViewUrl = "http://www.onlyoffice.com/viewfile?fileid=2221"
-        };
-    }
 }
 
 [Scope]

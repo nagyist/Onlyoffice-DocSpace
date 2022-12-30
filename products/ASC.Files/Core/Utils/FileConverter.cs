@@ -665,20 +665,6 @@ public class FileConverter
     }
 }
 
-internal class FileComparer<T> : IEqualityComparer<File<T>>
-{
-    public bool Equals(File<T> x, File<T> y)
-    {
-        return x != null && y != null && Equals(x.Id, y.Id) && x.Version == y.Version;
-    }
-
-    public int GetHashCode(File<T> obj)
-    {
-        return obj.Id.GetHashCode() + obj.Version.GetHashCode();
-    }
-}
-
-
 public static class FileConverterExtension
 {
     public static void Register(DIHelper services)

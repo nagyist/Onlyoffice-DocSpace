@@ -535,23 +535,8 @@ public static class DocumentService
         [DebuggerDisplay("{BuildVersion}")]
         public class ServerInfo
         {
-            [JsonPropertyName("buildDate")]
-            public DateTime BuildDate { get; set; }
-
-            [JsonPropertyName("buildNumber")]
-            public int BuildNumber { get; set; }
-
             [JsonPropertyName("buildVersion")]
             public string BuildVersion { get; set; }
-
-            [JsonPropertyName("packageType")]
-            public PackageTypes PackageType { get; set; }
-
-            [JsonPropertyName("resultType")]
-            public ResultTypes ResultType { get; set; }
-
-            [JsonPropertyName("workersCount")]
-            public int WorkersCount { get; set; }
 
             public enum PackageTypes
             {
@@ -603,12 +588,6 @@ public static class DocumentService
         [System.Text.Json.Serialization.JsonIgnore]
         public CommandMethod Command { get; set; }
 
-        [JsonPropertyName("c")]
-        public string C
-        {
-            get { return Command.ToString().ToLower(CultureInfo.InvariantCulture); }
-        }
-
         [JsonPropertyName("callback")]
         public string Callback { get; set; }
 
@@ -623,10 +602,6 @@ public static class DocumentService
 
         [JsonPropertyName("token")]
         public string Token { get; set; }
-
-        //not used
-        [JsonPropertyName("userdata")]
-        public string UserData { get; set; }
     }
 
     [Serializable]

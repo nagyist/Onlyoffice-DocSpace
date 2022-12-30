@@ -137,39 +137,6 @@ public class FilesSettingsHelper
         _filesLinkUtility = filesLinkUtility;
     }
 
-    public List<string> ExtsImagePreviewed => _fileUtility.ExtsImagePreviewed;
-    public List<string> ExtsMediaPreviewed => _fileUtility.ExtsMediaPreviewed;
-    public List<string> ExtsWebPreviewed => _fileUtility.ExtsWebPreviewed;
-    public List<string> ExtsWebEdited => _fileUtility.ExtsWebEdited;
-    public List<string> ExtsWebEncrypt => _fileUtility.ExtsWebEncrypt;
-    public List<string> ExtsWebReviewed => _fileUtility.ExtsWebReviewed;
-    public List<string> ExtsWebCustomFilterEditing => _fileUtility.ExtsWebCustomFilterEditing;
-    public List<string> ExtsWebRestrictedEditing => _fileUtility.ExtsWebRestrictedEditing;
-    public List<string> ExtsWebCommented => _fileUtility.ExtsWebCommented;
-    public List<string> ExtsWebTemplate => _fileUtility.ExtsWebTemplate;
-    public List<string> ExtsCoAuthoring => _fileUtility.ExtsCoAuthoring;
-    public List<string> ExtsMustConvert => _fileUtility.ExtsMustConvert;
-    public Dictionary<string, List<string>> ExtsConvertible => _fileUtility.ExtsConvertible;
-    public List<string> ExtsUploadable => _fileUtility.ExtsUploadable;
-    public List<string> ExtsArchive => FileUtility.ExtsArchive;
-    public List<string> ExtsVideo => FileUtility.ExtsVideo;
-    public List<string> ExtsAudio => FileUtility.ExtsAudio;
-    public List<string> ExtsImage => FileUtility.ExtsImage;
-    public List<string> ExtsSpreadsheet => FileUtility.ExtsSpreadsheet;
-    public List<string> ExtsPresentation => FileUtility.ExtsPresentation;
-    public List<string> ExtsDocument => FileUtility.ExtsDocument;
-    public Dictionary<FileType, string> InternalFormats => _fileUtility.InternalExtension;
-    public string MasterFormExtension => _fileUtility.MasterFormExtension;
-    public string ParamVersion => FilesLinkUtility.Version;
-    public string ParamOutType => FilesLinkUtility.OutType;
-    public string FileDownloadUrlString => _filesLinkUtility.FileDownloadUrlString;
-    public string FileWebViewerUrlString => _filesLinkUtility.FileWebViewerUrlString;
-    public string FileWebViewerExternalUrlString => _filesLinkUtility.FileWebViewerExternalUrlString;
-    public string FileWebEditorUrlString => _filesLinkUtility.FileWebEditorUrlString;
-    public string FileWebEditorExternalUrlString => _filesLinkUtility.FileWebEditorExternalUrlString;
-    public string FileRedirectPreviewUrlString => _filesLinkUtility.FileRedirectPreviewUrlString;
-    public string FileThumbnailUrlString => _filesLinkUtility.FileThumbnailUrlString;
-
     public bool ConfirmDelete
     {
         set
@@ -431,11 +398,6 @@ public class FilesSettingsHelper
             var setting = LoadForCurrentUser().DefaultSharingAccessRightsSetting;
             return setting ?? new List<FileShare>() { FileShare.Read };
         }
-    }
-
-    public long ChunkUploadSize
-    {
-        get => _setupInfo.ChunkUploadSize;
     }
 
     private FilesSettings Load()

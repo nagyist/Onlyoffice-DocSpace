@@ -111,27 +111,7 @@ internal class ProviderAccountDao : IProviderDao
     {
         return GetProvidersInfoInternalAsync(folderType: folderType, searchText: searchText);
     }
-
-    public virtual IAsyncEnumerable<IProviderInfo> GetProvidersInfoAsync(Guid userId)
-    {
-        try
-        {
-            var filesDbContext = _dbContextFactory.CreateDbContext();
-            var thirdpartyAccounts = filesDbContext.ThirdpartyAccount
-                .Where(r => r.TenantId == TenantID)
-                .Where(r => r.UserId == userId)
-                .AsAsyncEnumerable();
-
-            return thirdpartyAccounts.Select(ToProviderInfo);
-        }
-        catch (Exception e)
-        {
-            _logger.ErrorGetProvidersInfoInternalUser(userId, e);
-
-            return new List<IProviderInfo>().ToAsyncEnumerable();
-        }
-    }
-
+    
     static readonly Func<FilesDbContext, int, int, FolderType, Guid, string, IAsyncEnumerable<DbFilesThirdpartyAccount>> _getProvidersInfoQuery =
         EF.CompileAsyncQuery((FilesDbContext ctx, int tenantId, int linkId, FolderType folderType, Guid userId, string searchText) =>
         ctx.ThirdpartyAccount

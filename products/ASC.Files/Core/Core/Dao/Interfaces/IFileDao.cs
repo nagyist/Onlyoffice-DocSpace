@@ -242,13 +242,6 @@ public interface IFileDao<T>
     #region Only in TMFileDao
 
     /// <summary>
-    /// Set created by
-    /// </summary>
-    /// <param name="fileIds"></param>
-    /// <param name="newOwnerId"></param>
-    Task ReassignFilesAsync(T[] fileIds, Guid newOwnerId);
-
-    /// <summary>
     /// Search files in SharedWithMe & Projects
     /// </summary>
     /// <param name="parentIds"></param>
@@ -259,20 +252,12 @@ public interface IFileDao<T>
     /// <param name="searchInContent"></param>
     /// <returns></returns>
     IAsyncEnumerable<File<T>> GetFilesAsync(IEnumerable<T> parentIds, FilterType filterType, bool subjectGroup, Guid subjectID, string searchText, bool searchInContent);
-    /// <summary>
-    /// Search the list of files containing text
-    /// Only in TMFileDao
-    /// </summary>
-    /// <param name="text">search text</param>
-    /// <param name="bunch"></param>
-    /// <returns>list of files</returns>
-    IAsyncEnumerable<File<T>> SearchAsync(string text, bool bunch = false);
+
     /// <summary>
     ///   Checks whether file exists on storage
     /// </summary>
     /// <param name="file">file</param>
     /// <returns></returns>
-
     Task<bool> IsExistOnStorageAsync(File<T> file);
 
     Task SaveEditHistoryAsync(File<T> file, string changes, Stream differenceStream);

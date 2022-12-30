@@ -56,7 +56,6 @@ public interface IFolder
     public int FoldersCount { get; set; }
     public bool Shareable { get; set; }
     public int NewForMe { get; set; }
-    public string FolderUrl { get; set; }
     public bool Pinned { get; set; }
     public IEnumerable<Tag> Tags { get; set; }
 }
@@ -70,7 +69,6 @@ public class Folder<T> : FileEntry<T>, IFolder
     public int FoldersCount { get; set; }
     public bool Shareable { get; set; }
     public int NewForMe { get; set; }
-    public string FolderUrl { get; set; }
     public bool Pinned { get; set; }
     public bool Private { get; set; }
     public bool HasLogo { get; set; }

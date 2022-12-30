@@ -383,12 +383,7 @@ internal class ProviderFolderDao : ProviderDaoBase, IFolderDao<string>
     {
         return false;
     }
-
-    public bool UseRecursiveOperation(string folderId, int toRootFolderId)
-    {
-        return false;
-    }
-
+    
     public bool UseRecursiveOperation(string folderId, string toRootFolderId)
     {
         var selector = GetSelector(folderId);

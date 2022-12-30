@@ -1220,21 +1220,6 @@ internal class FileDao : AbstractDao, IFileDao<int>
 
     #region Only in TMFileDao
 
-    public async Task ReassignFilesAsync(int[] fileIds, Guid newOwnerId)
-    {
-        using var filesDbContext = _dbContextFactory.CreateDbContext();
-        var toUpdate = Query(filesDbContext.Files)
-            .Where(r => r.CurrentVersion)
-            .Where(r => fileIds.Contains(r.Id));
-
-        foreach (var f in toUpdate)
-        {
-            f.CreateBy = newOwnerId;
-        }
-
-        await filesDbContext.SaveChangesAsync();
-    }
-
     public IAsyncEnumerable<File<int>> GetFilesAsync(IEnumerable<int> parentIds, FilterType filterType, bool subjectGroup, Guid subjectID, string searchText, bool searchInContent)
     {
         if (parentIds == null || !parentIds.Any() || filterType == FilterType.FoldersOnly)
@@ -1305,37 +1290,6 @@ internal class FileDao : AbstractDao, IFileDao<int>
         await foreach (var e in FromQuery(filesDbContext, q).AsAsyncEnumerable())
         {
             yield return _mapper.Map<DbFileQuery, File<int>>(e);
-        }
-    }
-
-    public IAsyncEnumerable<File<int>> SearchAsync(string searchText, bool bunch = false)
-    {
-        using var filesDbContext = _dbContextFactory.CreateDbContext();
-
-        if (_factoryIndexer.TrySelectIds(s => s.MatchAll(searchText), out var ids))
-        {
-            var query = GetFileQuery(filesDbContext, r => r.CurrentVersion && ids.Contains(r.Id)).AsNoTracking();
-
-            return FromQuery(filesDbContext, query).AsAsyncEnumerable()
-                .Select(e => _mapper.Map<DbFileQuery, File<int>>(e))
-                .Where(
-                    f =>
-                    bunch
-                        ? f.RootFolderType == FolderType.BUNCH
-                        : f.RootFolderType == FolderType.USER || f.RootFolderType == FolderType.COMMON)
-                ;
-        }
-        else
-        {
-            var query = BuildSearch(GetFileQuery(filesDbContext, r => r.CurrentVersion).AsNoTracking(), searchText, SearhTypeEnum.Any);
-
-            return FromQuery(filesDbContext, query)
-                .AsAsyncEnumerable()
-                .Select(e => _mapper.Map<DbFileQuery, File<int>>(e))
-                .Where(f =>
-                       bunch
-                            ? f.RootFolderType == FolderType.BUNCH
-                            : f.RootFolderType == FolderType.USER || f.RootFolderType == FolderType.COMMON);
         }
     }
 
@@ -1657,33 +1611,7 @@ internal class FileDao : AbstractDao, IFileDao<int>
            return result;
        };
     }
-
-    protected IQueryable<DbFileQuery> FromQueryWithShared(FilesDbContext filesDbContext, IQueryable<DbFile> dbFiles)
-    {
-        var fileType = FileEntryType.File;
-        var denyArray = new[] { FileConstant.DenyDownloadId, FileConstant.DenySharingId };
-
-        return from r in dbFiles
-               select new DbFileQuery
-               {
-                   File = r,
-                   Root = (from f in filesDbContext.Folders
-                           where f.Id ==
-                           (from t in filesDbContext.Tree
-                            where t.FolderId == r.ParentId
-                            orderby t.Level descending
-                            select t.ParentId
-                            ).FirstOrDefault()
-                           where f.TenantId == r.TenantId
-                           select f
-                          ).FirstOrDefault(),
-                   Shared = (from f in filesDbContext.Security
-                             where f.EntryType == fileType && f.EntryId == r.Id.ToString() && f.TenantId == r.TenantId && !denyArray.Contains(f.Subject)
-                             select f
-                             ).Any()
-               };
-    }
-
+    
     protected IQueryable<DbFileQuery> FromQuery(FilesDbContext filesDbContext, IQueryable<DbFile> dbFiles)
     {
         return dbFiles
@@ -1756,12 +1684,6 @@ public class DbFileQuery
     public DbFile File { get; set; }
     public DbFolder Root { get; set; }
     public bool Shared { get; set; }
-}
-
-public class DbFileDeny
-{
-    public bool DenyDownload { get; set; }
-    public bool DenySharing { get; set; }
 }
 
 public class DbFileQueryWithSecurity

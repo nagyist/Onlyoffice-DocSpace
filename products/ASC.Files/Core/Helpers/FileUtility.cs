@@ -37,7 +37,6 @@ public class FileUtilityConfiguration
     }
 
     private List<string> _extsIndexing;
-    public List<string> ExtsIndexing { get => _extsIndexing ??= _configuration.GetSection("files:index").Get<List<string>>() ?? new List<string>(); }
 
     private List<string> _extsImagePreviewed;
     public List<string> ExtsImagePreviewed { get => _extsImagePreviewed ??= _configuration.GetSection("files:viewed-images").Get<List<string>>() ?? new List<string>(); }
@@ -64,7 +63,6 @@ public class FileUtilityConfiguration
     }
 
     private List<string> _extsWebEncrypt;
-    public List<string> ExtsWebEncrypt { get => _extsWebEncrypt ??= _configuration.GetSection("files:docservice:encrypted-docs").Get<List<string>>() ?? new List<string>(); }
 
     private List<string> _extsWebReviewed;
     public List<string> ExtsWebReviewed
@@ -419,12 +417,6 @@ public class FileUtility
         return ExtsMustConvert.Exists(r => r.Equals(ext, StringComparison.OrdinalIgnoreCase));
     }
 
-    public bool CanIndex(string fileName)
-    {
-        var ext = GetFileExtension(fileName);
-        return ExtsIndexing.Exists(r => r.Equals(ext, StringComparison.OrdinalIgnoreCase));
-    }
-
     #endregion
 
     #region member
@@ -486,9 +478,6 @@ public class FileUtility
             return _extsUploadable;
         }
     }
-
-    private List<string> ExtsIndexing { get => _fileUtilityConfiguration.ExtsIndexing; }
-
     public List<string> ExtsImagePreviewed { get => _fileUtilityConfiguration.ExtsImagePreviewed; }
 
     public List<string> ExtsMediaPreviewed { get => _fileUtilityConfiguration.ExtsMediaPreviewed; }
@@ -518,8 +507,6 @@ public class FileUtility
             return _fileUtilityConfiguration.ExtsWebEdited;
         }
     }
-
-    public List<string> ExtsWebEncrypt { get => _fileUtilityConfiguration.ExtsWebEncrypt; }
 
     public List<string> ExtsWebReviewed
     {
@@ -685,15 +672,6 @@ public class FileUtility
     public Dictionary<FileType, string> InternalExtension => _fileUtilityConfiguration.InternalExtension;
 
     public string MasterFormExtension { get => _fileUtilityConfiguration.MasterFormExtension; }
-    public enum CsvDelimiter
-    {
-        None = 0,
-        Tab = 1,
-        Semicolon = 2,
-        Colon = 3,
-        Comma = 4,
-        Space = 5
-    }
     public string SignatureSecret { get => GetSignatureSecret(); }
     public string SignatureHeader { get => GetSignatureHeader(); }
 

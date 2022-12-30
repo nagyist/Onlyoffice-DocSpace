@@ -96,23 +96,6 @@ public class ProductEntryPoint : Product
         //SearchHandlerManager.Registry(new SearchHandler());
     }
 
-    public string GetModuleResource(string ResourceClassTypeName, string ResourseKey)
-    {
-        if (string.IsNullOrEmpty(ResourseKey))
-        {
-            return string.Empty;
-        }
-
-        try
-        {
-            return (string)Type.GetType(ResourceClassTypeName).GetProperty(ResourseKey, BindingFlags.Static | BindingFlags.Public).GetValue(null, null);
-        }
-        catch (Exception)
-        {
-            return string.Empty;
-        }
-    }
-
     public override Guid ProductID => ID;
     public override string Name => FilesCommonResource.ProductName;
 

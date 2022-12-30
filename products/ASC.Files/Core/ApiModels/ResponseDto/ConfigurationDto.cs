@@ -30,7 +30,6 @@ public class ConfigurationDto<T>
 {
     public DocumentConfig<T> Document { get; set; }
     public string DocumentType { get; set; }
-    public EditorConfiguration<T> EditorConfig { get; set; }
     public EditorType EditorType { get; set; }
     public string EditorUrl { get; set; }
     public string Token { get; set; }

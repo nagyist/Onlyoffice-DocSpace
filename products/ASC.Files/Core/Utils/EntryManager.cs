@@ -38,22 +38,7 @@ public class LockerManager
         _daoFactory = daoFactory;
         _thirdPartySelector = thirdPartySelector;
     }
-
-    public async Task<bool> FileLockedForMe<T>(T fileId, Guid userId = default)
-    {
-        var app = _thirdPartySelector.GetAppByFileId(fileId.ToString());
-        if (app != null)
-        {
-            return false;
-        }
-
-        userId = userId == default ? _authContext.CurrentAccount.ID : userId;
-        var tagDao = _daoFactory.GetTagDao<T>();
-        var lockedBy = await FileLockedBy(fileId, tagDao);
-
-        return lockedBy != Guid.Empty && lockedBy != userId;
-    }
-
+    
     public async Task<bool> FileLockedForMeAsync<T>(T fileId, Guid userId = default)
     {
         var app = _thirdPartySelector.GetAppByFileId(fileId.ToString());
@@ -67,13 +52,6 @@ public class LockerManager
         var lockedBy = await FileLockedByAsync(fileId, tagDao);
 
         return lockedBy != Guid.Empty && lockedBy != userId;
-    }
-
-    public async Task<Guid> FileLockedBy<T>(T fileId, ITagDao<T> tagDao)
-    {
-        var tagLock = await tagDao.GetTagsAsync(fileId, FileEntryType.File, TagType.Locked).FirstOrDefaultAsync();
-
-        return tagLock != null ? tagLock.Owner : Guid.Empty;
     }
 
     public async Task<Guid> FileLockedByAsync<T>(T fileId, ITagDao<T> tagDao)
@@ -1027,12 +1005,7 @@ public class EntryManager
     {
         return _lockerManager.FileLockedForMeAsync(fileId, userId);
     }
-
-    public Task<Guid> FileLockedByAsync<T>(T fileId, ITagDao<T> tagDao)
-    {
-        return _lockerManager.FileLockedByAsync(fileId, tagDao);
-    }
-
+    
     public async Task<(File<T> file, Folder<T> folderIfNew)> GetFillFormDraftAsync<T>(File<T> sourceFile)
     {
         Folder<T> folderIfNew = null;
@@ -1872,19 +1845,5 @@ public class EntryManager
             _logger.InformationMoveSharedFile(file.Id.ToString(), parentId.ToString(), toId.ToString());
             await fileDao.MoveFileAsync(file.Id, toId);
         }
-    }
-
-    public static async Task ReassignItemsAsync<T>(T parentId, Guid fromUserId, Guid toUserId, IFolderDao<T> folderDao, IFileDao<T> fileDao)
-    {
-        var files = await fileDao.GetFilesAsync(parentId, new OrderBy(SortedByType.AZ, true), FilterType.ByUser, false, fromUserId, null, true, true).ToListAsync();
-        var fileIds = files.Where(file => file.CreateBy == fromUserId).Select(file => file.Id);
-
-        await fileDao.ReassignFilesAsync(fileIds.ToArray(), toUserId);
-
-        var folderIds = await folderDao.GetFoldersAsync(parentId, new OrderBy(SortedByType.AZ, true), FilterType.ByUser, false, fromUserId, null, true)
-                                 .Where(folder => folder.CreateBy == fromUserId).Select(folder => folder.Id)
-                                 .ToListAsync();
-
-        await folderDao.ReassignFoldersAsync(folderIds.ToArray(), toUserId);
     }
 }

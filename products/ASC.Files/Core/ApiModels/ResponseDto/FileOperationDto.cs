@@ -39,24 +39,6 @@ public class FileOperationDto
     public string Url { get; set; }
     public List<FileEntryDto> Files { get; set; }
     public List<FileEntryDto> Folders { get; set; }
-
-    public FileOperationDto() { }
-
-    public static FileOperationDto GetSample()
-    {
-        return new FileOperationDto
-        {
-            Id = Guid.NewGuid().ToString(),
-            OperationType = FileOperationType.Move,
-            Progress = 100,
-            //Source = "folder_1,file_1",
-            //Result = "folder_1,file_1",
-            Error = "",
-            Processed = "1",
-            Files = new List<FileEntryDto> { FileDto<int>.GetSample() },
-            Folders = new List<FileEntryDto> { FolderDto<int>.GetSample() }
-        };
-    }
 }
 
 [Scope]

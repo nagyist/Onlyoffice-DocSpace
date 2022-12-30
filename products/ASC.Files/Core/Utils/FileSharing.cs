@@ -769,13 +769,6 @@ public class FileSharing
         return GetAceShortWrappers(aces);
     }
 
-    public async Task<List<AceShortWrapper>> GetSharedInfoShortFolderAsync<T>(T folderId)
-    {
-        var aces = await GetSharedInfoAsync(new List<T>(), new List<T> { folderId });
-
-        return GetAceShortWrappers(aces);
-    }
-
     private List<AceShortWrapper> GetAceShortWrappers(List<AceWrapper> aces)
     {
         return new List<AceShortWrapper>(aces

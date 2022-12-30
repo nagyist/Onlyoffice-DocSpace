@@ -29,11 +29,6 @@ namespace ASC.Files.Core.IntegrationEvents.Events;
 [ProtoContract]
 public record ThumbnailRequestedIntegrationEvent : IntegrationEvent
 {
-    private ThumbnailRequestedIntegrationEvent() : base()
-    {
-
-    }
-
     public ThumbnailRequestedIntegrationEvent(Guid createBy, int tenantId)
     : base(createBy, tenantId)
     {

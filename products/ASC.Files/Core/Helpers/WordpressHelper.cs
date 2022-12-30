@@ -48,13 +48,6 @@ public class WordpressToken
         return _tokenHelper.GetToken(AppAttr);
     }
 
-    public void SaveToken(OAuth20Token token)
-    {
-        ArgumentNullException.ThrowIfNull(token);
-
-        _tokenHelper.SaveToken(new Token(token, AppAttr));
-    }
-
     public OAuth20Token SaveTokenFromCode(string code)
     {
         var token = _oAuth20TokenHelper.GetAccessToken<WordpressLoginProvider>(_consumerFactory, code);

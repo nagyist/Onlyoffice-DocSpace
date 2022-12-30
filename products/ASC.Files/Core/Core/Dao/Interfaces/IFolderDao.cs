@@ -187,7 +187,6 @@ public interface IFolderDao<T>
     bool UseRecursiveOperation(T folderId, T toRootFolderId);
     bool UseRecursiveOperation<TTo>(T folderId, TTo toRootFolderId);
     bool UseRecursiveOperation(T folderId, string toRootFolderId);
-    bool UseRecursiveOperation(T folderId, int toRootFolderId);
 
     /// <summary>
     /// Check the possibility to calculate the number of subitems
@@ -207,23 +206,6 @@ public interface IFolderDao<T>
     #region Only for TMFolderDao
 
     /// <summary>
-    /// Set created by
-    /// </summary>
-    /// <param name="folderIds"></param>
-    /// <param name="newOwnerId"></param>
-    Task ReassignFoldersAsync(T[] folderIds, Guid newOwnerId);
-
-
-    /// <summary>
-    /// Search the list of folders containing text in title
-    /// Only in TMFolderDao
-    /// </summary>
-    /// <param name="text"></param>
-    /// <param name="bunch"></param>
-    /// <returns></returns>
-    IAsyncEnumerable<Folder<T>> SearchFoldersAsync(string text, bool bunch = false);
-
-    /// <summary>
     /// Only in TMFolderDao
     /// </summary>
     /// <param name="module"></param>
@@ -232,8 +214,6 @@ public interface IFolderDao<T>
     /// <param name="createIfNotExists"></param>
     /// <returns></returns>
     Task<T> GetFolderIDAsync(string module, string bunch, string data, bool createIfNotExists);
-
-    IAsyncEnumerable<T> GetFolderIDsAsync(string module, string bunch, IEnumerable<string> data, bool createIfNotExists);
 
     /// <summary>
     ///  Returns id folder "Shared Documents"
@@ -333,14 +313,7 @@ public interface IFolderDao<T>
     /// <param name="folderID"></param>
     /// <returns></returns>
     Task<string> GetBunchObjectIDAsync(T folderID);
-
-    /// <summary>
-    /// Return ids of related objects
-    /// Only in TMFolderDao
-    /// </summary>
-    /// <param name="folderIDs"></param>
-    /// <returns></returns>
-    Task<Dictionary<string, string>> GetBunchObjectIDsAsync(List<T> folderIDs);
+    
     IAsyncEnumerable<FolderWithShare> GetFeedsForRoomsAsync(int tenant, DateTime from, DateTime to);
     IAsyncEnumerable<FolderWithShare> GetFeedsForFoldersAsync(int tenant, DateTime from, DateTime to);
     IAsyncEnumerable<ParentRoomPair> GetParentRoomsAsync(IEnumerable<int> foldersIds);

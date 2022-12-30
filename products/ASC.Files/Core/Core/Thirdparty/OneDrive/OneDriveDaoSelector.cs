@@ -51,11 +51,6 @@ internal class OneDriveDaoSelector : RegexDaoSelectorBase<OneDriveProviderInfo>,
     {
         return base.GetTagDao<OneDriveTagDao>(id);
     }
-
-    public ISecurityDao<string> GetSecurityDao(string id)
-    {
-        return base.GetSecurityDao<OneDriveSecurityDao>(id);
-    }
 }
 
 public static class OneDriveDaoSelectorExtension

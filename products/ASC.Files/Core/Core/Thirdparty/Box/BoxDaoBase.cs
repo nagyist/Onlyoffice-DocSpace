@@ -242,25 +242,7 @@ internal abstract class BoxDaoBase : ThirdPartyProviderDao<BoxProviderInfo>
 
         return items.Select(entry => MakeId(entry.Id));
     }
-
-    protected List<BoxItem> GetBoxItems(string parentId, bool? folder = null)
-    {
-        var boxFolderId = MakeBoxId(parentId);
-        var items = ProviderInfo.GetBoxItemsAsync(boxFolderId).Result;
-
-        if (folder.HasValue)
-        {
-            if (folder.Value)
-            {
-                return items.Where(i => i is BoxFolder).ToList();
-            }
-
-            return items.Where(i => i is BoxFile).ToList();
-        }
-
-        return items;
-    }
-
+    
     protected async Task<List<BoxItem>> GetBoxItemsAsync(string parentId, bool? folder = null)
     {
         var boxFolderId = MakeBoxId(parentId);
@@ -308,36 +290,7 @@ internal abstract class BoxDaoBase : ThirdPartyProviderDao<BoxProviderInfo>
             }
         }
     }
-
-    protected string GetAvailableTitle(string requestTitle, string parentFolderId, Func<string, string, bool> isExist)
-    {
-        if (!isExist(requestTitle, parentFolderId))
-        {
-            return requestTitle;
-        }
-
-        var re = new Regex(@"( \(((?<index>[0-9])+)\)(\.[^\.]*)?)$");
-        var match = re.Match(requestTitle);
-
-        if (!match.Success)
-        {
-            var insertIndex = requestTitle.Length;
-            if (requestTitle.LastIndexOf('.') != -1)
-            {
-                insertIndex = requestTitle.LastIndexOf('.');
-            }
-
-            requestTitle = requestTitle.Insert(insertIndex, " (1)");
-        }
-
-        while (isExist(requestTitle, parentFolderId))
-        {
-            requestTitle = re.Replace(requestTitle, MatchEvaluator);
-        }
-
-        return requestTitle;
-    }
-
+    
     protected async Task<string> GetAvailableTitleAsync(string requestTitle, string parentFolderId, Func<string, string, Task<bool>> isExist)
     {
         if (!await isExist(requestTitle, parentFolderId))

@@ -27,27 +27,10 @@
 namespace ASC.Files.Core.ApiModels.RequestDto;
 public class EntryPropertiesRequestDto : IMapFrom<EntryProperties>
 {
-    public FormFillingPropertiesRequestDto FormFilling { get; set; }
-
     public void Mapping(AutoMapper.Profile profile)
     {
         profile.CreateMap(typeof(EntryProperties), GetType());
         profile.CreateMap(GetType(), typeof(EntryProperties));
-    }
-}
-
-public class FormFillingPropertiesRequestDto : IMapFrom<FormFillingProperties>
-{
-    public bool CollectFillForm { get; set; }
-    public string ToFolderId { get; set; }
-    public string ToFolderPath { get; set; }
-    public string CreateFolderTitle { get; set; }
-    public string CreateFileMask { get; set; }
-
-    public void Mapping(AutoMapper.Profile profile)
-    {
-        profile.CreateMap(typeof(FormFillingProperties), GetType());
-        profile.CreateMap(GetType(), typeof(FormFillingProperties));
     }
 }
 

@@ -273,7 +273,7 @@ internal class OneDriveFileDao : OneDriveDaoBase, IFileDao<string>
         }
     }
 
-    public override Task<Stream> GetFileStreamAsync(File<string> file)
+    public Task<Stream> GetFileStreamAsync(File<string> file)
     {
         return GetFileStreamAsync(file, 0);
     }

@@ -228,22 +228,7 @@ internal abstract class GoogleDriveDaoBase : ThirdPartyProviderDao<GoogleDrivePr
     {
         return ToFolder(await GetDriveEntryAsync(""));
     }
-
-    protected DriveFile GetDriveEntry(string entryId)
-    {
-        var driveId = MakeDriveId(entryId);
-        try
-        {
-            var entry = ProviderInfo.GetDriveEntryAsync(driveId).Result;
-
-            return entry;
-        }
-        catch (Exception ex)
-        {
-            return new ErrorDriveEntry(ex, driveId);
-        }
-    }
-
+    
     protected async Task<DriveFile> GetDriveEntryAsync(string entryId)
     {
         var driveId = MakeDriveId(entryId);
@@ -264,14 +249,6 @@ internal abstract class GoogleDriveDaoBase : ThirdPartyProviderDao<GoogleDrivePr
         var entries = await GetDriveEntriesAsync(folderId);
 
         return entries.Select(entry => MakeId(entry.Id));
-    }
-
-    protected List<DriveFile> GetDriveEntries(object parentId, bool? folder = null)
-    {
-        var parentDriveId = MakeDriveId(parentId);
-        var entries = ProviderInfo.GetDriveEntriesAsync(parentDriveId, folder).Result;
-
-        return entries;
     }
 
     protected async Task<List<DriveFile>> GetDriveEntriesAsync(object parentId, bool? folder = null)

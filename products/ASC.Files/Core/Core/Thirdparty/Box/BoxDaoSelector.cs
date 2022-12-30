@@ -51,11 +51,6 @@ internal class BoxDaoSelector : RegexDaoSelectorBase<BoxProviderInfo>, IDaoSelec
     {
         return base.GetTagDao<BoxTagDao>(id);
     }
-
-    public ISecurityDao<string> GetSecurityDao(string id)
-    {
-        return base.GetSecurityDao<BoxSecurityDao>(id);
-    }
 }
 
 public static class BoxDaoSelectorExtension

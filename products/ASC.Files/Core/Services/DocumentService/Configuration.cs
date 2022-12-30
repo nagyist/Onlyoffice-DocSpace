@@ -51,17 +51,6 @@ public class ActionLinkConfig
     }
 }
 
-public class CoEditingConfig
-{
-    public bool Change { get; set; }
-    public bool Fast { get; set; }
-
-    public string Mode
-    {
-        get { return Fast ? "fast" : "strict"; }
-    }
-}
-
 public class Configuration<T>
 {
     internal static readonly Dictionary<FileType, string> DocType = new Dictionary<FileType, string>
@@ -92,8 +81,6 @@ public class Configuration<T>
         set => Document.Info.Type = value;
         get => Document.Info.Type;
     }
-
-    public string EditorUrl { get; }
 
     [JsonPropertyName("Error")]
     public string ErrorMessage { get; set; }
@@ -205,54 +192,7 @@ public class EditorConfiguration<T>
     private readonly UserManager _userManager;
     private Configuration<T> _configuration;
 
-    private EmbeddedConfig _embeddedConfig;
-
     public ActionLinkConfig ActionLink { get; set; }
-
-    public string ActionLinkString
-    {
-        get => null;
-        set
-        {
-            try
-            {
-                var options = new JsonSerializerOptions
-                {
-                    AllowTrailingCommas = true,
-                    PropertyNameCaseInsensitive = true
-                };
-
-                JsonSerializer.Deserialize<ActionLinkConfig>(value, options);
-            }
-            catch (Exception)
-            {
-                ActionLink = null;
-            }
-        }
-    }
-
-    public string CallbackUrl
-    {
-        get
-        {
-            return ModeWrite ? _documentServiceTrackerHelper.GetCallbackUrl(_configuration.Document.Info.GetFile().Id.ToString()) : null;
-        }
-    }
-
-    public CoEditingConfig CoEditing
-    {
-        set { }
-        get
-        {
-            return !ModeWrite && User == null
-              ? new CoEditingConfig
-              {
-                  Fast = false,
-                  Change = false
-              }
-              : null;
-        }
-    }
 
     public string CreateUrl
     {
@@ -274,16 +214,8 @@ public class EditorConfiguration<T>
 
     public CustomizationConfig<T> Customization { get; set; }
 
-    public EmbeddedConfig Embedded
-    {
-        set => _embeddedConfig = value;
-        get => _configuration.Document.Info.Type == EditorType.Embedded ? _embeddedConfig : null;
-    }
-
     public EncryptionKeysConfig EncryptionKeys { get; set; }
-
-    public string FileChoiceUrl { get; set; }
-
+    
     public string Lang => _userInfo.GetCulture().Name;
 
     public string Mode => ModeWrite ? "edit" : "view";
@@ -346,11 +278,7 @@ public class EditorConfiguration<T>
             return listRecent.ToList();
         }
     }
-
-    public string SaveAsUrl { get; set; }
-
-    public string SharingSettingsUrl { get; set; }
-
+    
     public List<TemplatesConfig> Templates
     {
         set { }
@@ -416,7 +344,6 @@ public class EditorConfiguration<T>
         FileUtility fileUtility,
         BaseCommonLinkUtility baseCommonLinkUtility,
         PluginsConfig pluginsConfig,
-        EmbeddedConfig embeddedConfig,
         CustomizationConfig<T> customizationConfig,
         FilesSettingsHelper filesSettingsHelper,
         IDaoFactory daoFactory,
@@ -434,7 +361,6 @@ public class EditorConfiguration<T>
         _entryManager = entryManager;
         _documentServiceTrackerHelper = documentServiceTrackerHelper;
         Plugins = pluginsConfig;
-        Embedded = embeddedConfig;
         _userInfo = userManager.GetUsers(authContext.CurrentAccount.ID);
 
         if (!_userInfo.Id.Equals(ASC.Core.Configuration.Constants.Guest.ID))
@@ -675,30 +601,7 @@ public class CustomizationConfig<T>
     public bool About => !_coreBaseSettings.Standalone && !_coreBaseSettings.CustomMode;
 
     public CustomerConfig<T> Customer { get; set; }
-
-    public FeedbackConfig Feedback
-    {
-        get
-        {
-            if (_coreBaseSettings.Standalone)
-            {
-                return null;
-            }
-
-            var link = _commonLinkUtility.GetFeedbackAndSupportLink(_settingsManager, true);
-
-            if (string.IsNullOrEmpty(link))
-            {
-                return null;
-            }
-
-            return new FeedbackConfig
-            {
-                Url = link
-            };
-        }
-    }
-
+    
     public bool? Forcesave
     {
         get
@@ -709,66 +612,7 @@ public class CustomizationConfig<T>
                    && _filesSettingsHelper.Forcesave;
         }
     }
-
-    public GobackConfig Goback
-    {
-        get
-        {
-            if (_configuration.EditorType == EditorType.Embedded || _configuration.EditorType == EditorType.External)
-            {
-                return null;
-            }
-
-            if (!_authContext.IsAuthenticated)
-            {
-                return null;
-            }
-            if (GobackUrl != null)
-            {
-                return new GobackConfig
-                {
-                    Url = GobackUrl,
-                };
-            }
-
-            var folderDao = _daoFactory.GetFolderDao<T>();
-            try
-            {
-                var parent = folderDao.GetFolderAsync(_configuration.Document.Info.GetFile().ParentId).Result;
-                if (_configuration.Document.Info.GetFile().RootFolderType == FolderType.USER
-                    && !Equals(_configuration.Document.Info.GetFile().RootId, _globalFolderHelper.FolderMy)
-                    && !_fileSecurity.CanReadAsync(parent).Result)
-                {
-                    if (_fileSecurity.CanReadAsync(_configuration.Document.Info.GetFile()).Result)
-                    {
-                        return new GobackConfig
-                        {
-                            Url = _pathProvider.GetFolderUrlByIdAsync(_globalFolderHelper.FolderShareAsync.Result).Result,
-                        };
-                    }
-
-                    return null;
-                }
-
-                if (_configuration.Document.Info.GetFile().Encrypted
-                    && _configuration.Document.Info.GetFile().RootFolderType == FolderType.Privacy
-                    && !_fileSecurity.CanReadAsync(parent).Result)
-                {
-                    parent = folderDao.GetFolderAsync(_globalFolderHelper.GetFolderPrivacyAsync<T>().Result).Result;
-                }
-
-                return new GobackConfig
-                {
-                    Url = _pathProvider.GetFolderUrlAsync(parent).Result,
-                };
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-    }
-
+    
     public LogoConfig<T> Logo { get; set; }
 
     public bool MentionShare
@@ -780,44 +624,7 @@ public class CustomizationConfig<T>
                    && FileSharing.CanSetAccessAsync(_configuration.Document.Info.GetFile()).Result;
         }
     }
-
-    public string ReviewDisplay
-    {
-        get { return _configuration.EditorConfig.ModeWrite ? null : "markup"; }
-    }
-
-    public bool SubmitForm
-    {
-        get
-        {
-            if (_configuration.EditorConfig.ModeWrite
-              && _configuration.Document.Info.GetFile().Access == FileShare.FillForms)
-            {
-                var linkDao = _daoFactory.GetLinkDao();
-                var sourceId = linkDao.GetSourceAsync(_configuration.Document.Info.GetFile().Id.ToString()).Result;
-
-                if (sourceId != null)
-                {
-                    EntryProperties properties;
-
-                    if (int.TryParse(sourceId, out var sourceInt))
-                    {
-                        properties = _daoFactory.GetFileDao<int>().GetProperties(sourceInt).Result;
-                    }
-                    else
-                    {
-                        properties = _daoFactory.GetFileDao<string>().GetProperties(sourceId).Result;
-                    }
-
-                    return properties != null
-                        && properties.FormFilling != null
-                        && properties.FormFilling.CollectFillForm;
-                }
-            }
-            return false;
-        }
-    }
-
+    
     private FileSharing FileSharing { get; }
 
     public CustomizationConfig(
@@ -869,48 +676,10 @@ public class CustomizationConfig<T>
     }
 }
 
-[Transient]
-public class EmbeddedConfig
-{
-    private readonly BaseCommonLinkUtility _baseCommonLinkUtility;
-    private readonly FilesLinkUtility _filesLinkUtility;
-
-    public string EmbedUrl => _baseCommonLinkUtility.GetFullAbsolutePath(_filesLinkUtility.FilesBaseAbsolutePath
-        + FilesLinkUtility.EditorPage + "?" + FilesLinkUtility.Action + "=embedded" + ShareLinkParam);
-
-    public string SaveUrl => _baseCommonLinkUtility.GetFullAbsolutePath(_filesLinkUtility.FileHandlerPath + "?"
-        + FilesLinkUtility.Action + "=download" + ShareLinkParam);
-
-    public string ShareLinkParam { get; set; }
-
-    public string ShareUrl => _baseCommonLinkUtility.GetFullAbsolutePath(_filesLinkUtility.FilesBaseAbsolutePath
-        + FilesLinkUtility.EditorPage + "?" + FilesLinkUtility.Action + "=view" + ShareLinkParam);
-
-    public string ToolbarDocked => "top";
-
-    public EmbeddedConfig(BaseCommonLinkUtility baseCommonLinkUtility, FilesLinkUtility filesLinkUtility)
-    {
-        _baseCommonLinkUtility = baseCommonLinkUtility;
-        _filesLinkUtility = filesLinkUtility;
-    }
-}
-
 public class EncryptionKeysConfig
 {
-    public string CryptoEngineId => "{FFF0E1EB-13DB-4678-B67D-FF0A41DBBCEF}";
     public string PrivateKeyEnc { get; set; }
     public string PublicKey { get; set; }
-}
-
-public class FeedbackConfig
-{
-    public string Url { get; set; }
-    public bool Visible { get => true; }
-}
-
-public class GobackConfig
-{
-    public string Url { get; set; }
 }
 
 [Transient]
@@ -936,23 +705,7 @@ public class LogoConfig<T>
                     : _commonLinkUtility.GetFullAbsolutePath(_tenantLogoHelper.GetLogo(WhiteLabelLogoTypeEnum.DocsEditor).Result);
         }
     }
-
-    public string ImageDark
-    {
-        set { }
-        get => _commonLinkUtility.GetFullAbsolutePath(_tenantLogoHelper.GetLogo(WhiteLabelLogoTypeEnum.DocsEditor).Result);
-    }
-
-    public string ImageEmbedded
-    {
-        get
-        {
-            return _configuration.EditorType != EditorType.Embedded
-                    ? null
-                    : _commonLinkUtility.GetFullAbsolutePath(_tenantLogoHelper.GetLogo(WhiteLabelLogoTypeEnum.DocsEditorEmbed).Result);
-        }
-    }
-
+    
     public string Url
     {
         set { }
@@ -984,34 +737,7 @@ public class PluginsConfig
 
     private readonly CoreBaseSettings _coreBaseSettings;
     private readonly TenantManager _tenantManager;
-
-    public string[] PluginsData
-    {
-        get
-        {
-            var plugins = new List<string>();
-
-            if (_coreBaseSettings.Standalone || !_tenantManager.GetCurrentTenantQuota().Free)
-            {
-                var easyBibHelper = _consumerFactory.Get<EasyBibHelper>();
-                if (!string.IsNullOrEmpty(easyBibHelper.AppKey))
-                {
-                    plugins.Add(_baseCommonLinkUtility.GetFullAbsolutePath("ThirdParty/plugin/easybib/config.json"));
-                }
-
-                var wordpressLoginProvider = _consumerFactory.Get<WordpressLoginProvider>();
-                if (!string.IsNullOrEmpty(wordpressLoginProvider.ClientID) &&
-                    !string.IsNullOrEmpty(wordpressLoginProvider.ClientSecret) &&
-                    !string.IsNullOrEmpty(wordpressLoginProvider.RedirectUri))
-                {
-                    plugins.Add(_baseCommonLinkUtility.GetFullAbsolutePath("ThirdParty/plugin/wordpress/config.json"));
-                }
-            }
-
-            return plugins.ToArray();
-        }
-    }
-
+    
     public PluginsConfig(
         ConsumerFactory consumerFactory,
         BaseCommonLinkUtility baseCommonLinkUtility,
@@ -1059,7 +785,6 @@ public static class ConfigurationExtention
         services.TryAdd<EditorConfiguration<int>>();
 
         services.TryAdd<PluginsConfig>();
-        services.TryAdd<EmbeddedConfig>();
 
         services.TryAdd<CustomizationConfig<string>>();
         services.TryAdd<CustomizationConfig<int>>();

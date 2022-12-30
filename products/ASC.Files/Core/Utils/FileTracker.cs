@@ -108,30 +108,7 @@ public class FileTrackerHelper
 
         SetTracker(fileId, null);
     }
-
-    public void RemoveAllOther<T>(Guid userId, T fileId)
-    {
-        var tracker = GetTracker(fileId);
-        if (tracker != null)
-        {
-            var listForRemove = tracker.EditingBy
-                                       .Where(b => b.Value.UserId != userId);
-
-            if (listForRemove.Count() != tracker.EditingBy.Count)
-            {
-                foreach (var forRemove in listForRemove)
-                {
-                    tracker.EditingBy.Remove(forRemove.Key);
-                }
-
-                SetTracker(fileId, tracker);
-
-                return;
-            }
-        }
-        SetTracker(fileId, null);
-    }
-
+    
     public bool IsEditing<T>(T fileId)
     {
         var tracker = GetTracker(fileId);

@@ -364,26 +364,12 @@ internal class GoogleDriveStorage : IDisposable
 
         return request.ResponseBody;
     }
-
-    public void DeleteEntry(string entryId)
-    {
-        _driveService.Files.Delete(entryId).Execute();
-    }
-
+    
     public Task DeleteEntryAsync(string entryId)
     {
         return _driveService.Files.Delete(entryId).ExecuteAsync();
     }
-
-    public DriveFile InsertEntryIntoFolder(DriveFile entry, string folderId)
-    {
-        var request = _driveService.Files.Update(FileConstructor(), entry.Id);
-        request.AddParents = folderId;
-        request.Fields = GoogleLoginProvider.FilesFields;
-
-        return request.Execute();
-    }
-
+    
     public Task<DriveFile> InsertEntryIntoFolderAsync(DriveFile entry, string folderId)
     {
         var request = _driveService.Files.Update(FileConstructor(), entry.Id);
@@ -392,16 +378,7 @@ internal class GoogleDriveStorage : IDisposable
 
         return request.ExecuteAsync();
     }
-
-    public DriveFile RemoveEntryFromFolder(DriveFile entry, string folderId)
-    {
-        var request = _driveService.Files.Update(FileConstructor(), entry.Id);
-        request.RemoveParents = folderId;
-        request.Fields = GoogleLoginProvider.FilesFields;
-
-        return request.Execute();
-    }
-
+    
     public Task<DriveFile> RemoveEntryFromFolderAsync(DriveFile entry, string folderId)
     {
         var request = _driveService.Files.Update(FileConstructor(), entry.Id);
@@ -663,16 +640,7 @@ internal class GoogleDriveStorage : IDisposable
             googleDriveSession.FileId = responseJson.Value<string>("id");
         }
     }
-
-    public long GetMaxUploadSize()
-    {
-        var request = _driveService.About.Get();
-        request.Fields = "maxUploadSize";
-        var about = request.Execute();
-
-        return about.MaxUploadSize ?? MaxChunkedUploadFileSize;
-    }
-
+    
     public async Task<long> GetMaxUploadSizeAsync()
     {
         var request = _driveService.About.Get();

@@ -515,11 +515,6 @@ internal class OneDriveFolderDao : OneDriveDaoBase, IFolderDao<string>
         return false;
     }
 
-    public bool UseRecursiveOperation(string folderId, int toRootFolderId)
-    {
-        return false;
-    }
-
     public bool CanCalculateSubitems(string entryId)
     {
         return true;

@@ -37,44 +37,6 @@ public class FilesIntegration
         _daoFactory = daoFactory;
     }
 
-    public Task<T> RegisterBunchAsync<T>(string module, string bunch, string data)
-    {
-        var folderDao = _daoFactory.GetFolderDao<T>();
-
-        return folderDao.GetFolderIDAsync(module, bunch, data, true);
-    }
-
-    public IAsyncEnumerable<T> RegisterBunchFoldersAsync<T>(string module, string bunch, IEnumerable<string> data)
-    {
-        ArgumentNullException.ThrowIfNull(data);
-
-        data = data.ToList();
-        if (!data.Any())
-        {
-            return AsyncEnumerable.Empty<T>();
-        }
-
-        var folderDao = _daoFactory.GetFolderDao<T>();
-        return folderDao.GetFolderIDsAsync(module, bunch, data, true);
-    }
-
-    public bool IsRegisteredFileSecurityProvider(string module, string bunch)
-    {
-        lock (_providers)
-        {
-            return _providers.ContainsKey(module + bunch);
-        }
-
-    }
-
-    public void RegisterFileSecurityProvider(string module, string bunch, IFileSecurityProvider securityProvider)
-    {
-        lock (_providers)
-        {
-            _providers[module + bunch] = securityProvider;
-        }
-    }
-
     internal static IFileSecurity GetFileSecurity(string path)
     {
         if (string.IsNullOrEmpty(path))

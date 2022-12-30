@@ -138,45 +138,7 @@ public class DocumentServiceConnector
 
         return false;
     }
-
-    public async Task<(string BuilderKey, Dictionary<string, string> Urls)> DocbuilderRequestAsync(string requestKey,
-                                           string inputScript,
-                                           bool isAsync)
-    {
-        var urls = new Dictionary<string, string>();
-        string scriptUrl = null;
-        if (!string.IsNullOrEmpty(inputScript))
-        {
-            using (var stream = new MemoryStream())
-            using (var writer = new StreamWriter(stream))
-            {
-                await writer.WriteAsync(inputScript);
-                await writer.FlushAsync();
-                stream.Position = 0;
-                scriptUrl = await _pathProvider.GetTempUrlAsync(stream, ".docbuilder");
-            }
-            scriptUrl = ReplaceCommunityAdress(scriptUrl);
-            requestKey = null;
-        }
-
-        _logger.DebugDocServiceBuilderRequestKey(requestKey, isAsync);
-        try
-        {
-            return await ASC.Files.Core.Helpers.DocumentService.DocbuilderRequestAsync(
-                _fileUtility,
-                _filesLinkUtility.DocServiceDocbuilderUrl,
-                GenerateRevisionId(requestKey),
-                scriptUrl,
-                isAsync,
-                _fileUtility.SignatureSecret,
-                _clientFactory);
-        }
-        catch (Exception ex)
-        {
-            throw CustomizeError(ex);
-        }
-    }
-
+    
     public async Task<string> GetVersionAsync()
     {
         _logger.DebugDocServiceRequestVersion();

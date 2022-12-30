@@ -36,27 +36,6 @@ public class FolderContentDto<T>
     public int Count { get; set; }
     public int Total { get; set; }
     public int New { get; set; }
-
-    public FolderContentDto() { }
-
-    public static FolderContentDto<int> GetSample()
-    {
-        return new FolderContentDto<int>
-        {
-            Current = FolderDto<int>.GetSample(),
-            //Files = new List<FileEntryDto>(new[] { FileDto<int>.GetSample(), FileDto<int>.GetSample() }),
-            //Folders = new List<FileEntryDto>(new[] { FolderDto<int>.GetSample(), FolderDto<int>.GetSample() }),
-            PathParts = new
-            {
-                key = "Key",
-                path = "//path//to//folder"
-            },
-
-            StartIndex = 0,
-            Count = 4,
-            Total = 4,
-        };
-    }
 }
 
 [Scope]

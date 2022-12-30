@@ -259,11 +259,6 @@ public class FileSecurity : IFileSecurity
     {
         return CanDeleteAsync(entry, _authContext.CurrentAccount.ID);
     }
-    public Task<bool> CanDownload<T>(FileEntry<T> entry)
-    {
-        return CanDownloadAsync(entry, _authContext.CurrentAccount.ID);
-    }
-
     public Task<bool> CanEditRoomAsync<T>(FileEntry<T> entry)
     {
         return CanEditRoomAsync(entry, _authContext.CurrentAccount.ID);
@@ -312,11 +307,6 @@ public class FileSecurity : IFileSecurity
     public Task<bool> CanEditAccessAsync<T>(FileEntry<T> entry)
     {
         return CanAsync(entry, _authContext.CurrentAccount.ID, FilesSecurityActions.EditAccess);
-    }
-
-    public Task<bool> CanEditHistoryAsync<T>(FileEntry<T> entry)
-    {
-        return CanAsync(entry, _authContext.CurrentAccount.ID, FilesSecurityActions.EditHistory);
     }
 
     public Task<IEnumerable<Guid>> WhoCanReadAsync<T>(FileEntry<T> entry)

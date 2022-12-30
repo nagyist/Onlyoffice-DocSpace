@@ -26,53 +26,6 @@
 
 namespace ASC.Web.Files.Classes;
 
-[Singletone]
-public class GlobalNotify
-{
-    public ILogger Logger { get; set; }
-    private readonly ICacheNotify<AscCacheItem> _notify;
-
-    public GlobalNotify(ICacheNotify<AscCacheItem> notify, ILoggerProvider options, CoreBaseSettings coreBaseSettings)
-    {
-        _notify = notify;
-        Logger = options.CreateLogger("ASC.Files");
-        if (coreBaseSettings.Standalone)
-        {
-            ClearCache();
-        }
-    }
-
-    private void ClearCache()
-    {
-        try
-        {
-            _notify.Subscribe((item) =>
-            {
-                try
-                {
-                    GlobalFolder.ProjectsRootFolderCache.Clear();
-                    GlobalFolder.UserRootFolderCache.Clear();
-                    GlobalFolder.CommonFolderCache.Clear();
-                    GlobalFolder.ShareFolderCache.Clear();
-                    GlobalFolder.RecentFolderCache.Clear();
-                    GlobalFolder.FavoritesFolderCache.Clear();
-                    GlobalFolder.TemplatesFolderCache.Clear();
-                    GlobalFolder.PrivacyFolderCache.Clear();
-                    GlobalFolder.TrashFolderCache.Clear();
-                }
-                catch (Exception e)
-                {
-                    Logger.CriticalClearCacheAction(e);
-                }
-            }, CacheNotifyAction.Any);
-        }
-        catch (Exception e)
-        {
-            Logger.CriticalClearCacheSubscribe(e);
-        }
-    }
-}
-
 [EnumExtensions]
 public enum ThumbnailExtension
 {
@@ -393,12 +346,7 @@ public class GlobalFolder
 
     internal static readonly ConcurrentDictionary<string, Lazy<int>> UserRootFolderCache =
         new ConcurrentDictionary<string, Lazy<int>>(); /*Use SYNCHRONIZED for cross thread blocks*/
-
-    public T GetFolderMy<T>(FileMarker fileMarker, IDaoFactory daoFactory)
-    {
-        return (T)Convert.ChangeType(GetFolderMy(fileMarker, daoFactory), typeof(T));
-    }
-
+    
     public int GetFolderMy(FileMarker fileMarker, IDaoFactory daoFactory)
     {
         if (!_authContext.IsAuthenticated)
@@ -417,31 +365,7 @@ public class GlobalFolder
 
         return myFolderId.Value;
     }
-
-    protected internal void SetFolderMy(object value)
-    {
-        var cacheKey = string.Format("my/{0}/{1}", _tenantManager.GetCurrentTenant().Id, value);
-        UserRootFolderCache.Remove(cacheKey, out _);
-    }
-
-    public async ValueTask<bool> IsFirstVisit(IDaoFactory daoFactory)
-    {
-        var cacheKey = string.Format("my/{0}/{1}", _tenantManager.GetCurrentTenant().Id, _authContext.CurrentAccount.ID);
-
-        if (!UserRootFolderCache.TryGetValue(cacheKey, out var _))
-        {
-            var folderDao = daoFactory.GetFolderDao<int>();
-            var myFolderId = await folderDao.GetFolderIDUserAsync(false);
-
-            if (Equals(myFolderId, 0))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
+    
     internal static readonly IDictionary<int, int> CommonFolderCache =
             new ConcurrentDictionary<int, int>(); /*Use SYNCHRONIZED for cross thread blocks*/
 
@@ -781,17 +705,7 @@ public class GlobalFolderHelper
     {
         return (T)Convert.ChangeType(await FolderProjectsAsync, typeof(T));
     }
-
-    public T GetFolderTrash<T>()
-    {
-        return (T)Convert.ChangeType(FolderTrash, typeof(T));
-    }
-
-    public async ValueTask<T> GetFolderPrivacyAsync<T>()
-    {
-        return (T)Convert.ChangeType(await FolderPrivacyAsync, typeof(T));
-    }
-
+    
     public async ValueTask<T> GetFolderVirtualRooms<T>()
     {
         return (T)Convert.ChangeType(await FolderVirtualRoomsAsync, typeof(T));
@@ -800,11 +714,6 @@ public class GlobalFolderHelper
     public async ValueTask<T> GetFolderArchive<T>()
     {
         return (T)Convert.ChangeType(await FolderArchiveAsync, typeof(T));
-    }
-
-    public void SetFolderMy<T>(T val)
-    {
-        _globalFolder.SetFolderMy(val);
     }
 
     public async ValueTask<T> GetFolderShareAsync<T>()

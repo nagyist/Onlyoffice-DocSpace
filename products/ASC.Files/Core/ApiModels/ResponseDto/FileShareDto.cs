@@ -28,24 +28,11 @@ namespace ASC.Files.Core.ApiModels.ResponseDto;
 
 public class FileShareDto
 {
-    public FileShareDto() { }
-
     public FileShare Access { get; set; }
     public object SharedTo { get; set; }
     public bool IsLocked { get; set; }
     public bool IsOwner { get; set; }
     public bool CanEditAccess { get; set; }
-
-    public static FileShareDto GetSample()
-    {
-        return new FileShareDto
-        {
-            Access = FileShare.ReadWrite,
-            IsLocked = false,
-            IsOwner = true,
-            //SharedTo = EmployeeWraper.GetSample()
-        };
-    }
 }
 
 public class FileShareLink

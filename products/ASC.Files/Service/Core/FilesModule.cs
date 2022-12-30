@@ -33,7 +33,7 @@ public class FilesModule : FeedModule
     public override Guid ProductID => WebItemManager.DocumentsProductID;
     public override string Name => Constants.FilesModule;
     public override string Product => Constants.Documents;
-    protected override string DbId => Constants.FilesDbId;
+    protected string DbId => Constants.FilesDbId;
 
     private const string FileItem = Constants.FileItem;
     private const string SharedFileItem = Constants.SharedFileItem;

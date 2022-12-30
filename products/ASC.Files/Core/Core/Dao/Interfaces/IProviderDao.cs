@@ -32,7 +32,6 @@ public interface IProviderDao
     Task<IProviderInfo> GetProviderInfoAsync(int linkId);
     IAsyncEnumerable<IProviderInfo> GetProvidersInfoAsync();
     IAsyncEnumerable<IProviderInfo> GetProvidersInfoAsync(FolderType folderType, string searchText = null);
-    IAsyncEnumerable<IProviderInfo> GetProvidersInfoAsync(Guid userId);
     Task<int> SaveProviderInfoAsync(string providerKey, string customerTitle, AuthData authData, FolderType folderType);
     Task<bool> UpdateProviderInfoAsync(int linkId, FolderType rootFolderType);
     Task<bool> UpdateProviderInfoAsync(int linkId, bool hasLogo);

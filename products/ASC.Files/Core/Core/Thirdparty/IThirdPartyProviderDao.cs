@@ -29,20 +29,10 @@ namespace ASC.Files.Thirdparty;
 internal abstract class ThirdPartyProviderDao
 {
     #region FileDao
-
-    public Task ReassignFilesAsync(string[] fileIds, Guid newOwnerId)
-    {
-        return Task.CompletedTask;
-    }
-
+    
     public IAsyncEnumerable<File<string>> GetFilesAsync(IEnumerable<string> parentIds, FilterType filterType, bool subjectGroup, Guid subjectID, string searchText, bool searchInContent)
     {
         return AsyncEnumerable.Empty<File<string>>();
-    }
-
-    public IAsyncEnumerable<File<string>> SearchAsync(string text, bool bunch)
-    {
-        return null;
     }
 
     public Task<bool> IsExistOnStorageAsync(File<string> file)
@@ -97,11 +87,6 @@ internal abstract class ThirdPartyProviderDao
         return null;
     }
 
-    public virtual Task<Stream> GetFileStreamAsync(File<string> file)
-    {
-        return null;
-    }
-
     public string GetUniqFilePath(File<string> file, string fileTitle)
     {
         throw new NotImplementedException();
@@ -119,26 +104,10 @@ internal abstract class ThirdPartyProviderDao
 
     #endregion
     #region FolderDao
-
-    public Task ReassignFoldersAsync(string[] folderIds, Guid newOwnerId)
-    {
-        return Task.CompletedTask;
-    }
-
-    public IAsyncEnumerable<Folder<string>> SearchFoldersAsync(string text, bool bunch)
-    {
-        return null;
-    }
-
-
+    
     public Task<string> GetFolderIDAsync(string module, string bunch, string data, bool createIfNotExists)
     {
         return null;
-    }
-
-    public IAsyncEnumerable<string> GetFolderIDsAsync(string module, string bunch, IEnumerable<string> data, bool createIfNotExists)
-    {
-        return AsyncEnumerable.Empty<string>();
     }
 
     public Task<string> GetFolderIDCommonAsync(bool createIfNotExists)
@@ -182,13 +151,7 @@ internal abstract class ThirdPartyProviderDao
     {
         return null;
     }
-
-    public string GetFolderIDPhotos(bool createIfNotExists)
-    {
-        return null;
-    }
-
-
+    
     public Task<string> GetFolderIDProjectsAsync(bool createIfNotExists)
     {
         return null;
@@ -208,12 +171,7 @@ internal abstract class ThirdPartyProviderDao
     {
         return null;
     }
-
-    public Task<Dictionary<string, string>> GetBunchObjectIDsAsync(List<string> folderIDs)
-    {
-        return null;
-    }
-
+    
     public IAsyncEnumerable<FolderWithShare> GetFeedsForRoomsAsync(int tenant, DateTime from, DateTime to)
     {
         throw new NotImplementedException();
@@ -566,22 +524,12 @@ internal abstract class ThirdPartyProviderDao<T> : ThirdPartyProviderDao, IDispo
     {
         return Task.FromResult((IDictionary<object, IEnumerable<Tag>>)new Dictionary<object, IEnumerable<Tag>>());
     }
-
-    public Task<IDictionary<object, IEnumerable<Tag>>> GetTagsAsync(Guid subject, IEnumerable<TagType> tagType, IAsyncEnumerable<FileEntry<string>> fileEntries)
-    {
-        return Task.FromResult((IDictionary<object, IEnumerable<Tag>>)new Dictionary<object, IEnumerable<Tag>>());
-    }
-
+    
     public IAsyncEnumerable<Tag> GetNewTagsAsync(Guid subject, IEnumerable<FileEntry<string>> fileEntries)
     {
         return AsyncEnumerable.Empty<Tag>();
     }
-
-    public IAsyncEnumerable<Tag> GetNewTagsAsync(Guid subject, IAsyncEnumerable<FileEntry<string>> fileEntries)
-    {
-        return AsyncEnumerable.Empty<Tag>();
-    }
-
+    
     public IAsyncEnumerable<Tag> GetNewTagsAsync(Guid subject, FileEntry<string> fileEntry)
     {
         return AsyncEnumerable.Empty<Tag>();
@@ -646,11 +594,7 @@ internal abstract class ThirdPartyProviderDao<T> : ThirdPartyProviderDao, IDispo
     {
         return AsyncEnumerable.Empty<Tag>();
     }
-
-    public void MarkAsNew(Guid subject, FileEntry<string> fileEntry)
-    {
-    }
-
+    
     public async IAsyncEnumerable<Tag> GetNewTagsAsync(Guid subject, Folder<string> parentFolder, bool deepSearch)
     {
         var folderId = DaoSelector.ConvertId(parentFolder.Id);
@@ -739,24 +683,5 @@ internal class ErrorEntry
     {
         Error = error;
         ErrorId = errorId;
-    }
-}
-
-public class TagLink
-{
-    public int TenantId { get; set; }
-    public int Id { get; set; }
-}
-
-public class TagLinkComparer : IEqualityComparer<TagLink>
-{
-    public bool Equals([AllowNull] TagLink x, [AllowNull] TagLink y)
-    {
-        return x.Id == y.Id && x.TenantId == y.TenantId;
-    }
-
-    public int GetHashCode([DisallowNull] TagLink obj)
-    {
-        return obj.Id.GetHashCode() + obj.TenantId.GetHashCode();
     }
 }

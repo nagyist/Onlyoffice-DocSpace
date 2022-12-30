@@ -206,19 +206,6 @@ internal abstract class OneDriveDaoBase : ThirdPartyProviderDao<OneDriveProvider
         return ToFolder(await GetOneDriveItemAsync(""));
     }
 
-    protected Item GetOneDriveItem(string itemId)
-    {
-        var onedriveId = MakeOneDriveId(itemId);
-        try
-        {
-            return ProviderInfo.GetOneDriveItemAsync(onedriveId).Result;
-        }
-        catch (Exception ex)
-        {
-            return new ErrorItem(ex, onedriveId);
-        }
-    }
-
     protected async Task<Item> GetOneDriveItemAsync(string itemId)
     {
         var onedriveId = MakeOneDriveId(itemId);
@@ -238,25 +225,7 @@ internal abstract class OneDriveDaoBase : ThirdPartyProviderDao<OneDriveProvider
 
         return items.Select(entry => MakeId(entry.Id));
     }
-
-    protected List<Item> GetOneDriveItems(string parentId, bool? folder = null)
-    {
-        var onedriveFolderId = MakeOneDriveId(parentId);
-        var items = ProviderInfo.GetOneDriveItemsAsync(onedriveFolderId).Result;
-
-        if (folder.HasValue)
-        {
-            if (folder.Value)
-            {
-                return items.Where(i => i.Folder != null).ToList();
-            }
-
-            return items.Where(i => i.File != null).ToList();
-        }
-
-        return items;
-    }
-
+    
     protected async Task<List<Item>> GetOneDriveItemsAsync(string parentId, bool? folder = null)
     {
         var onedriveFolderId = MakeOneDriveId(parentId);
@@ -289,37 +258,7 @@ internal abstract class OneDriveDaoBase : ThirdPartyProviderDao<OneDriveProvider
             }
         }
     }
-
-    protected string GetAvailableTitle(string requestTitle, string parentFolderId, Func<string, string, bool> isExist)
-    {
-        requestTitle = new Regex("\\.$").Replace(requestTitle, "_");
-        if (!isExist(requestTitle, parentFolderId))
-        {
-            return requestTitle;
-        }
-
-        var re = new Regex(@"( \(((?<index>[0-9])+)\)(\.[^\.]*)?)$");
-        var match = re.Match(requestTitle);
-
-        if (!match.Success)
-        {
-            var insertIndex = requestTitle.Length;
-            if (requestTitle.LastIndexOf('.') != -1)
-            {
-                insertIndex = requestTitle.LastIndexOf('.');
-            }
-
-            requestTitle = requestTitle.Insert(insertIndex, " (1)");
-        }
-
-        while (isExist(requestTitle, parentFolderId))
-        {
-            requestTitle = re.Replace(requestTitle, MatchEvaluator);
-        }
-
-        return requestTitle;
-    }
-
+    
     protected async Task<string> GetAvailableTitleAsync(string requestTitle, string parentFolderId, Func<string, string, Task<bool>> isExist)
     {
         requestTitle = new Regex("\\.$").Replace(requestTitle, "_");

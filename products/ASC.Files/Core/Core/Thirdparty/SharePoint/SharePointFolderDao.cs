@@ -435,12 +435,7 @@ internal class SharePointFolderDao : SharePointDaoBase, IFolderDao<string>
     {
         return false;
     }
-
-    public bool UseRecursiveOperation(string folderId, int toRootFolderId)
-    {
-        return false;
-    }
-
+    
     public bool UseRecursiveOperation(string folderId, string toRootFolderId)
     {
         return false;

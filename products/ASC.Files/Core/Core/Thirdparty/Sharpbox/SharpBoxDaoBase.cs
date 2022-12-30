@@ -112,17 +112,7 @@ internal abstract class SharpBoxDaoBase : ThirdPartyProviderDao<SharpBoxProvider
 
             return null;
         }
-
-        public ICloudFileSystemEntry GetChild(string idOrName, bool bThrowException, bool firstByNameIfNotFound)
-        {
-            if (bThrowException)
-            {
-                throw new ArgumentNullException(idOrName);
-            }
-
-            return null;
-        }
-
+        
         public ICloudFileSystemEntry GetChild(int idx)
         {
             return null;
@@ -295,22 +285,7 @@ internal abstract class SharpBoxDaoBase : ThirdPartyProviderDao<SharpBoxProvider
 
         return Global.ReplaceInvalidCharsAndTruncate(fsEntry.Name);
     }
-
-    protected string PathParent(string path)
-    {
-        if (!string.IsNullOrEmpty(path))
-        {
-            var index = path.TrimEnd('/').LastIndexOf('/');
-            if (index != -1)
-            {
-                //Cut to it
-                return path.Substring(0, index);
-            }
-        }
-
-        return path;
-    }
-
+    
     protected Folder<string> ToFolder(ICloudDirectoryEntry fsEntry)
     {
         if (fsEntry == null)
@@ -506,35 +481,6 @@ internal abstract class SharpBoxDaoBase : ThirdPartyProviderDao<SharpBoxProvider
     protected IEnumerable<ICloudFileSystemEntry> GetFolderSubfolders(ICloudDirectoryEntry folder)
     {
         return folder.Where(x => x is ICloudDirectoryEntry);
-    }
-
-    protected string GetAvailableTitle(string requestTitle, ICloudDirectoryEntry parentFolder, Func<string, ICloudDirectoryEntry, bool> isExist)
-    {
-        if (!isExist(requestTitle, parentFolder))
-        {
-            return requestTitle;
-        }
-
-        var re = new Regex(@"( \(((?<index>[0-9])+)\)(\.[^\.]*)?)$");
-        var match = re.Match(requestTitle);
-
-        if (!match.Success)
-        {
-            var insertIndex = requestTitle.Length;
-            if (requestTitle.LastIndexOf('.') != -1)
-            {
-                insertIndex = requestTitle.LastIndexOf('.');
-            }
-
-            requestTitle = requestTitle.Insert(insertIndex, " (1)");
-        }
-
-        while (isExist(requestTitle, parentFolder))
-        {
-            requestTitle = re.Replace(requestTitle, MatchEvaluator);
-        }
-
-        return requestTitle;
     }
 
     protected async Task<string> GetAvailableTitleAsync(string requestTitle, ICloudDirectoryEntry parentFolder, Func<string, ICloudDirectoryEntry, Task<bool>> isExist)

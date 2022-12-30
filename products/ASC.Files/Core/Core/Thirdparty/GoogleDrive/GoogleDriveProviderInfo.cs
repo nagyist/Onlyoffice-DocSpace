@@ -155,12 +155,7 @@ internal class GoogleDriveProviderInfo : IProviderInfo
     {
         return _googleDriveProviderInfoHelper.CacheResetAsync(DriveRootId, ID, driveId, childFolder);
     }
-
-    internal Task CacheResetChildsAsync(string parentDriveId, bool? childFolder = null)
-    {
-        return _googleDriveProviderInfoHelper.CacheResetChildsAsync(ID, parentDriveId, childFolder);
-    }
-
+    
     internal async Task<Stream> GetThumbnail(string fileId, int width, int height)
     {
         var storage = await StorageAsync;
@@ -378,11 +373,6 @@ public class GoogleDriveProviderInfoHelper
 
             await _cacheNotify.PublishAsync(new GoogleDriveCacheItem { ResetEntry = true, ResetChilds = true, Key = key, ChildFolder = childFolder ?? false, ChildFolderExist = childFolder.HasValue }, CacheNotifyAction.Remove);
         }
-    }
-
-    internal Task CacheResetChildsAsync(int id, string parentDriveId, bool? childFolder = null)
-    {
-        return _cacheNotify.PublishAsync(new GoogleDriveCacheItem { ResetChilds = true, Key = id + "-" + parentDriveId, ChildFolder = childFolder ?? false, ChildFolderExist = childFolder.HasValue }, CacheNotifyAction.Remove);
     }
 }
 

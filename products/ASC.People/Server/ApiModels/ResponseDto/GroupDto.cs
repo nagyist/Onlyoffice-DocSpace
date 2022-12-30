@@ -35,19 +35,6 @@ public class GroupDto
     public Guid Id { get; set; }
     public EmployeeDto Manager { get; set; }
     public List<EmployeeDto> Members { get; set; }
-
-    public static GroupDto GetSample()
-    {
-        return new GroupDto
-        {
-            Id = Guid.NewGuid(),
-            Manager = EmployeeDto.GetSample(),
-            Category = Guid.NewGuid(),
-            Name = "Sample group",
-            Parent = Guid.NewGuid(),
-            Members = new List<EmployeeDto> { EmployeeDto.GetSample() }
-        };
-    }
 }
 
 [Scope]

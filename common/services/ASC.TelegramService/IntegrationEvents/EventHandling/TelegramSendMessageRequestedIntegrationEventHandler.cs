@@ -31,12 +31,7 @@ public class TelegramSendMessageRequestedIntegrationEventHandler : IIntegrationE
 {
     private readonly ILogger _logger;
     private readonly TelegramHandler _telegramHandler;
-
-    private TelegramSendMessageRequestedIntegrationEventHandler() : base()
-    {
-
-    }
-
+    
     public TelegramSendMessageRequestedIntegrationEventHandler(
         ILogger<TelegramSendMessageRequestedIntegrationEventHandler> logger,
         TelegramHandler telegramHandler

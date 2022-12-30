@@ -29,7 +29,6 @@ namespace ASC.Data.Storage.RackspaceCloud;
 [Scope]
 public class RackspaceCloudStorage : BaseStorage
 {
-    public override bool IsSupportChunking => true;
     public TempPath TempPath { get; }
 
     private string _region;
@@ -324,99 +323,7 @@ public class RackspaceCloudStorage : BaseStorage
 
         return Task.CompletedTask;
     }
-
-    public override Task DeleteFilesAsync(string domain, List<string> paths)
-    {
-        if (paths.Count == 0)
-        {
-            return Task.CompletedTask;
-        }
-
-        return InternalDeleteFilesAsync(domain, paths);
-    }
-
-    private async Task InternalDeleteFilesAsync(string domain, List<string> paths)
-    {
-        var keysToDel = new List<string>();
-
-        long quotaUsed = 0;
-
-        foreach (var path in paths)
-        {
-            try
-            {
-                var key = MakePath(domain, path);
-
-                if (QuotaController != null)
-                {
-                    quotaUsed += await GetFileSizeAsync(domain, path);
-                }
-
-                keysToDel.Add(key);
-            }
-            catch (FileNotFoundException)
-            {
-
-            }
-        }
-
-        if (keysToDel.Count == 0)
-        {
-            return;
-        }
-
-        var client = GetClient();
-
-        keysToDel.ForEach(x => client.DeleteObject(_private_container, x));
-
-        if (quotaUsed > 0)
-        {
-            QuotaUsedDelete(domain, quotaUsed);
-        }
-    }
-
-    public override Task DeleteFilesAsync(string domain, string folderPath, DateTime fromDate, DateTime toDate)
-    {
-        var client = GetClient();
-
-        var files = client.ListObjects(_private_container, null, null, null, MakePath(domain, folderPath), _region)
-                           .Where(x => x.LastModified >= fromDate && x.LastModified <= toDate);
-
-        if (!files.Any())
-        {
-            return Task.CompletedTask;
-        }
-
-        foreach (var file in files)
-        {
-            client.DeleteObject(_private_container, file.Name);
-        }
-
-        if (QuotaController != null)
-        {
-            QuotaUsedDelete(domain, files.Select(x => x.Bytes).Sum());
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public override Task MoveDirectoryAsync(string srcdomain, string srcdir, string newdomain, string newdir)
-    {
-        var client = GetClient();
-        var srckey = MakePath(srcdomain, srcdir);
-        var dstkey = MakePath(newdomain, newdir);
-
-        var paths = client.ListObjects(_private_container, null, null, srckey, _region).Select(x => x.Name);
-
-        foreach (var path in paths)
-        {
-            client.CopyObject(_private_container, path, _private_container, path.Replace(srckey, dstkey));
-            client.DeleteObject(_private_container, path);
-        }
-
-        return Task.CompletedTask;
-    }
-
+    
     public override async Task<Uri> MoveAsync(string srcdomain, string srcpath, string newdomain, string newpath, bool quotaCheckFileSize = true)
     {
         var srcKey = MakePath(srcdomain, srcpath);
@@ -434,14 +341,7 @@ public class RackspaceCloudStorage : BaseStorage
 
         return await GetUriAsync(newdomain, newpath);
     }
-
-    public override Task<Uri> SaveTempAsync(string domain, out string assignedPath, Stream stream)
-    {
-        assignedPath = Guid.NewGuid().ToString();
-
-        return SaveAsync(domain, assignedPath, stream);
-    }
-
+    
     public override IAsyncEnumerable<string> ListDirectoriesRelativeAsync(string domain, string path, bool recursive)
     {
         var client = GetClient();
@@ -503,24 +403,7 @@ public class RackspaceCloudStorage : BaseStorage
 
         return Task.FromResult<long>(0);
     }
-
-    public override Task<long> GetDirectorySizeAsync(string domain, string path)
-    {
-        var client = GetClient();
-
-        var objToDel = client
-                      .ListObjects(_private_container, null, null, null, MakePath(domain, path));
-
-        long result = 0;
-
-        foreach (var obj in objToDel)
-        {
-            result += obj.Bytes;
-        }
-
-        return Task.FromResult(result);
-    }
-
+    
     public override Task<long> ResetQuotaAsync(string domain)
     {
         var client = GetClient();
@@ -561,38 +444,7 @@ public class RackspaceCloudStorage : BaseStorage
 
         return Task.FromResult(result);
     }
-
-    public override async Task<Uri> CopyAsync(string srcdomain, string path, string newdomain, string newpath)
-    {
-        var srcKey = MakePath(srcdomain, path);
-        var dstKey = MakePath(newdomain, newpath);
-        var size = await GetFileSizeAsync(srcdomain, path);
-        var client = GetClient();
-
-        client.CopyObject(_private_container, srcKey, _private_container, dstKey);
-
-        QuotaUsedAdd(newdomain, size);
-
-        return await GetUriAsync(newdomain, newpath);
-    }
-
-    public override Task CopyDirectoryAsync(string srcdomain, string dir, string newdomain, string newdir)
-    {
-        var srckey = MakePath(srcdomain, dir);
-        var dstkey = MakePath(newdomain, newdir);
-        var client = GetClient();
-
-        var files = client.ListObjects(_private_container, null, null, null, srckey, _region);
-
-        foreach (var file in files)
-        {
-            client.CopyObject(_private_container, file.Name, _private_container, file.Name.Replace(srckey, dstkey));
-
-            QuotaUsedAdd(newdomain, file.Bytes);
-        }
-        return Task.CompletedTask;
-    }
-
+    
     public override async Task<string> SavePrivateAsync(string domain, string path, Stream stream, DateTime expires)
     {
         var uri = await SaveAsync(domain, path, stream, "application/octet-stream", "attachment", ACL.Auto, null, 5, expires);
@@ -604,21 +456,6 @@ public class RackspaceCloudStorage : BaseStorage
     {
         return Task.CompletedTask;
         // When the file is saved is specified life time
-    }
-
-    public override string GetUploadForm(string domain, string directoryPath, string redirectTo, long maxUploadSize, string contentType, string contentDisposition, string submitLabel)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override string GetUploadUrl()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override string GetPostParams(string domain, string directoryPath, long maxUploadSize, string contentType, string contentDisposition)
-    {
-        throw new NotImplementedException();
     }
 
     #region chunking
@@ -750,19 +587,5 @@ public class RackspaceCloudStorage : BaseStorage
             return value;
         }
         return _moduleAcl;
-    }
-
-    public override Task<string> GetFileEtagAsync(string domain, string path)
-    {
-        var client = GetClient();
-        var prefix = MakePath(domain, path);
-
-        var obj = client.ListObjects(_private_container, null, null, null, prefix, _region).FirstOrDefault();
-
-        var lastModificationDate  =  obj == null ? throw new FileNotFoundException("File not found" + prefix) : obj.LastModified.UtcDateTime;
-
-        var etag = '"' + lastModificationDate.Ticks.ToString("X8", CultureInfo.InvariantCulture) + '"';
-
-        return Task.FromResult(etag);
     }
 }

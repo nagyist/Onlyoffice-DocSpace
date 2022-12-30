@@ -275,9 +275,7 @@ public abstract class BaseStorage : IDataStore
 
     public abstract Task<string> SavePrivateAsync(string domain, string path, Stream stream, DateTime expires);
     public abstract Task DeleteExpiredAsync(string domain, string path, TimeSpan oldThreshold);
-    
-    public abstract string GetUploadUrl();
-    
+
     internal void QuotaUsedAdd(string domain, long size, bool quotaCheckFileSize = true)
     {
         if (QuotaController != null)

@@ -33,8 +33,6 @@ namespace ASC.Data.Storage.S3;
 [Scope]
 public class S3Storage : BaseStorage
 {
-    public override bool IsSupportChunking => true;
-
     private readonly List<string> _domains = new List<string>();
     private Dictionary<string, S3CannedACL> _domainsAcl;
     private S3CannedACL _moduleAcl;
@@ -403,68 +401,7 @@ public class S3Storage : BaseStorage
 
         QuotaUsedDelete(domain, size);
     }
-
-    public override Task DeleteFilesAsync(string domain, List<string> paths)
-    {
-        if (paths.Count == 0)
-        {
-            return Task.CompletedTask;
-        }
-
-        return InternalDeleteFilesAsync(domain, paths);
-    }
-
-    private async Task InternalDeleteFilesAsync(string domain, List<string> paths)
-    {
-        var keysToDel = new List<string>();
-
-        long quotaUsed = 0;
-
-        foreach (var path in paths)
-        {
-            try
-            {
-                //var obj = GetS3Objects(domain, path).FirstOrDefault();
-
-                var key = MakePath(domain, path);
-
-                if (QuotaController != null)
-                {
-                    quotaUsed += await GetFileSizeAsync(domain, path);
-                }
-
-                keysToDel.Add(key);
-
-                //objsToDel.Add(obj);
-            }
-            catch (FileNotFoundException)
-            {
-
-            }
-        }
-
-        if (keysToDel.Count == 0)
-        {
-            return;
-        }
-
-        using (var client = GetClient())
-        {
-            var deleteRequest = new DeleteObjectsRequest
-            {
-                BucketName = _bucket,
-                Objects = keysToDel.Select(key => new KeyVersion { Key = key }).ToList()
-            };
-
-            await client.DeleteObjectsAsync(deleteRequest);
-        }
-
-        if (quotaUsed > 0)
-        {
-            QuotaUsedDelete(domain, quotaUsed);
-        }
-    }
-
+    
     public override async Task DeleteFilesAsync(string domain, string path, string pattern, bool recursive)
     {
         var makedPath = MakePath(domain, path) + '/';
@@ -490,54 +427,7 @@ public class S3Storage : BaseStorage
             QuotaUsedDelete(domain, s3Object.Size);
         }
     }
-
-    public override async Task DeleteFilesAsync(string domain, string path, DateTime fromDate, DateTime toDate)
-    {
-        var obj = await GetS3ObjectsAsync(domain, path);
-        var objToDel = obj.Where(x => x.LastModified >= fromDate && x.LastModified <= toDate);
-
-        using var client = GetClient();
-        foreach (var s3Object in objToDel)
-        {
-            await RecycleAsync(client, domain, s3Object.Key);
-
-            var deleteRequest = new DeleteObjectRequest
-            {
-                BucketName = _bucket,
-                Key = s3Object.Key
-            };
-
-            await client.DeleteObjectAsync(deleteRequest);
-
-            QuotaUsedDelete(domain, s3Object.Size);
-        }
-    }
-
-    public override async Task MoveDirectoryAsync(string srcdomain, string srcdir, string newdomain, string newdir)
-    {
-        var srckey = MakePath(srcdomain, srcdir);
-        var dstkey = MakePath(newdomain, newdir);
-        //List files from src
-        using var client = GetClient();
-        var request = new ListObjectsRequest
-        {
-            BucketName = _bucket,
-            Prefix = srckey
-        };
-
-        var response = await client.ListObjectsAsync(request);
-        foreach (var s3Object in response.S3Objects)
-        {
-            await CopyFileAsync(client, s3Object.Key, s3Object.Key.Replace(srckey, dstkey), newdomain);
-
-            await client.DeleteObjectAsync(new DeleteObjectRequest
-            {
-                BucketName = _bucket,
-                Key = s3Object.Key
-            });
-        }
-    }
-
+    
     public override async Task<Uri> MoveAsync(string srcdomain, string srcpath, string newdomain, string newpath, bool quotaCheckFileSize = true)
     {
         var srcKey = MakePath(srcdomain, srcpath);
@@ -553,13 +443,7 @@ public class S3Storage : BaseStorage
 
         return await GetUriAsync(newdomain, newpath);
     }
-
-    public override Task<Uri> SaveTempAsync(string domain, out string assignedPath, Stream stream)
-    {
-        assignedPath = Guid.NewGuid().ToString();
-        return SaveAsync(domain, assignedPath, stream);
-    }
-
+    
     public override async IAsyncEnumerable<string> ListDirectoriesRelativeAsync(string domain, string path, bool recursive)
     {
         var tmp = await GetS3ObjectsAsync(domain, path);
@@ -649,86 +533,6 @@ public class S3Storage : BaseStorage
         }
     }
 
-    public override string GetUploadUrl()
-    {
-        return GetUriInternal(string.Empty).ToString();
-    }
-
-    public override string GetPostParams(string domain, string directoryPath, long maxUploadSize, string contentType,
-                                         string contentDisposition)
-    {
-        var key = MakePath(domain, directoryPath) + "/";
-        //Generate policy
-        var policyBase64 = GetPolicyBase64(key, string.Empty, contentType, contentDisposition, maxUploadSize,
-                                              out var sign);
-        var postBuilder = new StringBuilder();
-        postBuilder.Append('{');
-        postBuilder.Append("\"key\":\"").Append(key).Append("${{filename}}\",");
-        postBuilder.Append("\"acl\":\"public-read\",");
-        postBuilder.Append($"\"key\":\"{key}\",");
-        postBuilder.Append("\"success_action_status\":\"201\",");
-
-        if (!string.IsNullOrEmpty(contentType))
-        {
-            postBuilder.Append($"\"Content-Type\":\"{contentType}\",");
-        }
-
-        if (!string.IsNullOrEmpty(contentDisposition))
-        {
-            postBuilder.Append($"\"Content-Disposition\":\"{contentDisposition}\",");
-        }
-
-        postBuilder.Append($"\"AWSAccessKeyId\":\"{_accessKeyId}\",");
-        postBuilder.Append($"\"Policy\":\"{policyBase64}\",");
-        postBuilder.Append($"\"Signature\":\"{sign}\"");
-        postBuilder.Append("\"SignatureVersion\":\"2\"");
-        postBuilder.Append("\"SignatureMethod\":\"HmacSHA1\"");
-        postBuilder.Append('}');
-
-        return postBuilder.ToString();
-    }
-
-    public override string GetUploadForm(string domain, string directoryPath, string redirectTo, long maxUploadSize,
-                                         string contentType, string contentDisposition, string submitLabel)
-    {
-        var destBucket = GetUploadUrl();
-        var key = MakePath(domain, directoryPath) + "/";
-        //Generate policy
-        var policyBase64 = GetPolicyBase64(key, redirectTo, contentType, contentDisposition, maxUploadSize,
-                                              out var sign);
-
-        var formBuilder = new StringBuilder();
-        formBuilder.Append($"<form action=\"{destBucket}\" method=\"post\" enctype=\"multipart/form-data\">");
-        formBuilder.Append($"<input type=\"hidden\" name=\"key\" value=\"{key}${{filename}}\" />");
-        formBuilder.Append("<input type=\"hidden\" name=\"acl\" value=\"public-read\" />");
-        if (!string.IsNullOrEmpty(redirectTo))
-        {
-            formBuilder.Append($"<input type=\"hidden\" name=\"success_action_redirect\" value=\"{redirectTo}\" />");
-        }
-
-        formBuilder.AppendFormat("<input type=\"hidden\" name=\"success_action_status\" value=\"{0}\" />", 201);
-
-        if (!string.IsNullOrEmpty(contentType))
-        {
-            formBuilder.Append($"<input type=\"hidden\" name=\"Content-Type\" value=\"{contentType}\" />");
-        }
-
-        if (!string.IsNullOrEmpty(contentDisposition))
-        {
-            formBuilder.Append($"<input type=\"hidden\" name=\"Content-Disposition\" value=\"{contentDisposition}\" />");
-        }
-
-        formBuilder.Append($"<input type=\"hidden\" name=\"AWSAccessKeyId\" value=\"{_accessKeyId}\"/>");
-        formBuilder.Append($"<input type=\"hidden\" name=\"Policy\" value=\"{policyBase64}\" />");
-        formBuilder.Append($"<input type=\"hidden\" name=\"Signature\" value=\"{sign}\" />");
-        formBuilder.Append("<input type=\"hidden\" name=\"SignatureVersion\" value=\"2\" />");
-        formBuilder.Append("<input type=\"hidden\" name=\"SignatureMethod\" value=\"HmacSHA1{0}\" />");
-        formBuilder.Append("<input type=\"file\" name=\"file\" />");
-        formBuilder.Append($"<input type=\"submit\" name=\"submit\" value=\"{submitLabel}\" /></form>");
-
-        return formBuilder.ToString();
-    }
-
     public override async IAsyncEnumerable<string> ListFilesRelativeAsync(string domain, string path, string pattern, bool recursive)
     {
         var tmp = await GetS3ObjectsAsync(domain, path);
@@ -801,18 +605,6 @@ public class S3Storage : BaseStorage
         throw new FileNotFoundException("file not found", path);
     }
 
-    public override async Task<long> GetDirectorySizeAsync(string domain, string path)
-    {
-        if (!await IsDirectoryAsync(domain, path))
-        {
-            throw new FileNotFoundException("directory not found", path);
-        }
-
-        var tmp = await GetS3ObjectsAsync(domain, path);
-        return tmp.Where(x => Wildcard.IsMatch("*.*", Path.GetFileName(x.Key)))
-        .Sum(x => x.Size);
-    }
-
     public override async Task<long> ResetQuotaAsync(string domain)
     {
         if (QuotaController != null)
@@ -833,37 +625,7 @@ public class S3Storage : BaseStorage
 
         return objects.Sum(s3Object => s3Object.Size);
     }
-
-    public override async Task<Uri> CopyAsync(string srcdomain, string srcpath, string newdomain, string newpath)
-    {
-        var srcKey = MakePath(srcdomain, srcpath);
-        var dstKey = MakePath(newdomain, newpath);
-        var size = await GetFileSizeAsync(srcdomain, srcpath);
-        using var client = GetClient();
-        await CopyFileAsync(client, srcKey, dstKey, newdomain, S3MetadataDirective.REPLACE);
-
-        QuotaUsedAdd(newdomain, size);
-
-        return await GetUriAsync(newdomain, newpath);
-    }
-
-    public override async Task CopyDirectoryAsync(string srcdomain, string srcdir, string newdomain, string newdir)
-    {
-        var srckey = MakePath(srcdomain, srcdir);
-        var dstkey = MakePath(newdomain, newdir);
-        //List files from src
-        using var client = GetClient();
-        var request = new ListObjectsRequest { BucketName = _bucket, Prefix = srckey };
-
-        var response = await client.ListObjectsAsync(request);
-        foreach (var s3Object in response.S3Objects)
-        {
-            await CopyFileAsync(client, s3Object.Key, s3Object.Key.Replace(srckey, dstkey), newdomain);
-
-            QuotaUsedAdd(newdomain, s3Object.Size);
-        }
-    }
-
+    
     public override IDataStore Configure(string tenant, Handler handlerConfig, Module moduleConfig, IDictionary<string, string> props)
     {
         Tenant = tenant;
@@ -1042,51 +804,6 @@ public class S3Storage : BaseStorage
 
         await cfClient.CreateInvalidationAsync(invalidationRequest);
     }
-
-    private string GetPolicyBase64(string key, string redirectTo, string contentType, string contentDisposition,
-                                   long maxUploadSize, out string sign)
-    {
-        var policyBuilder = new StringBuilder();
-
-        var minutes = DateTime.UtcNow.AddMinutes(15).ToString(AWSSDKUtils.ISO8601DateFormat,
-                                                                           CultureInfo.InvariantCulture);
-
-        policyBuilder.Append($"{{\"expiration\": \"{minutes}\",\"conditions\":[");
-        policyBuilder.Append($"{{\"bucket\": \"{_bucket}\"}},");
-        policyBuilder.Append($"[\"starts-with\", \"$key\", \"{key}\"],");
-        policyBuilder.Append("{\"acl\": \"public-read\"},");
-        if (!string.IsNullOrEmpty(redirectTo))
-        {
-            policyBuilder.Append($"{{\"success_action_redirect\": \"{redirectTo}\"}},");
-        }
-        policyBuilder.Append("{{\"success_action_status\": \"201\"}},");
-        if (!string.IsNullOrEmpty(contentType))
-        {
-            policyBuilder.Append($"[\"eq\", \"$Content-Type\", \"{contentType}\"],");
-        }
-        if (!string.IsNullOrEmpty(contentDisposition))
-        {
-            policyBuilder.Append($"[\"eq\", \"$Content-Disposition\", \"{contentDisposition}\"],");
-        }
-        policyBuilder.Append($"[\"content-length-range\", 0, {maxUploadSize}]");
-        policyBuilder.Append("]}");
-
-        var policyBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(policyBuilder.ToString()));
-        //sign = AWSSDKUtils.HMACSign(policyBase64, _secretAccessKeyId, new HMACSHA1());
-        using var algorithm = new HMACSHA1 { Key = Encoding.UTF8.GetBytes(_secretAccessKeyId) };
-        try
-        {
-            algorithm.Key = Encoding.UTF8.GetBytes(key);
-            sign = Convert.ToBase64String(algorithm.ComputeHash(Encoding.UTF8.GetBytes(policyBase64)));
-        }
-        finally
-        {
-            algorithm.Clear();
-        }
-
-        return policyBase64;
-    }
-
 
     private bool CheckKey(string domain, string key)
     {
@@ -1442,22 +1159,7 @@ public class S3Storage : BaseStorage
 
         return method;
     }
-
-    public override async Task<string> GetFileEtagAsync(string domain, string path)
-    {
-        using var client = GetClient();
-
-        var getObjectMetadataRequest = new GetObjectMetadataRequest
-        {
-            BucketName = _bucket,
-            Key = MakePath(domain, path)
-        };
-
-        var el = await client.GetObjectMetadataAsync(getObjectMetadataRequest);
-
-        return el.ETag;
-    }
-  
+    
     private enum EncryptionMethod
     {
         None,

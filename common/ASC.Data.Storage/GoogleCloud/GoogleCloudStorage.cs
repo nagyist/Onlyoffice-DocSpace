@@ -29,8 +29,6 @@ namespace ASC.Data.Storage.GoogleCloud;
 [Scope]
 public class GoogleCloudStorage : BaseStorage
 {
-    public override bool IsSupportChunking => true;
-
     private string _subDir = string.Empty;
     private Dictionary<string, PredefinedObjectAcl> _domainsAcl;
     private PredefinedObjectAcl _moduleAcl;
@@ -267,95 +265,7 @@ public class GoogleCloudStorage : BaseStorage
             QuotaUsedDelete(domain, Convert.ToInt64(obj.Size));
         }
     }
-
-    public override Task DeleteFilesAsync(string domain, List<string> paths)
-    {
-        if (paths.Count == 0)
-        {
-            return Task.CompletedTask;
-        }
-
-        return InternalDeleteFilesAsync(domain, paths);
-    }
-
-    private async Task InternalDeleteFilesAsync(string domain, List<string> paths)
-    {
-        var keysToDel = new List<string>();
-
-        long quotaUsed = 0;
-
-        foreach (var path in paths)
-        {
-            try
-            {
-
-                var key = MakePath(domain, path);
-
-                if (QuotaController != null)
-                {
-                    quotaUsed += await GetFileSizeAsync(domain, path);
-                }
-
-                keysToDel.Add(key);
-            }
-            catch (FileNotFoundException)
-            {
-
-            }
-        }
-
-        if (keysToDel.Count == 0)
-        {
-            return;
-        }
-
-        using var storage = GetStorage();
-
-        foreach (var e in keysToDel)
-        {
-            await storage.DeleteObjectAsync(_bucket, e);
-        }
-
-        if (quotaUsed > 0)
-        {
-            QuotaUsedDelete(domain, quotaUsed);
-        }
-    }
-
-    public override async Task DeleteFilesAsync(string domain, string folderPath, DateTime fromDate, DateTime toDate)
-    {
-        using var storage = GetStorage();
-
-        var objToDel = GetObjectsAsync(domain, folderPath, true)
-                      .Where(x => x.Updated >= fromDate && x.Updated <= toDate);
-
-        await foreach (var obj in objToDel)
-        {
-            await storage.DeleteObjectAsync(_bucket, obj.Name);
-            QuotaUsedDelete(domain, Convert.ToInt64(obj.Size));
-        }
-    }
-
-    public override async Task MoveDirectoryAsync(string srcdomain, string srcdir, string newdomain, string newdir)
-    {
-        using var storage = GetStorage();
-        var srckey = MakePath(srcdomain, srcdir);
-        var dstkey = MakePath(newdomain, newdir);
-
-        var objects = storage.ListObjects(_bucket, srckey);
-
-        foreach (var obj in objects)
-        {
-            await storage.CopyObjectAsync(_bucket, srckey, _bucket, dstkey, new CopyObjectOptions
-            {
-                DestinationPredefinedAcl = GetDomainACL(newdomain)
-            });
-
-            await storage.DeleteObjectAsync(_bucket, srckey);
-
-        }
-    }
-
+    
     public override async Task<Uri> MoveAsync(string srcdomain, string srcpath, string newdomain, string newpath, bool quotaCheckFileSize = true)
     {
         using var storage = GetStorage();
@@ -375,13 +285,6 @@ public class GoogleCloudStorage : BaseStorage
         QuotaUsedAdd(newdomain, size, quotaCheckFileSize);
 
         return await GetUriAsync(newdomain, newpath);
-    }
-
-    public override Task<Uri> SaveTempAsync(string domain, out string assignedPath, Stream stream)
-    {
-        assignedPath = Guid.NewGuid().ToString();
-
-        return SaveAsync(domain, assignedPath, stream);
     }
 
     public override IAsyncEnumerable<string> ListDirectoriesRelativeAsync(string domain, string path, bool recursive)
@@ -447,26 +350,6 @@ public class GoogleCloudStorage : BaseStorage
         return obj.Size.HasValue ? Convert.ToInt64(obj.Size.Value) : 0;
     }
 
-    public override async Task<long> GetDirectorySizeAsync(string domain, string path)
-    {
-        using var storage = GetStorage();
-
-        var objToDel = storage
-                          .ListObjectsAsync(_bucket, MakePath(domain, path));
-
-        long result = 0;
-
-        await foreach (var obj in objToDel)
-        {
-            if (obj.Size.HasValue)
-            {
-                result += Convert.ToInt64(obj.Size.Value);
-            }
-        }
-
-        return result;
-    }
-
     public override async Task<long> ResetQuotaAsync(string domain)
     {
         using var storage = GetStorage();
@@ -513,45 +396,6 @@ public class GoogleCloudStorage : BaseStorage
         }
 
         return result;
-    }
-
-    public override async Task<Uri> CopyAsync(string srcdomain, string srcpath, string newdomain, string newpath)
-    {
-        using var storage = GetStorage();
-
-        var size = await GetFileSizeAsync(srcdomain, srcpath);
-
-        var options = new CopyObjectOptions
-        {
-            DestinationPredefinedAcl = GetDomainACL(newdomain)
-        };
-
-        await storage.CopyObjectAsync(_bucket, MakePath(srcdomain, srcpath), _bucket, MakePath(newdomain, newpath), options);
-
-        QuotaUsedAdd(newdomain, size);
-
-        return await GetUriAsync(newdomain, newpath);
-    }
-
-    public override async Task CopyDirectoryAsync(string srcdomain, string srcdir, string newdomain, string newdir)
-    {
-        var srckey = MakePath(srcdomain, srcdir);
-        var dstkey = MakePath(newdomain, newdir);
-        //List files from src
-
-        using var storage = GetStorage();
-
-        var objects = storage.ListObjectsAsync(_bucket, srckey);
-
-        await foreach (var obj in objects)
-        {
-            await storage.CopyObjectAsync(_bucket, srckey, _bucket, dstkey, new CopyObjectOptions
-            {
-                DestinationPredefinedAcl = GetDomainACL(newdomain)
-            });
-
-            QuotaUsedAdd(newdomain, Convert.ToInt64(obj.Size));
-        }
     }
 
     public override async Task<string> SavePrivateAsync(string domain, string path, Stream stream, DateTime expires)
@@ -725,21 +569,7 @@ public class GoogleCloudStorage : BaseStorage
     }
 
     #endregion
-
-    public override string GetUploadForm(string domain, string directoryPath, string redirectTo, long maxUploadSize, string contentType, string contentDisposition, string submitLabel)
-    {
-        throw new NotImplementedException();
-    }
-
-    public override string GetUploadUrl()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override string GetPostParams(string domain, string directoryPath, long maxUploadSize, string contentType, string contentDisposition)
-    {
-        throw new NotImplementedException();
-    }
+    
 
     protected override Task<Uri> SaveWithAutoAttachmentAsync(string domain, string path, Stream stream, string attachmentFileName)
     {
@@ -819,19 +649,5 @@ public class GoogleCloudStorage : BaseStorage
             return value;
         }
         return _moduleAcl;
-    }
-
-    public override async Task<string> GetFileEtagAsync(string domain, string path)
-    {
-        var storage = GetStorage();
-        var objectName = MakePath(domain, path);
-
-        var obj = await storage.GetObjectAsync(_bucket, objectName);
-
-        var lastModificationDate = obj == null ? throw new FileNotFoundException("File not found" + objectName) : obj.Updated ?? obj.TimeCreated ?? DateTime.MinValue;
-
-        var etag = '"' + lastModificationDate.Ticks.ToString("X8", CultureInfo.InvariantCulture) + '"';
-
-        return etag;
     }
 }

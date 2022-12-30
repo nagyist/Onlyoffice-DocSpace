@@ -246,5 +246,4 @@ public interface IDataStore
 
     Task<string> SavePrivateAsync(string domain, string path, Stream stream, DateTime expires);
     Task DeleteExpiredAsync(string domain, string path, TimeSpan oldThreshold);
-    string GetUploadUrl();
 }

@@ -29,8 +29,8 @@ namespace ASC.ActiveDirectory.Novell;
 [Scope]
 public class NovellLdapUserImporter : LdapUserImporter
 {
-    public NovellLdapUserImporter(ILogger<LdapUserImporter> logger, UserManager userManager, IConfiguration configuration, NovellLdapHelper novellLdapHelper, LdapObjectExtension ldapObjectExtension)
-        : base(logger, userManager, configuration, novellLdapHelper, ldapObjectExtension)
+    public NovellLdapUserImporter(ILogger<LdapUserImporter> logger, IConfiguration configuration, NovellLdapHelper novellLdapHelper, LdapObjectExtension ldapObjectExtension)
+        : base(logger, configuration, novellLdapHelper, ldapObjectExtension)
     {
     }
 }

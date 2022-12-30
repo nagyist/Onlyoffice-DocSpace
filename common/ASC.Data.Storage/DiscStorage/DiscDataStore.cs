@@ -31,7 +31,6 @@ public class DiscDataStore : BaseStorage
 {
     public override bool IsSupportInternalUri => false;
     public override bool IsSupportedPreSignedUri => false;
-    public override bool IsSupportChunking => true;
 
     private readonly Dictionary<string, MappedPath> _mappedPaths = new Dictionary<string, MappedPath>();
     private ICrypt _crypt;
@@ -275,28 +274,6 @@ public class DiscDataStore : BaseStorage
         }
     }
 
-    public override Task DeleteFilesAsync(string domain, List<string> paths)
-    {
-        ArgumentNullException.ThrowIfNull(paths);
-
-        foreach (var path in paths)
-        {
-            var target = GetTarget(domain, path);
-
-            if (!File.Exists(target))
-            {
-                continue;
-            }
-
-            var size = _crypt.GetFileSize(target);
-            File.Delete(target);
-
-            QuotaUsedDelete(domain, size);
-        }
-
-        return Task.CompletedTask;
-    }
-
     public override Task DeleteFilesAsync(string domain, string folderPath, string pattern, bool recursive)
     {
         ArgumentNullException.ThrowIfNull(folderPath);
@@ -318,50 +295,6 @@ public class DiscDataStore : BaseStorage
         {
             throw new DirectoryNotFoundException($"Directory '{targetDir}' not found");
         }
-    }
-
-    public override Task DeleteFilesAsync(string domain, string folderPath, DateTime fromDate, DateTime toDate)
-    {
-        ArgumentNullException.ThrowIfNull(folderPath);
-
-        //Return dirs
-        var targetDir = GetTarget(domain, folderPath);
-        if (Directory.Exists(targetDir))
-        {
-            var entries = Directory.GetFiles(targetDir, "*", SearchOption.AllDirectories);
-            foreach (var entry in entries)
-            {
-                var fileInfo = new FileInfo(entry);
-                if (fileInfo.LastWriteTime >= fromDate && fileInfo.LastWriteTime <= toDate)
-                {
-                    var size = _crypt.GetFileSize(entry);
-                    File.Delete(entry);
-                    QuotaUsedDelete(domain, size);
-                }
-            }
-        }
-        else
-        {
-            throw new DirectoryNotFoundException($"Directory '{targetDir}' not found");
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public override Task MoveDirectoryAsync(string srcdomain, string srcdir, string newdomain, string newdir)
-    {
-        var target = GetTarget(srcdomain, srcdir);
-        var newtarget = GetTarget(newdomain, newdir);
-        var newtargetSub = newtarget.Remove(newtarget.LastIndexOf(Path.DirectorySeparatorChar));
-
-        if (!Directory.Exists(newtargetSub))
-        {
-            Directory.CreateDirectory(newtargetSub);
-        }
-
-        Directory.Move(target, newtarget);
-
-        return Task.CompletedTask;
     }
 
     public override Task<Uri> MoveAsync(string srcdomain, string srcpath, string newdomain, string newpath, bool quotaCheckFileSize = true)
@@ -459,26 +392,6 @@ public class DiscDataStore : BaseStorage
         throw new FileNotFoundException("file not found " + target);
     }
 
-    public override Task<long> GetDirectorySizeAsync(string domain, string path)
-    {
-        var target = GetTarget(domain, path);
-
-        if (Directory.Exists(target))
-        {
-            return Task.FromResult(Directory.GetFiles(target, "*.*", SearchOption.AllDirectories)
-            .Select(entry => _crypt.GetFileSize(entry))
-                .Sum());
-        }
-
-        throw new FileNotFoundException("directory not found " + target);
-    }
-
-    public override Task<Uri> SaveTempAsync(string domain, out string assignedPath, Stream stream)
-    {
-        assignedPath = Guid.NewGuid().ToString();
-        return SaveAsync(domain, assignedPath, stream);
-    }
-
     public override async Task<string> SavePrivateAsync(string domain, string path, Stream stream, DateTime expires)
     {
         var result = await SaveAsync(domain, path, stream);
@@ -510,21 +423,6 @@ public class DiscDataStore : BaseStorage
         }
 
         return Task.CompletedTask;
-    }
-
-    public override string GetUploadForm(string domain, string directoryPath, string redirectTo, long maxUploadSize, string contentType, string contentDisposition, string submitLabel)
-    {
-        throw new NotSupportedException("This operation supported only on s3 storage");
-    }
-
-    public override string GetUploadUrl()
-    {
-        throw new NotSupportedException("This operation supported only on s3 storage");
-    }
-
-    public override string GetPostParams(string domain, string directoryPath, long maxUploadSize, string contentType, string contentDisposition)
-    {
-        throw new NotSupportedException("This operation supported only on s3 storage");
     }
 
     public override IAsyncEnumerable<string> ListDirectoriesRelativeAsync(string domain, string path, bool recursive)
@@ -605,46 +503,6 @@ public class DiscDataStore : BaseStorage
         return Task.FromResult(size);
     }
 
-    public override Task<Uri> CopyAsync(string srcdomain, string srcpath, string newdomain, string newpath)
-    {
-        ArgumentNullException.ThrowIfNull(srcpath);
-        ArgumentNullException.ThrowIfNull(newpath);
-
-        var target = GetTarget(srcdomain, srcpath);
-        var newtarget = GetTarget(newdomain, newpath);
-
-        if (File.Exists(target))
-        {
-            if (!Directory.Exists(Path.GetDirectoryName(newtarget)))
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(newtarget));
-            }
-
-            File.Copy(target, newtarget, true);
-
-            var flength = _crypt.GetFileSize(target);
-            QuotaUsedAdd(newdomain, flength);
-        }
-        else
-        {
-            throw new FileNotFoundException("File not found", Path.GetFullPath(target));
-        }
-        return GetUriAsync(newdomain, newpath);
-    }
-
-    public override Task CopyDirectoryAsync(string srcdomain, string srcdir, string newdomain, string newdir)
-    {
-        var target = GetTarget(srcdomain, srcdir);
-        var newtarget = GetTarget(newdomain, newdir);
-
-        var diSource = new DirectoryInfo(target);
-        var diTarget = new DirectoryInfo(newtarget);
-
-        CopyAll(diSource, diTarget, newdomain);
-        return Task.CompletedTask;
-    }
-
-
     public Stream GetWriteStream(string domain, string path)
     {
         return GetWriteStream(domain, path, FileMode.Create);
@@ -679,31 +537,6 @@ public class DiscDataStore : BaseStorage
     protected override Task<Uri> SaveWithAutoAttachmentAsync(string domain, string path, Stream stream, string attachmentFileName)
     {
         return SaveAsync(domain, path, stream);
-    }
-
-    private void CopyAll(DirectoryInfo source, DirectoryInfo target, string newdomain)
-    {
-        // Check if the target directory exists, if not, create it.
-        if (!Directory.Exists(target.FullName))
-        {
-            Directory.CreateDirectory(target.FullName);
-        }
-
-        // Copy each file into it's new directory.
-        foreach (var fi in source.GetFiles())
-        {
-            var fp = CrossPlatform.PathCombine(target.ToString(), fi.Name);
-            fi.CopyTo(fp, true);
-            var size = _crypt.GetFileSize(fp);
-            QuotaUsedAdd(newdomain, size);
-        }
-
-        // Copy each subdirectory using recursion.
-        foreach (var diSourceSubDir in source.GetDirectories())
-        {
-            var nextTargetSubDir = target.CreateSubdirectory(diSourceSubDir.Name);
-            CopyAll(diSourceSubDir, nextTargetSubDir, newdomain);
-        }
     }
 
     private MappedPath GetPath(string domain)
@@ -759,16 +592,5 @@ public class DiscDataStore : BaseStorage
         {
             throw new FileNotFoundException("file not found", target);
         }
-    }
-
-    public override Task<string> GetFileEtagAsync(string domain, string path)
-    {
-        ArgumentNullException.ThrowIfNull(path);
-
-        var target = GetTarget(domain, path);              
-        var lastModificationDate = File.Exists(target) ? File.GetLastWriteTimeUtc(target) : throw new FileNotFoundException("File not found" + target);
-        var etag = '"' + lastModificationDate.Ticks.ToString("X8", CultureInfo.InvariantCulture) + '"';
-
-        return Task.FromResult(etag);
     }
 }

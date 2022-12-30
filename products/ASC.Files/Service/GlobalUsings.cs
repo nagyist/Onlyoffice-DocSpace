@@ -36,7 +36,6 @@ global using ASC.Common.Caching;
 global using ASC.Common.DependencyInjection;
 global using ASC.Common.Log;
 global using ASC.Core;
-global using ASC.Core.ChunkedUploader;
 global using ASC.Core.Common;
 global using ASC.Core.Common.EF;
 global using ASC.Core.Common.Hosting;
@@ -61,6 +60,8 @@ global using ASC.Files.Core.Log;
 global using ASC.Files.Core.Resources;
 global using ASC.Files.Core.Security;
 global using ASC.Files.Expired;
+global using ASC.Files.Service;
+global using ASC.Files.Service.Extension;
 global using ASC.Files.Service.Log;
 global using ASC.Files.ThumbnailBuilder;
 global using ASC.Thumbnail.IntegrationEvents.EventHandling;
@@ -79,6 +80,5 @@ global using Microsoft.Extensions.Hosting.WindowsServices;
 global using Microsoft.Extensions.Logging;
 
 global using SixLabors.ImageSharp;
-global using ASC.Files.Service.Extension;
+
 global using static ASC.Files.Core.Helpers.DocumentService;
-global using ASC.Files.Service;

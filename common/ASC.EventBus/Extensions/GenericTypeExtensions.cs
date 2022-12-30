@@ -24,33 +24,21 @@
 // content are licensed under the terms of the Creative Commons Attribution-ShareAlike 4.0
 // International. See the License terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
 
-using ASC.Data.Storage.ChunkedUploader;
-
-namespace ASC.Files.Expired;
-
-[Singletone]
-public class DeleteExpiredService : BackgroundService
+namespace ASC.EventBus.Extensions;
+public static class GenericTypeExtensions
 {
-    private readonly CommonChunkedUploadSessionHolder _commonChunkedUploadSessionHolder;
-    private readonly TimeSpan _launchFrequency;
-
-    public DeleteExpiredService(
-        ILogger<DeleteExpiredService> log,
-        SetupInfo setupInfo,
-        TempPath tempPath,
-        GlobalStore globalStore,
-        IConfiguration configuration)
+    public static string GetGenericTypeName(this Type type)
     {
-        _launchFrequency = TimeSpan.Parse(configuration["files:deleteExpired"] ?? "1", CultureInfo.InvariantCulture);
-        _commonChunkedUploadSessionHolder = new CommonChunkedUploadSessionHolder(tempPath, log, globalStore.GetStore(false), FileConstant.StorageDomainTmp, setupInfo.ChunkUploadSize);
-    }
-
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
-    {
-        while (!stoppingToken.IsCancellationRequested)
+        var typeName = string.Empty;
+        if (type.IsGenericType)
         {
-            await _commonChunkedUploadSessionHolder.DeleteExpiredAsync();
-            await Task.Delay(_launchFrequency, stoppingToken);
+            var genericTypes = string.Join(",", type.GetGenericArguments().Select(t => t.Name).ToArray());
+            typeName = $"{type.Name.Remove(type.Name.IndexOf('`'))}<{genericTypes}>";
         }
+        else
+        {
+            typeName = type.Name;
+        }
+        return typeName;
     }
 }

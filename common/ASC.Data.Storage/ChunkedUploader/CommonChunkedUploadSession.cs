@@ -24,7 +24,7 @@
 // content are licensed under the terms of the Creative Commons Attribution-ShareAlike 4.0
 // International. See the License terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
 
-namespace ASC.Core.ChunkedUploader;
+namespace ASC.Data.Storage.ChunkedUploader;
 
 [Serializable]
 public class CommonChunkedUploadSession : ICloneable
@@ -112,20 +112,20 @@ public class CommonChunkedUploadSession : ICloneable
                 {
                     var value = (JsonElement)item.Value;
 
-                        switch (value.ValueKind)
+                    switch (value.ValueKind)
                     {
-                            case JsonValueKind.String:
-                        newItems.Add(item.Key, item.Value.ToString());
-                                break;
-                            case JsonValueKind.Number:
-                                newItems.Add(item.Key, Int32.Parse(item.Value.ToString()));
-                                break;
-                            case JsonValueKind.Array:
-                        newItems.Add(item.Key, value.EnumerateArray().Select(o => o.ToString()).ToList());
-                                break;
-                            default:
-                                newItems.Add(item.Key, item.Value);
-                                break;
+                        case JsonValueKind.String:
+                            newItems.Add(item.Key, item.Value.ToString());
+                            break;
+                        case JsonValueKind.Number:
+                            newItems.Add(item.Key, int.Parse(item.Value.ToString()));
+                            break;
+                        case JsonValueKind.Array:
+                            newItems.Add(item.Key, value.EnumerateArray().Select(o => o.ToString()).ToList());
+                            break;
+                        default:
+                            newItems.Add(item.Key, item.Value);
+                            break;
                     }
                 }
                 else

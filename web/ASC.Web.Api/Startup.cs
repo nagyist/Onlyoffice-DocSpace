@@ -28,8 +28,6 @@ namespace ASC.Web.Api;
 
 public class Startup : BaseStartup
 {
-    protected override bool ConfirmAddScheme { get => true; }
-
     public Startup(IConfiguration configuration, IHostEnvironment hostEnvironment) : base(configuration, hostEnvironment)
     {
 

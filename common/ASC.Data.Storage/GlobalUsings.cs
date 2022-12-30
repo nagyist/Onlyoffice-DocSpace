@@ -24,7 +24,6 @@
 // content are licensed under the terms of the Creative Commons Attribution-ShareAlike 4.0
 // International. See the License terms at http://creativecommons.org/licenses/by-sa/4.0/legalcode
 
-global using System.Collections.Concurrent;
 global using System.Globalization;
 global using System.Net;
 global using System.Net.Http.Headers;
@@ -50,7 +49,6 @@ global using ASC.Common.Log;
 global using ASC.Common.Threading;
 global using ASC.Common.Utils;
 global using ASC.Core;
-global using ASC.Core.ChunkedUploader;
 global using ASC.Core.Common.Configuration;
 global using ASC.Core.Common.Quota;
 global using ASC.Core.Common.Quota.Features;
@@ -58,7 +56,6 @@ global using ASC.Core.Common.Settings;
 global using ASC.Core.Encryption;
 global using ASC.Core.Notify;
 global using ASC.Core.Tenants;
-global using ASC.Data.Storage;
 global using ASC.Data.Storage.Configuration;
 global using ASC.Data.Storage.DiscStorage;
 global using ASC.Data.Storage.Encryption;

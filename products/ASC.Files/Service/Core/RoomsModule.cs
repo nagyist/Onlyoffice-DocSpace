@@ -53,7 +53,7 @@ public class RoomsModule : FeedModule
     public override string Name => Constants.RoomsModule;
     public override string Product => Constants.Documents;
     public override Guid ProductID => WebItemManager.DocumentsProductID;
-    protected override string DbId => Constants.FilesDbId;
+    protected string DbId => Constants.FilesDbId;
 
     public override bool VisibleFor(Feed.Aggregator.Feed feed, object data, Guid userId)
     {

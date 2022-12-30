@@ -33,7 +33,6 @@ public class FoldersModule : FeedModule
     public override Guid ProductID => WebItemManager.DocumentsProductID;
     public override string Name => Constants.FoldersModule;
     public override string Product => Constants.Documents;
-    protected string DbId => Constants.FilesDbId;
 
     private const string FolderItem = Constants.FolderItem;
     private const string SharedFolderItem = Constants.SharedFolderItem;

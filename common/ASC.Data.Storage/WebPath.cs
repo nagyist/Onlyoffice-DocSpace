@@ -40,24 +40,6 @@ public class WebPathSettings
         }
     }
 
-    public string GetRelativePath(HttpContext httpContext, ILoggerProvider options, string absolutePath)
-    {
-        if (!Uri.IsWellFormedUriString(absolutePath, UriKind.Absolute))
-        {
-            throw new ArgumentException($"bad path format {absolutePath} is not absolute");
-        }
-
-        var appender = _appenders.FirstOrDefault(x => absolutePath.Contains(x.Append) || (absolutePath.Contains(x.AppendSecure) && !string.IsNullOrEmpty(x.AppendSecure)));
-        if (appender == null)
-        {
-            return absolutePath;
-        }
-
-        return SecureHelper.IsSecure(httpContext, options) && !string.IsNullOrEmpty(appender.AppendSecure) ?
-            absolutePath.Remove(0, appender.AppendSecure.Length) :
-            absolutePath.Remove(0, appender.Append.Length);
-    }
-
     public string GetPath(HttpContext httpContext, ILoggerProvider options, string relativePath)
     {
         if (!string.IsNullOrEmpty(relativePath) && relativePath.IndexOf('~') == 0)
@@ -130,9 +112,7 @@ public class WebPath
 {
     public IServiceProvider ServiceProvider { get; }
     public IHostEnvironment HostEnvironment { get; }
-    private IHttpClientFactory ClientFactory { get; }
-
-    private static readonly IDictionary<string, bool> _existing = new ConcurrentDictionary<string, bool>();
+    
     private readonly WebPathSettings _webPathSettings;
     private readonly SettingsManager _settingsManager;
     private readonly StorageSettingsHelper _storageSettingsHelper;
@@ -147,8 +127,7 @@ public class WebPath
         StorageSettingsHelper storageSettingsHelper,
         IHostEnvironment hostEnvironment,
         CoreBaseSettings coreBaseSettings,
-        ILoggerProvider options,
-        IHttpClientFactory clientFactory)
+        ILoggerProvider options)
     {
         _webPathSettings = webPathSettings;
         ServiceProvider = serviceProvider;
@@ -157,21 +136,18 @@ public class WebPath
         HostEnvironment = hostEnvironment;
         _coreBaseSettings = coreBaseSettings;
         _options = options;
-        ClientFactory = clientFactory;
     }
 
     public WebPath(
         WebPathSettings webPathSettings,
         IServiceProvider serviceProvider,
-        StaticUploader staticUploader,
         SettingsManager settingsManager,
         StorageSettingsHelper storageSettingsHelper,
         IHttpContextAccessor httpContextAccessor,
         IHostEnvironment hostEnvironment,
         CoreBaseSettings coreBaseSettings,
-            ILoggerProvider options,
-            IHttpClientFactory clientFactory)
-            : this(webPathSettings, serviceProvider, settingsManager, storageSettingsHelper, hostEnvironment, coreBaseSettings, options, clientFactory)
+            ILoggerProvider options)
+            : this(webPathSettings, serviceProvider, settingsManager, storageSettingsHelper, hostEnvironment, coreBaseSettings, options)
     {
         _httpContextAccessor = httpContextAccessor;
     }
@@ -206,45 +182,5 @@ public class WebPath
         }
 
         return _webPathSettings.GetPath(_httpContextAccessor?.HttpContext, _options, relativePath);
-    }
-
-    public async Task<bool> ExistsAsync(string relativePath)
-    {
-        var path = await GetPathAsync(relativePath);
-        if (!_existing.ContainsKey(path))
-        {
-            if (Uri.IsWellFormedUriString(path, UriKind.Relative) && _httpContextAccessor?.HttpContext != null)
-            {
-                //Local
-                _existing[path] = File.Exists(CrossPlatform.PathCombine(HostEnvironment.ContentRootPath, path));
-            }
-            if (Uri.IsWellFormedUriString(path, UriKind.Absolute))
-            {
-                //Make request
-                _existing[path] = CheckWebPath(path);
-            }
-        }
-
-        return _existing[path];
-    }
-
-    private bool CheckWebPath(string path)
-    {
-        try
-        {
-            var request = new HttpRequestMessage
-            {
-                RequestUri = new Uri(path),
-                Method = HttpMethod.Head
-            };
-            var httpClient = ClientFactory.CreateClient();
-            using var response = httpClient.Send(request);
-
-            return response.StatusCode == HttpStatusCode.OK;
-        }
-        catch (Exception)
-        {
-            return false;
-        }
     }
 }

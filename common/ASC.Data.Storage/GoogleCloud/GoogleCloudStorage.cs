@@ -102,13 +102,6 @@ public class GoogleCloudStorage : BaseStorage
         return this;
     }
 
-    public static long DateToUnixTimestamp(DateTime date)
-    {
-        var ts = date - new DateTime(1970, 1, 1, 0, 0, 0);
-
-        return (long)ts.TotalSeconds;
-    }
-
     public override Task<Uri> GetInternalUriAsync(string domain, string path, TimeSpan expire, IEnumerable<string> headers)
     {
         if (expire == TimeSpan.Zero || expire == TimeSpan.MinValue || expire == TimeSpan.MaxValue)
@@ -395,20 +388,6 @@ public class GoogleCloudStorage : BaseStorage
     {
         return GetObjectsAsync(domain, path, recursive)
                .Select(x => x.Name.Substring(MakePath(domain, path + "/").Length));
-    }
-
-    private IEnumerable<Google.Apis.Storage.v1.Data.Object> GetObjects(string domain, string path, bool recursive)
-    {
-        using var storage = GetStorage();
-
-        var items = storage.ListObjects(_bucket, MakePath(domain, path));
-
-        if (recursive)
-        {
-            return items;
-        }
-
-        return items.Where(x => x.Name.IndexOf('/', MakePath(domain, path + "/").Length) == -1);
     }
 
     private IAsyncEnumerable<Google.Apis.Storage.v1.Data.Object> GetObjectsAsync(string domain, string path, bool recursive)
@@ -779,13 +758,6 @@ public class GoogleCloudStorage : BaseStorage
         return StorageClient.Create(credential);
     }
 
-    private Task<StorageClient> GetStorageAsync()
-    {
-        var credential = GoogleCredential.FromJson(_json);
-
-        return StorageClient.CreateAsync(credential);
-    }
-
     private string MakePath(string domain, string path)
     {
         string result;
@@ -823,11 +795,6 @@ public class GoogleCloudStorage : BaseStorage
         var signedPart = uri.PathAndQuery.TrimStart('/');
 
         return new Uri(uri.Scheme.Equals("https", StringComparison.OrdinalIgnoreCase) ? _bucketSSlRoot : _bucketRoot, signedPart);
-    }
-
-    private void InvalidateCloudFront(params string[] paths)
-    {
-        throw new NotImplementedException();
     }
 
     private PredefinedObjectAcl GetGoogleCloudAcl(ACL acl)

@@ -72,14 +72,6 @@ public class StorageUploader
         }
     }
 
-    public MigrateOperation GetProgress(int tenantId)
-    {
-        lock (_locker)
-        {
-            return _queue.PeekTask<MigrateOperation>(GetCacheKey(tenantId));
-        }
-    }
-
     public void Stop()
     {
         foreach (var task in _queue.GetAllTasks(DistributedTaskQueue.INSTANCE_ID).Where(r => r.Status == DistributedTaskStatus.Running))

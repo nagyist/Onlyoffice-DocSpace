@@ -119,9 +119,4 @@ public class ServiceClient : IService
 
         return migrationProgress.Progress;
     }
-
-    public void StopMigrate()
-    {
-        CacheMigrationNotify.Publish(new MigrationCache(), CacheNotifyAction.InsertOrUpdate);
-    }
 }

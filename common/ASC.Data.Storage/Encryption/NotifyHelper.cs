@@ -46,11 +46,6 @@ public class NotifyHelper
         _serverRootPath = serverRootPath;
     }
 
-    public void SendStorageEncryptionStart(int tenantId)
-    {
-        SendStorageEncryptionNotification("SendStorageEncryptionStart", tenantId);
-    }
-
     public void SendStorageEncryptionSuccess(int tenantId)
     {
         SendStorageEncryptionNotification("SendStorageEncryptionSuccess", tenantId);
@@ -59,11 +54,6 @@ public class NotifyHelper
     public void SendStorageEncryptionError(int tenantId)
     {
         SendStorageEncryptionNotification("SendStorageEncryptionError", tenantId);
-    }
-
-    public void SendStorageDecryptionStart(int tenantId)
-    {
-        SendStorageEncryptionNotification("SendStorageDecryptionStart", tenantId);
     }
 
     public void SendStorageDecryptionSuccess(int tenantId)

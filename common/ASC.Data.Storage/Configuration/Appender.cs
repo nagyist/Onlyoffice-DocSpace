@@ -88,7 +88,6 @@ public class Module
     public string Type { get; set; }
     public string Path { get; set; }
     public ACL Acl { get; set; } = ACL.Read;
-    public string VirtualPath { get; set; }
     public TimeSpan Expires { get; set; }
     public bool Visible { get; set; } = true;
     public bool AppendTenantId { get; set; } = true;

@@ -36,8 +36,5 @@ public interface IService
     double GetProgress(int tenant);
 
     [OperationContract]
-    void StopMigrate();
-
-    [OperationContract]
     void UploadCdn(int tenant, string relativePath, string mappedPath, CdnStorageSettings cdnStorageSettings = null);
 }

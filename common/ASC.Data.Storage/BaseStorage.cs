@@ -31,7 +31,6 @@ public abstract class BaseStorage : IDataStore
     public IQuotaController QuotaController { get; set; }
     public virtual bool IsSupportInternalUri => true;
     public virtual bool IsSupportedPreSignedUri => true;
-    public virtual bool IsSupportChunking => false;
     internal string Modulename { get; set; }
     internal bool Cache { get; set; }
     internal DataList DataList { get; set; }
@@ -196,11 +195,7 @@ public abstract class BaseStorage : IDataStore
 
     public abstract Task DeleteAsync(string domain, string path);
     public abstract Task DeleteFilesAsync(string domain, string folderPath, string pattern, bool recursive);
-    public abstract Task DeleteFilesAsync(string domain, List<string> paths);
-    public abstract Task DeleteFilesAsync(string domain, string folderPath, DateTime fromDate, DateTime toDate);
-    public abstract Task MoveDirectoryAsync(string srcdomain, string srcdir, string newdomain, string newdir);
     public abstract Task<Uri> MoveAsync(string srcdomain, string srcpath, string newdomain, string newpath, bool quotaCheckFileSize = true);
-    public abstract Task<Uri> SaveTempAsync(string domain, out string assignedPath, Stream stream);
     public abstract IAsyncEnumerable<string> ListDirectoriesRelativeAsync(string domain, string path, bool recursive);
     public abstract IAsyncEnumerable<string> ListFilesRelativeAsync(string domain, string path, string pattern, bool recursive);
 
@@ -208,11 +203,8 @@ public abstract class BaseStorage : IDataStore
     public abstract Task<bool> IsDirectoryAsync(string domain, string path);
     public abstract Task DeleteDirectoryAsync(string domain, string path);
     public abstract Task<long> GetFileSizeAsync(string domain, string path);
-    public abstract Task<long> GetDirectorySizeAsync(string domain, string path);
     public abstract Task<long> ResetQuotaAsync(string domain);
     public abstract Task<long> GetUsedQuotaAsync(string domain);
-    public abstract Task<Uri> CopyAsync(string srcdomain, string path, string newdomain, string newpath);
-    public abstract Task CopyDirectoryAsync(string srcdomain, string dir, string newdomain, string newdir);
 
     public Task<Stream> GetReadStreamAsync(string path)
     {
@@ -244,29 +236,9 @@ public abstract class BaseStorage : IDataStore
         return MoveAsync(string.Empty, srcpath, newdomain, newpath);
     }
 
-    public Task<Uri> SaveTempAsync(out string assignedPath, Stream stream)
-    {
-        return SaveTempAsync(string.Empty, out assignedPath, stream);
-    }
-
     public IAsyncEnumerable<string> ListDirectoriesRelativeAsync(string path, bool recursive)
     {
         return ListDirectoriesRelativeAsync(string.Empty, path, recursive);
-    }
-
-    public IAsyncEnumerable<Uri> ListFilesAsync(string path, string pattern, bool recursive)
-    {
-        return ListFilesAsync(string.Empty, path, pattern, recursive);
-    }
-
-    public async IAsyncEnumerable<Uri> ListFilesAsync(string domain, string path, string pattern, bool recursive)
-    {
-        var filePaths = ListFilesRelativeAsync(domain, path, pattern, recursive);
-
-        await foreach (var paths in filePaths)
-        {
-            yield return await GetUriAsync(domain, CrossPlatform.PathCombine(PathUtils.Normalize(path), paths));
-        }
     }
 
     public Task<bool> IsFileAsync(string path)
@@ -288,22 +260,7 @@ public abstract class BaseStorage : IDataStore
     {
         return GetFileSizeAsync(string.Empty, path);
     }
-
-    public Task<long> GetDirectorySizeAsync(string path)
-    {
-        return GetDirectorySizeAsync(string.Empty, path);
-    }
-
-    public Task<Uri> CopyAsync(string path, string newdomain, string newpath)
-    {
-        return CopyAsync(string.Empty, path, newdomain, newpath);
-    }
-
-    public async Task CopyDirectoryAsync(string dir, string newdomain, string newdir)
-    {
-        await CopyDirectoryAsync(string.Empty, dir, newdomain, newdir);
-    }
-
+    
     public virtual IDataStore Configure(string tenant, Handler handlerConfig, Module moduleConfig, IDictionary<string, string> props)
     {
         return this;
@@ -318,15 +275,9 @@ public abstract class BaseStorage : IDataStore
 
     public abstract Task<string> SavePrivateAsync(string domain, string path, Stream stream, DateTime expires);
     public abstract Task DeleteExpiredAsync(string domain, string path, TimeSpan oldThreshold);
-
-    public abstract string GetUploadForm(string domain, string directoryPath, string redirectTo, long maxUploadSize,
-                                         string contentType, string contentDisposition, string submitLabel);
-
+    
     public abstract string GetUploadUrl();
-
-    public abstract string GetPostParams(string domain, string directoryPath, long maxUploadSize, string contentType,
-                                         string contentDisposition);
-
+    
     internal void QuotaUsedAdd(string domain, long size, bool quotaCheckFileSize = true)
     {
         if (QuotaController != null)
@@ -347,8 +298,6 @@ public abstract class BaseStorage : IDataStore
     {
         return "/" + str.TrimStart('/');
     }
-
-    public abstract Task<string> GetFileEtagAsync(string domain, string path);
     
     internal class MonoUri : Uri
     {

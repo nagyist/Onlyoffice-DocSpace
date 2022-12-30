@@ -152,8 +152,6 @@ public interface IDataStore
 
     Task AbortChunkedUploadAsync(string domain, string path, string uploadId);
 
-    bool IsSupportChunking { get; }
-
     bool IsSupportedPreSignedUri { get; }
 
     ///<summary>
@@ -173,31 +171,6 @@ public interface IDataStore
     Task DeleteFilesAsync(string domain, string folderPath, string pattern, bool recursive);
 
     ///<summary>
-    /// Deletes files
-    ///</summary>
-    ///<param name="domain"></param>
-    ///<param name="listPaths"></param>
-    Task DeleteFilesAsync(string domain, List<string> paths);
-
-    ///<summary>
-    /// Deletes file by last modified date
-    ///</summary>
-    ///<param name="domain"></param>
-    ///<param name="folderPath"></param>
-    ///<param name="fromDate"></param>
-    ///<param name="toDate"></param>
-    Task DeleteFilesAsync(string domain, string folderPath, DateTime fromDate, DateTime toDate);
-
-    ///<summary>
-    /// Moves the contents of one directory to another. s3 for a very expensive procedure.
-    ///</summary>
-    ///<param name="srcdomain"></param>
-    ///<param name="srcdir"></param>
-    ///<param name="newdomain"></param>
-    ///<param name="newdir"></param>
-    Task MoveDirectoryAsync(string srcdomain, string srcdir, string newdomain, string newdir);
-
-    ///<summary>
     /// Moves file
     ///</summary>
     ///<param name="srcdomain"></param>
@@ -206,16 +179,7 @@ public interface IDataStore
     ///<param name="newpath"></param>
     ///<returns></returns>
     Task<Uri> MoveAsync(string srcdomain, string srcpath, string newdomain, string newpath, bool quotaCheckFileSize = true);
-
-    ///<summary>
-    /// Saves the file in the temp. In fact, almost no different from the usual Save except that generates the file name itself. An inconvenient thing.
-    ///</summary>
-    ///<param name="domain"></param>
-    ///<param name="assignedPath"></param>
-    ///<param name="stream"></param>
-    ///<returns></returns>
-    Task<Uri> SaveTempAsync(string domain, out string assignedPath, Stream stream);
-
+    
     /// <summary>
     ///  Returns a list of links to all subfolders
     /// </summary>
@@ -224,17 +188,7 @@ public interface IDataStore
     /// <param name="recursive">iterate subdirectories or not</param>
     /// <returns></returns>
     IAsyncEnumerable<string> ListDirectoriesRelativeAsync(string domain, string path, bool recursive);
-
-    ///<summary>
-    /// Returns a list of links to all files
-    ///</summary>
-    ///<param name="domain"></param>
-    ///<param name="path"></param>
-    ///<param name="pattern">Wildcard mask (*. jpg for example)</param>
-    ///<param name="recursive">iterate subdirectories or not</param>
-    ///<returns></returns>
-    IAsyncEnumerable<Uri> ListFilesAsync(string domain, string path, string pattern, bool recursive);
-
+    
     ///<summary>
     /// Returns a list of relative paths for all files
     ///</summary>
@@ -266,14 +220,9 @@ public interface IDataStore
 
     Task<long> GetFileSizeAsync(string domain, string path);
 
-    Task<long> GetDirectorySizeAsync(string domain, string path);
-
     Task<long> ResetQuotaAsync(string domain);
 
     Task<long> GetUsedQuotaAsync(string domain);
-
-    Task<Uri> CopyAsync(string srcdomain, string path, string newdomain, string newpath);
-    Task CopyDirectoryAsync(string srcdomain, string dir, string newdomain, string newdir);
 
     //Then there are restarted methods without domain. functionally identical to the top
 
@@ -284,16 +233,11 @@ public interface IDataStore
     Task DeleteAsync(string path);
     Task DeleteFilesAsync(string folderPath, string pattern, bool recursive);
     Task<Uri> MoveAsync(string srcpath, string newdomain, string newpath);
-    Task<Uri> SaveTempAsync(out string assignedPath, Stream stream);
     IAsyncEnumerable<string> ListDirectoriesRelativeAsync(string path, bool recursive);
-    IAsyncEnumerable<Uri> ListFilesAsync(string path, string pattern, bool recursive);
     Task<bool> IsFileAsync(string path);
     Task<bool> IsDirectoryAsync(string path);
     Task DeleteDirectoryAsync(string path);
     Task<long> GetFileSizeAsync(string path);
-    Task<long> GetDirectorySizeAsync(string path);
-    Task<Uri> CopyAsync(string path, string newdomain, string newpath);
-    Task CopyDirectoryAsync(string dir, string newdomain, string newdir);
 #pragma warning restore 1591
 
 
@@ -302,13 +246,5 @@ public interface IDataStore
 
     Task<string> SavePrivateAsync(string domain, string path, Stream stream, DateTime expires);
     Task DeleteExpiredAsync(string domain, string path, TimeSpan oldThreshold);
-
-    string GetUploadForm(string domain, string directoryPath, string redirectTo, long maxUploadSize,
-                         string contentType, string contentDisposition, string submitLabel);
     string GetUploadUrl();
-
-    string GetPostParams(string domain, string directoryPath, long maxUploadSize, string contentType,
-                         string contentDisposition);
-
-    Task<string> GetFileEtagAsync(string domain, string path);
 }

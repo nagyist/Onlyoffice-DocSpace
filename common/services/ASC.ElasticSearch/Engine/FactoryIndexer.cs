@@ -87,32 +87,6 @@ public class FactoryIndexer<T> : IFactoryIndexer where T : class, ISearchItem
         _indexer = baseIndexer;
         _serviceProvider = serviceProvider;
     }
-
-    public bool TrySelect(Expression<Func<Selector<T>, Selector<T>>> expression, out IReadOnlyCollection<T> result)
-    {
-        var t = _serviceProvider.GetService<T>();
-        if (!Support(t) || !_indexer.CheckExist(t))
-        {
-            result = new List<T>();
-
-            return false;
-        }
-
-        try
-        {
-            result = _indexer.Select(expression);
-        }
-        catch (Exception e)
-        {
-            Logger.ErrorSelect(e);
-            result = new List<T>();
-
-            return false;
-        }
-
-        return true;
-    }
-
     public bool TrySelectIds(Expression<Func<Selector<T>, Selector<T>>> expression, out List<int> result)
     {
         var t = _serviceProvider.GetService<T>();
@@ -137,34 +111,6 @@ public class FactoryIndexer<T> : IFactoryIndexer where T : class, ISearchItem
 
         return true;
     }
-
-    public bool TrySelectIds(Expression<Func<Selector<T>, Selector<T>>> expression, out List<int> result, out long total)
-    {
-        var t = _serviceProvider.GetService<T>();
-        if (!Support(t) || !_indexer.CheckExist(t))
-        {
-            result = new List<int>();
-            total = 0;
-
-            return false;
-        }
-
-        try
-        {
-            result = _indexer.Select(expression, true, out total).Select(r => r.Id).ToList();
-        }
-        catch (Exception e)
-        {
-            Logger.ErrorSelect(e);
-            total = 0;
-            result = new List<int>();
-
-            return false;
-        }
-
-        return true;
-    }
-
     public bool CanIndexByContent(T t)
     {
         return Support(t) && _searchSettingsHelper.CanIndexByContent<T>(_tenantManager.GetCurrentTenant().Id);
@@ -509,28 +455,6 @@ public class FactoryIndexer<T> : IFactoryIndexer where T : class, ISearchItem
         var tenant = _tenantManager.GetCurrentTenant().Id;
 
         return await Queue(() => _indexer.Delete(expression, tenant, immediately));
-    }
-
-    public void Flush()
-    {
-        var t = _serviceProvider.GetService<T>();
-        if (!Support(t))
-        {
-            return;
-        }
-
-        _indexer.Flush();
-    }
-
-    public void Refresh()
-    {
-        var t = _serviceProvider.GetService<T>();
-        if (!Support(t))
-        {
-            return;
-        }
-
-        _indexer.Refresh();
     }
 
     public virtual Task IndexAll()

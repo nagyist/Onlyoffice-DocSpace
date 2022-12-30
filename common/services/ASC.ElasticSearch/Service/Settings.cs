@@ -43,20 +43,10 @@ public class Settings
         get => _maxContentLength ?? 100 * 1024 * 1024L;
         set => _maxContentLength = value;
     }
-    public long? MaxFileSize
-    {
-        get => _maxFileSize ?? 10 * 1024 * 1024L;
-        set => _maxFileSize = value;
-    }
     public int? Threads
     {
         get => _threads ?? 1;
         set => _threads = value;
-    }
-    public bool? HttpCompression
-    {
-        get => _httpCompression ?? true;
-        set => _httpCompression = value;
     }
 
     private int? _period;

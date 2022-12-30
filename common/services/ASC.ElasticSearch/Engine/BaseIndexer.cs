@@ -198,16 +198,6 @@ public class BaseIndexer<T> where T : class, ISearchItem
         }
     }
 
-    public void Flush()
-    {
-        _client.Instance.Indices.Flush(new FlushRequest(IndexName));
-    }
-
-    public void Refresh()
-    {
-        _client.Instance.Indices.Refresh(new RefreshRequest(IndexName));
-    }
-
     internal async Task Index(T data, bool immediately = true)
     {
         if (!(await BeforeIndex(data)))

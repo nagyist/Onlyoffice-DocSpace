@@ -288,40 +288,7 @@ public class FeedAggregateDataProvider
             .Select(r => r.Key)
             .ToList();
     }
-
-    public FeedResultItem GetFeedItem(string id)
-    {
-        using var feedDbContext = _dbContextFactory.CreateDbContext();
-        var news =
-            feedDbContext.FeedAggregates
-            .Where(r => r.Id == id)
-            .FirstOrDefault();
-
-        return _mapper.Map<FeedAggregate, FeedResultItem>(news);
-    }
-
-    public void RemoveFeedItem(string id)
-    {
-        using var feedDbContext = _dbContextFactory.CreateDbContext();
-        var strategy = feedDbContext.Database.CreateExecutionStrategy();
-
-        strategy.Execute(() =>
-        {
-            using var feedDbContext = _dbContextFactory.CreateDbContext();
-            using var tx = feedDbContext.Database.BeginTransaction(IsolationLevel.ReadUncommitted);
-
-            var aggregates = feedDbContext.FeedAggregates.Where(r => r.Id == id);
-            feedDbContext.FeedAggregates.RemoveRange(aggregates);
-
-            var users = feedDbContext.FeedUsers.Where(r => r.FeedId == id);
-            feedDbContext.FeedUsers.RemoveRange(users);
-
-            feedDbContext.SaveChanges();
-
-            tx.Commit();
-        });
-    }
-
+    
     private Expression<Func<FeedAggregate, bool>> GetIdSearchExpression(string id, string module, bool withRelated)
     {
         Expression<Func<FeedAggregate, bool>> exp = null;

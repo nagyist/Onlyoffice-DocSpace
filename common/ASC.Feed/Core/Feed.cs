@@ -40,16 +40,13 @@ public class Feed
     public string ExtraLocation { get; set; }
     public FeedAction Action { get; set; }
     public string Title { get; set; }
-    public string ItemUrl { get; set; }
     public string Description { get; set; }
     public string AdditionalInfo { get; set; }
     public string AdditionalInfo2 { get; set; }
     public string AdditionalInfo3 { get; set; }
     public string AdditionalInfo4 { get; set; }
-    public bool HasPreview { get; set; }
     public bool CanComment { get; set; }
     public object Target { get; set; }
-    public string CommentApiUrl { get; set; }
     public IEnumerable<FeedComment> Comments { get; set; }
     public string GroupId { get; set; }
     public string Keywords { get; set; }

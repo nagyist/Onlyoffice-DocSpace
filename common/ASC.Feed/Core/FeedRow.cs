@@ -28,7 +28,6 @@ namespace ASC.Feed.Core;
 
 public class FeedRow
 {
-    public DateTime AggregatedDate { get; set; }
     public IList<Guid> Users { get; set; }
     public int Tenant { get; set; }
     public string Product { get; set; }
@@ -40,9 +39,6 @@ public class FeedRow
     public Guid ModifiedBy => Feed.ModifiedBy;
     public DateTime CreatedDate => Feed.CreatedDate;
     public DateTime ModifiedDate => Feed.ModifiedDate;
-    public string GroupId => Feed.GroupId;
-    public string Keywords => Feed.Keywords;
-    public string ContextId => Feed.ContextId;
     public string Json
     {
         get

@@ -56,17 +56,6 @@ public class FeedMin : IMapFrom<FeedResultItem>
         public FeedMinUser Author { get; set; }
         public string Description { get; set; }
         public DateTime Date { get; set; }
-
-        public FeedMin ToFeedMin()
-        {
-            return new FeedMin
-            {
-                Author = Author,
-                Title = Description,
-                CreatedDate = Date,
-                ModifiedDate = Date
-            };
-        }
     }
 
     public void Mapping(Profile profile)

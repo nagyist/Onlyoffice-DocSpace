@@ -28,11 +28,7 @@ namespace ASC.Feed;
 
 public static class Constants
 {
-    public const string FeedDbId = "core";
-    public const string ProjectsDbId = "projects";
     public const string FilesDbId = "files";
-    public const string CommunityDbId = "community";
-    public const string CrmDbId = "crm";
 
     #region Modules
 

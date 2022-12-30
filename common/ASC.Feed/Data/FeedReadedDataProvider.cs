@@ -95,22 +95,6 @@ public class FeedReadedDataProvider
         feedDbContext.SaveChanges();
     }
 
-    public IEnumerable<string> GetReadedModules(DateTime fromTime)
-    {
-        return GetReadedModules(GetUser(), GetTenant(), fromTime);
-    }
-
-    public IEnumerable<string> GetReadedModules(Guid user, int tenant, DateTime fromTime)
-    {
-        using var feedDbContext = _dbContextFactory.CreateDbContext();
-        return feedDbContext.FeedReaded
-            .Where(r => r.Tenant == tenant)
-            .Where(r => r.UserId == user)
-            .Where(r => r.TimeStamp >= fromTime)
-            .Select(r => r.Module)
-            .ToList();
-    }
-
     private int GetTenant()
     {
         return _tenantManager.GetCurrentTenant().Id;

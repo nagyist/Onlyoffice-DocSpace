@@ -30,7 +30,6 @@ namespace ASC.Migration.Core.Models.Api;
 public class ApiMigratorAttribute : Attribute
 {
     public string Name { get; private set; }
-    public bool RequiresFolder { get; private set; }
 
     public string[] RequiredFileTypes { get; private set; }
 

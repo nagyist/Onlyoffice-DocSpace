@@ -33,7 +33,6 @@ namespace ASC.Migration.NextcloudWorkspace;
 public class NextcloudWorkspaceMigration : AbstractMigration<NCMigrationInfo, NCMigratingUser, NCMigratingContacts, NCMigratingCalendar, NCMigratingFiles, NCMigratingMail>
 {
     private string _takeouts;
-    public string[] TempParse;
     private string _tmpFolder;
     private readonly GlobalFolderHelper _globalFolderHelper;
     private readonly IDaoFactory _daoFactory;

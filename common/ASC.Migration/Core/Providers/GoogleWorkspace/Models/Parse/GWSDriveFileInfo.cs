@@ -30,21 +30,6 @@ namespace ASC.Migration.GoogleWorkspace.Models.Parse;
 public class GwsDriveFileInfo
 {
     public bool Starred { get; set; }
-
-    [JsonPropertyName("viewers_can_download")]
-    public bool ViewersCanDownload { get; set; }
-
-    [JsonPropertyName("editors_can_edit_access")]
-    public bool EditorsCanEditAccess { get; set; }
-
-    [JsonPropertyName("last_modified_by_any_user")]
-    public DateTimeOffset LastModifiedByAnyUser { get; set; }
-
-    [JsonPropertyName("last_modified_by_me")]
-    public DateTimeOffset LastModifiedByMe { get; set; }
-
-    [JsonPropertyName("content_last_modified")]
-    public DateTimeOffset ContentLastModified { get; set; }
     public DateTimeOffset Created { get; set; }
     public List<GwsDriveFilePermission> Permissions { get; set; }
 }
@@ -59,9 +44,6 @@ public class GwsDriveFilePermission
     [JsonPropertyName("additional_roles")]
     public List<string> AdditionalRoles { get; set; }
     public string Kind { get; set; }
-
-    [JsonPropertyName("self_link")]
-    public Uri SelfLink { get; set; }
 
     [JsonPropertyName("email_address")]
     public string EmailAddress { get; set; }

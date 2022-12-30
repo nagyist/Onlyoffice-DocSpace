@@ -26,21 +26,6 @@
 
 namespace ASC.Migration.GoogleWorkspace.Models.Parse;
 
-public class GwsTasksRoot
-{
-    public string Kind { get; set; }
-    public List<GwsTaskList> Items { get; set; }
-}
-
-public class GwsTaskList
-{
-    public string Kind { get; set; }
-    public string Id { get; set; }
-    public string Title { get; set; }
-    public DateTimeOffset Updated { get; set; }
-    public List<GwsTask> Items { get; set; }
-}
-
 public class GwsTask
 {
     public string Notes { get; set; }
@@ -49,10 +34,6 @@ public class GwsTask
     public string Id { get; set; }
     public DateTimeOffset? Completed { get; set; }
     public string Title { get; set; }
-
-    [JsonPropertyName("task_type")]
-    public string TaskType { get; set; }
     public DateTimeOffset Updated { get; set; }
     public string Status { get; set; }
-    public DateTimeOffset? Due { get; set; }
 }

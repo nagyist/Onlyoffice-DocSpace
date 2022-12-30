@@ -27,7 +27,6 @@
 namespace ASC.Migration.NextcloudWorkspace.Models;
 public class NCContact
 {
-    public string ContactName { get; set; }
     public string Address { get; set; }
     public string Description { get; set; }
 

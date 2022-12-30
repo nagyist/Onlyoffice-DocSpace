@@ -32,7 +32,6 @@ namespace ASC.Migration.OwnCloud;
 public class OwnCloudMigration : AbstractMigration<OCMigrationInfo, OCMigratingUser, OCMigratingContacts, OCMigratingCalendar, OCMigratingFiles, OCMigratingMail>
 {
     private string _takeouts;
-    public string[] TempParse;
     private string _tmpFolder;
     private readonly GlobalFolderHelper _globalFolderHelper;
     private readonly IDaoFactory _daoFactory;

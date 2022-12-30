@@ -280,13 +280,4 @@ public class MigrationController : ControllerBase
     {
         _cache.Remove(MigrationCacheKey);
     }
-
-    private void ClearMigration(CacheEntryRemovedArguments arguments)
-    {
-        if (typeof(OngoingMigration).IsAssignableFrom(arguments.CacheItem.Value.GetType()))
-        {
-            var ongoingMigration = (OngoingMigration)arguments.CacheItem.Value;
-            ongoingMigration.Migration.Dispose();
-        }
-    }
 }

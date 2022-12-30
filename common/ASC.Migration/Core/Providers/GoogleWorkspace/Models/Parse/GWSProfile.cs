@@ -49,5 +49,4 @@ public class GwsName
 {
     public string GivenName { get; set; }
     public string FamilyName { get; set; }
-    public string FormattedName { get; set; }
 }

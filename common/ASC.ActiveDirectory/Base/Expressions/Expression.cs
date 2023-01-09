@@ -185,6 +185,16 @@ public class Expression : ICloneable
     }
 
     /// <summary>
+    /// Negation
+    /// </summary>
+    /// <returns>Self</returns>
+    public Expression Negative()
+    {
+        _negative = !_negative;
+        return this;
+    }
+
+    /// <summary>
     /// Existence
     /// </summary>
     /// <param name="attrbuteName"></param>

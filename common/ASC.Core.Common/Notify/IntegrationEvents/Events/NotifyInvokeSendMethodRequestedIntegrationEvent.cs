@@ -29,6 +29,11 @@ namespace ASC.Core.Common.Notify.IntegrationEvents.Events;
 [ProtoContract]
 public record NotifyInvokeSendMethodRequestedIntegrationEvent : IntegrationEvent
 {
+    private NotifyInvokeSendMethodRequestedIntegrationEvent() : base()
+    {
+
+    }
+
     public NotifyInvokeSendMethodRequestedIntegrationEvent(Guid createBy, int tenantId) :
         base(createBy, tenantId)
     {

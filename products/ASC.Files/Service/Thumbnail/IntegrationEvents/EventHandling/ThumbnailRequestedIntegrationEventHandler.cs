@@ -30,7 +30,12 @@ namespace ASC.Thumbnail.IntegrationEvents.EventHandling;
 public class ThumbnailRequestedIntegrationEventHandler : IIntegrationEventHandler<ThumbnailRequestedIntegrationEvent>
 {
     private readonly ILogger _logger;
-    
+
+    private ThumbnailRequestedIntegrationEventHandler() : base()
+    {
+
+    }
+
     public ThumbnailRequestedIntegrationEventHandler(ILogger<ThumbnailRequestedIntegrationEventHandler> logger)
     {
         _logger = logger;

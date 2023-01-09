@@ -55,8 +55,6 @@ public class ThumbnailSettings
 
     #region data privider settings
 
-    private string _connectionStringName;
-
     private string _formats;
     public string Formats
     {

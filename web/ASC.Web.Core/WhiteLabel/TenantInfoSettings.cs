@@ -102,33 +102,6 @@ public class TenantInfoSettingsHelper
         tenantLogoManager.RemoveMailLogoDataFromCache();
     }
 
-    public async Task SetCompanyLogo(string companyLogoFileName, byte[] data, TenantInfoSettings tenantInfoSettings, TenantLogoManager tenantLogoManager)
-    {
-        var store = _storageFactory.GetStorage(_tenantManager.GetCurrentTenant().Id, "logo");
-
-        if (!tenantInfoSettings.IsDefault)
-        {
-            try
-            {
-                await store.DeleteFilesAsync("", "*", false);
-            }
-            catch
-            {
-            }
-        }
-        using (var memory = new MemoryStream(data))
-        using (var image = Image.Load(memory))
-        {
-            tenantInfoSettings.CompanyLogoSize = image.Size();
-            memory.Seek(0, SeekOrigin.Begin);
-            await store.SaveAsync(companyLogoFileName, memory);
-            tenantInfoSettings.CompanyLogoFileName = companyLogoFileName;
-        }
-        tenantInfoSettings.IsDefault = false;
-
-        tenantLogoManager.RemoveMailLogoDataFromCache();
-    }
-
     public string GetAbsoluteCompanyLogoPath(TenantInfoSettings tenantInfoSettings)
     {
         if (tenantInfoSettings.IsDefault)

@@ -31,25 +31,17 @@ public static class Tags
     public const string UserName = "UserName";
     public const string UserLastName = "UserLastName";
     public const string UserEmail = "UserEmail";
-    public const string UserPosition = "Position";
     public const string Phone = "Phone";
     public const string Website = "Website";
     public const string CompanyTitle = "CompanyTitle";
-    public const string CompanySize = "CompanySize";
     public const string Subject = "Subject";
     public const string Body = "Body";
     public const string MyStaffLink = "MyStaffLink";
-    public const string SettingsLink = "SettingsLink";
     public const string InviteLink = "InviteLink";
     public const string Date = "Date";
     public const string IP = "IP";
-    public const string WebStudioLink = "WebStudioLink";
-    public const string AuthorLink = "AuthorLink";
     public const string Activities = "Activities";
-    public const string BackupUrl = "BackupUrl";
-    public const string BackupHours = "BackupHours";
-
-    public const string DeactivateUrl = "DeactivateUrl";
+    
     public const string ActivateUrl = "ActivateUrl";
     public const string DeleteUrl = "DeleteUrl";
     public const string AutoRenew = "AutoRenew";
@@ -62,8 +54,6 @@ public static class Tags
     public const string PortalUrl = "PortalUrl";
     public const string ControlPanelUrl = "ControlPanelUrl";
     public const string UserDisplayName = "UserDisplayName";
-    public const string PricingPage = "PricingPage";
-    public const string BlogLink = "TagBlogLink";
     public const string DueDate = "DueDate";
     public const string DelayDueDate = "DelayDueDate";
     public const string LinkToRecovery = "LinkToRecovery";
@@ -78,8 +68,6 @@ public static class Tags
     public const string Login = "Login";
     public const string Server = "Server";
     public const string Encryption = "Encryption";
-    public const string ImapPort = "ImapPort";
-    public const string SmtpPort = "SmtpPort";
 }
 
 public static class CommonTags

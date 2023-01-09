@@ -157,18 +157,10 @@ public class SsoFieldMapping
 [Serializable]
 public class SsoCertificate
 {
-    public bool SelfSigned { get; set; }
-
-    public string Crt { get; set; }
-
     public string Key { get; set; }
 
     public string Action { get; set; }
-
-    public string DomainName { get; set; }
-
-    public DateTime StartDate { get; set; }
-
+    
     public DateTime ExpiredDate { get; set; }
 }
 
@@ -214,88 +206,37 @@ public class SsoSpCertificateAdvanced
 [Serializable]
 public class SsoNameIdFormatType
 {
-    public const string Saml11Unspecified = "urn:oasis:names:tc:SAML:1.1:nameid-format:unspecified";
-
-    public const string Saml11EmailAddress = "urn:oasis:names:tc:SAML:1.1:nameid-format:emailAddress";
-
-    public const string Saml20Entity = "urn:oasis:names:tc:SAML:2.0:nameid-format:entity";
-
     public const string Saml20Transient = "urn:oasis:names:tc:SAML:2.0:nameid-format:transient";
-
-    public const string Saml20Persistent = "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent";
-
-    public const string Saml20Encrypted = "urn:oasis:names:tc:SAML:2.0:nameid-format:encrypted";
-
-    public const string Saml20Unspecified = "urn:oasis:names:tc:SAML:2.0:nameid-format:unspecified";
-
-    public const string Saml11X509SubjectName = "urn:oasis:names:tc:SAML:1.1:nameid-format:X509SubjectName";
-
-    public const string Saml11WindowsDomainQualifiedName = "urn:oasis:names:tc:SAML:1.1:nameid-format:WindowsDomainQualifiedName";
-
-    public const string Saml20Kerberos = "urn:oasis:names:tc:SAML:2.0:nameid-format:kerberos";
 }
 
 [Serializable]
 public class SsoBindingType
 {
     public const string Saml20HttpPost = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST";
-
-    public const string Saml20HttpRedirect = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect";
-}
-
-[Serializable]
-public class SsoMetadata
-{
-    public const string BaseUrl = "";
-
-    public const string MetadataUrl = "/sso/metadata";
-
-    public const string EntityId = "/sso/metadata";
-
-    public const string ConsumerUrl = "/sso/acs";
-
-    public const string LogoutUrl = "/sso/slo/callback";
-
 }
 
 [Serializable]
 public class SsoSigningAlgorithmType
 {
     public const string RSA_SHA1 = "http://www.w3.org/2000/09/xmldsig#rsa-sha1";
-
-    public const string RSA_SHA256 = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha256";
-
-    public const string RSA_SHA512 = "http://www.w3.org/2001/04/xmldsig-more#rsa-sha512";
 }
 
 [Serializable]
 public class SsoEncryptAlgorithmType
 {
     public const string AES_128 = "http://www.w3.org/2001/04/xmlenc#aes128-cbc";
-
-    public const string AES_256 = "http://www.w3.org/2001/04/xmlenc#aes256-cbc";
-
-    public const string TRI_DEC = "http://www.w3.org/2001/04/xmlenc#tripledes-cbc";
 }
 
 [Serializable]
 public class SsoSpCertificateActionType
 {
-    public const string Signing = "signing";
-
     public const string Encrypt = "encrypt";
-
-    public const string SigningAndEncrypt = "signing and encrypt";
 }
 
 [Serializable]
 public class SsoIdpCertificateActionType
 {
-    public const string Verification = "verification";
-
     public const string Decrypt = "decrypt";
-
-    public const string VerificationAndDecrypt = "verification and decrypt";
 }
 
 #endregion

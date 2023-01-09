@@ -35,6 +35,4 @@ public interface IProduct : IWebItem
 
 
     void Init();
-
-    void Shutdown();
 }

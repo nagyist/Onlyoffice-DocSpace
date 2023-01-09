@@ -277,43 +277,6 @@ public class UserPhotoManager
         return await GetSizedPhotoAbsoluteWebPath(userID, SmallFotoSize);
     }
 
-
-    public async Task<string> GetSizedPhotoUrl(Guid userId, int width, int height)
-    {
-        return await GetSizedPhotoAbsoluteWebPath(userId, new Size(width, height));
-    }
-
-
-    private string _defaultSmallPhotoURL;
-    public string GetDefaultSmallPhotoURL()
-    {
-        return _defaultSmallPhotoURL ??= GetDefaultPhotoAbsoluteWebPath(SmallFotoSize);
-    }
-
-    private string _defaultMediumPhotoURL;
-    public string GetDefaultMediumPhotoURL()
-    {
-        return _defaultMediumPhotoURL ??= GetDefaultPhotoAbsoluteWebPath(MediumFotoSize);
-    }
-
-    private string _defaultBigPhotoURL;
-    public string GetDefaultBigPhotoURL()
-    {
-        return _defaultBigPhotoURL ??= GetDefaultPhotoAbsoluteWebPath(BigFotoSize);
-    }
-
-    private string _defaultMaxPhotoURL;
-    public string GetDefaultMaxPhotoURL()
-    {
-        return _defaultMaxPhotoURL ??= GetDefaultPhotoAbsoluteWebPath(MaxFotoSize);
-    }
-
-    private string _defaultRetinaPhotoURL;
-    public string GetDefaultRetinaPhotoURL()
-    {
-        return _defaultRetinaPhotoURL ??= GetDefaultPhotoAbsoluteWebPath(RetinaFotoSize);
-    }
-
     public static Size OriginalFotoSize { get; } = new Size(1280, 1280);
 
     public static Size RetinaFotoSize { get; } = new Size(360, 360);
@@ -373,28 +336,7 @@ public class UserPhotoManager
         }
         return GetDefaultPhotoAbsoluteWebPath();
     }
-
-    internal async Task<Size> GetPhotoSize(Guid userID)
-    {
-        var virtualPath = await GetPhotoAbsoluteWebPath(userID);
-        if (virtualPath == null)
-        {
-            return Size.Empty;
-        }
-
-        try
-        {
-            var sizePart = virtualPath.Substring(virtualPath.LastIndexOf('_'));
-            sizePart = sizePart.Trim('_');
-            sizePart = sizePart.Remove(sizePart.LastIndexOf('.'));
-            return new Size(int.Parse(sizePart.Split('-')[0]), int.Parse(sizePart.Split('-')[1]));
-        }
-        catch
-        {
-            return Size.Empty;
-        }
-    }
-
+    
     private async Task<string> GetSizedPhotoAbsoluteWebPath(Guid userID, Size size)
     {
         var res = await SearchInCache(userID, size);
@@ -754,11 +696,6 @@ public class UserPhotoManager
         }
     }
 
-    public async Task<string> GetTempPhotoAbsoluteWebPath(string fileName)
-    {
-        return (await GetDataStore().GetUriAsync(_tempDomainName, fileName)).ToString();
-    }
-
     public async Task<string> SaveTempPhoto(byte[] data, long maxFileSize, int maxWidth, int maxHeight)
     {
         data = TryParseImage(data, maxFileSize, new Size(maxWidth, maxHeight), out var imgFormat, out _, out _);
@@ -802,38 +739,7 @@ public class UserPhotoManager
 
         return data.ToArray();
     }
-
-    public async Task<string> GetSizedTempPhotoAbsoluteWebPath(string fileName, int newWidth, int newHeight)
-    {
-        var store = GetDataStore();
-        if (await store.IsFileAsync(_tempDomainName, fileName))
-        {
-            using var s = await store.GetReadStreamAsync(_tempDomainName, fileName);
-            using var img = Image.Load(s, out var format);
-            var imgFormat = format;
-            byte[] data;
-
-            if (img.Width != newWidth || img.Height != newHeight)
-            {
-                using var img2 = CommonPhotoManager.DoThumbnail(img, new Size(newWidth, newHeight), true, true, true);
-                data = CommonPhotoManager.SaveToBytes(img2);
-            }
-            else
-            {
-                data = CommonPhotoManager.SaveToBytes(img);
-            }
-            var widening = CommonPhotoManager.GetImgFormatName(imgFormat);
-            var index = fileName.LastIndexOf('.');
-            var fileNameWithoutExt = (index != -1) ? fileName.Substring(0, index) : fileName;
-
-            var trueFileName = fileNameWithoutExt + "_size_" + newWidth.ToString() + "-" + newHeight.ToString() + "." + widening;
-            using var stream = new MemoryStream(data);
-            return (await store.SaveAsync(_tempDomainName, trueFileName, stream)).ToString();
-        }
-
-        return GetDefaultPhotoAbsoluteWebPath(new Size(newWidth, newHeight));
-    }
-
+    
     public async Task RemoveTempPhoto(string fileName)
     {
         var index = fileName.LastIndexOf('.');
@@ -1058,14 +964,6 @@ public class ImageSizeLimitException : Exception
         };
     }
 }*/
-
-public static class SizeExtend
-{
-    public static void Deconstruct(this Size size, out int w, out int h)
-    {
-        (w, h) = (size.Width, size.Height);
-    }
-}
 
 public static class ResizeWorkerItemExtension
 {

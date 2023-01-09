@@ -65,15 +65,7 @@ public class FileSizeComment
     {
         get { return new TenantQuotaException(FileSizeExceptionString); }
     }
-
-    /// <summary>
-    /// The maximum file size is exceeded (1 MB).
-    /// </summary>
-    public Exception FileImageSizeException
-    {
-        get { return new TenantQuotaException(FileImageSizeExceptionString); }
-    }
-
+    
     public static Exception GetFileSizeException(long size)
     {
         return new TenantQuotaException(GetFileSizeExceptionString(size));
@@ -82,55 +74,6 @@ public class FileSizeComment
     public static Exception GetPersonalFreeSpaceException(long size)
     {
         return new TenantQuotaException(GetPersonalFreeSpaceExceptionString(size));
-    }
-
-    /// <summary>
-    /// Get note about maximum file size
-    /// </summary>
-    /// <returns>Note: the file size cannot exceed 25 MB</returns>
-    public string GetFileSizeNote()
-    {
-        return GetFileSizeNote(true);
-    }
-
-    /// <summary>
-    /// Get note about maximum file size
-    /// </summary>
-    /// <param name="withHtmlStrong">Highlight a word about size</param>
-    /// <returns>Note: the file size cannot exceed 25 MB</returns>
-    public string GetFileSizeNote(bool withHtmlStrong)
-    {
-        return GetFileSizeNote(Resource.FileSizeNote, withHtmlStrong);
-    }
-
-    /// <summary>
-    /// Get note about maximum file size
-    /// </summary>
-    /// <param name="note">Resource fromat of note</param>
-    /// <param name="withHtmlStrong">Highlight a word about size</param>
-    /// <returns>Note: the file size cannot exceed 25 MB</returns>
-    public string GetFileSizeNote(string note, bool withHtmlStrong)
-    {
-        return
-            string.Format(note,
-                          FilesSizeToString(_tenantExtra.MaxUploadSize),
-                          withHtmlStrong ? "<strong>" : string.Empty,
-                          withHtmlStrong ? "</strong>" : string.Empty);
-    }
-
-    /// <summary>
-    /// Get note about maximum file size of image
-    /// </summary>
-    /// <param name="note">Resource fromat of note</param>
-    /// <param name="withHtmlStrong">Highlight a word about size</param>
-    /// <returns>Note: the file size cannot exceed 1 MB</returns>
-    public string GetFileImageSizeNote(string note, bool withHtmlStrong)
-    {
-        return
-            string.Format(note,
-                          FilesSizeToString(_setupInfo.MaxImageUploadSize),
-                          withHtmlStrong ? "<strong>" : string.Empty,
-                          withHtmlStrong ? "</strong>" : string.Empty);
     }
 
     /// <summary>

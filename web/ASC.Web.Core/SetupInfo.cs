@@ -85,11 +85,6 @@ public class SetupInfo
         return regex.IsMatch(email);
     }
 
-    public static bool DisplayMobappBanner(string product)
-    {
-        return _webDisplayMobappsBanner.Contains(product, StringComparer.InvariantCultureIgnoreCase);
-    }
-
     public string ShareTwitterUrl { get; private set; }
     public string ShareFacebookUrl { get; private set; }
     public string ControlPanelUrl { get; private set; }

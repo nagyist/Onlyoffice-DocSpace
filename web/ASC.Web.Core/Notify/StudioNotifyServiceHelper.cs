@@ -58,22 +58,7 @@ public class StudioNotifyServiceHelper
     {
         SendNoticeToAsync(action, objectID, recipients, senderNames, false, args);
     }
-
-    public void SendNoticeToAsync(INotifyAction action, string objectID, IRecipient[] recipients, params ITagValue[] args)
-    {
-        SendNoticeToAsync(action, objectID, recipients, null, false, args);
-    }
-
-    public void SendNoticeToAsync(INotifyAction action, string objectID, IRecipient[] recipients, bool checkSubscription, params ITagValue[] args)
-    {
-        SendNoticeToAsync(action, objectID, recipients, null, checkSubscription, args);
-    }
-
-    public void SendNoticeAsync(INotifyAction action, string objectID, IRecipient recipient, params ITagValue[] args)
-    {
-        SendNoticeToAsync(action, objectID, new[] { recipient }, null, false, args);
-    }
-
+    
     public void SendNoticeAsync(INotifyAction action, string objectID, params ITagValue[] args)
     {
         var subscriptionSource = _studioNotifyHelper.NotifySource.GetSubscriptionProvider();
@@ -81,12 +66,7 @@ public class StudioNotifyServiceHelper
 
         SendNoticeToAsync(action, objectID, recipients, null, false, args);
     }
-
-    public void SendNoticeAsync(INotifyAction action, string objectID, IRecipient recipient, bool checkSubscription, params ITagValue[] args)
-    {
-        SendNoticeToAsync(action, objectID, new[] { recipient }, null, checkSubscription, args);
-    }
-
+    
     public void SendNoticeToAsync(INotifyAction action, string objectID, IRecipient[] recipients, string[] senderNames, bool checkSubsciption, params ITagValue[] args)
     {
         var item = new NotifyItem

@@ -35,8 +35,3 @@ public class FileUploadResult
     public string FileName { get; set; }
     public string FileURL { get; set; }
 }
-
-public interface IFileUploadHandler
-{
-    FileUploadResult ProcessUpload(HttpContext context);
-}

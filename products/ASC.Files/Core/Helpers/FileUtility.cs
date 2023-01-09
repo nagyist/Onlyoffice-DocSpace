@@ -36,8 +36,6 @@ public class FileUtilityConfiguration
         _configuration = configuration;
     }
 
-    private List<string> _extsIndexing;
-
     private List<string> _extsImagePreviewed;
     public List<string> ExtsImagePreviewed { get => _extsImagePreviewed ??= _configuration.GetSection("files:viewed-images").Get<List<string>>() ?? new List<string>(); }
 
@@ -61,8 +59,6 @@ public class FileUtilityConfiguration
             return _extsWebEdited ??= _configuration.GetSection("files:docservice:edited-docs").Get<List<string>>() ?? new List<string>();
         }
     }
-
-    private List<string> _extsWebEncrypt;
 
     private List<string> _extsWebReviewed;
     public List<string> ExtsWebReviewed

@@ -87,8 +87,6 @@ public interface ISearchHandlerEx
 {
     Guid ProductID { get; }
 
-    Guid ModuleID { get; }
-
     /// <summary>
     /// Interface log 
     /// </summary>

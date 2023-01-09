@@ -110,57 +110,7 @@ public class StudioNotifyService
             new TagValue(Tags.UserEmail, email),
             new TagValue(Tags.UserName, userName));
     }
-
-    public void SendRequestTariff(bool license, string fname, string lname, string title, string email, string phone, string ctitle, string csize, string site, string message)
-    {
-        fname = (fname ?? "").Trim();
-        ArgumentNullOrEmptyException.ThrowIfNullOrEmpty(fname);
-
-        lname = (lname ?? "").Trim();
-        ArgumentNullOrEmptyException.ThrowIfNullOrEmpty(lname);
-
-        title = (title ?? "").Trim();
-        email = (email ?? "").Trim();
-        ArgumentNullOrEmptyException.ThrowIfNullOrEmpty(email);
-
-        phone = (phone ?? "").Trim();
-        ArgumentNullOrEmptyException.ThrowIfNullOrEmpty(phone);
-
-        ctitle = (ctitle ?? "").Trim();
-        ArgumentNullOrEmptyException.ThrowIfNullOrEmpty(ctitle);
-
-        csize = (csize ?? "").Trim();
-        ArgumentNullOrEmptyException.ThrowIfNullOrEmpty(csize);
-        site = (site ?? "").Trim();
-        if (string.IsNullOrEmpty(site) && !_coreBaseSettings.CustomMode)
-        {
-            throw new ArgumentNullException(nameof(site));
-        }
-
-        message = (message ?? "").Trim();
-        if (string.IsNullOrEmpty(message) && !_coreBaseSettings.CustomMode)
-        {
-            throw new ArgumentNullException(nameof(message));
-        }
-
-        var salesEmail = _settingsManager.LoadForDefaultTenant<AdditionalWhiteLabelSettings>().SalesEmail ?? _setupInfo.SalesEmail;
-
-        var recipient = (IRecipient)new DirectRecipient(_authContext.CurrentAccount.ID.ToString(), string.Empty, new[] { salesEmail }, false);
-
-        _client.SendNoticeToAsync(license ? Actions.RequestLicense : Actions.RequestTariff,
-                             new[] { recipient },
-                             new[] { "email.sender" },
-                             new TagValue(Tags.UserName, fname),
-                             new TagValue(Tags.UserLastName, lname),
-                             new TagValue(Tags.UserPosition, title),
-                             new TagValue(Tags.UserEmail, email),
-                             new TagValue(Tags.Phone, phone),
-                             new TagValue(Tags.Website, site),
-                             new TagValue(Tags.CompanyTitle, ctitle),
-                             new TagValue(Tags.CompanySize, csize),
-                             new TagValue(Tags.Body, message));
-    }
-
+    
     #region User Password
 
     public void UserPasswordChange(UserInfo userInfo)
@@ -261,56 +211,7 @@ public class StudioNotifyService
     }
 
     #endregion
-
-    #region MailServer
-
-    public void SendMailboxCreated(List<string> toEmails, string username, string address)
-    {
-        SendMailboxCreated(toEmails, username, address, null, null, -1, -1, null);
-    }
-
-    public void SendMailboxCreated(List<string> toEmails, string username, string address, string server,
-        string encyption, int portImap, int portSmtp, string login, bool skipSettings = false)
-    {
-        var tags = new List<ITagValue>
-            {
-                new TagValue(Tags.UserName, username ?? string.Empty),
-                new TagValue(Tags.Address, address ?? string.Empty)
-            };
-
-        if (!skipSettings)
-        {
-            var link = $"{_commonLinkUtility.GetFullAbsolutePath("~").TrimEnd('/')}/addons/mail/#accounts/changepwd={address}";
-
-            tags.Add(new TagValue(Tags.MyStaffLink, link));
-            tags.Add(new TagValue(Tags.Server, server));
-            tags.Add(new TagValue(Tags.Encryption, encyption ?? string.Empty));
-            tags.Add(new TagValue(Tags.ImapPort, portImap.ToString(CultureInfo.InvariantCulture)));
-            tags.Add(new TagValue(Tags.SmtpPort, portSmtp.ToString(CultureInfo.InvariantCulture)));
-            tags.Add(new TagValue(Tags.Login, login));
-        }
-
-        _client.SendNoticeToAsync(
-        skipSettings
-            ? Actions.MailboxWithoutSettingsCreated
-            : Actions.MailboxCreated,
-        null,
-            _studioNotifyHelper.RecipientFromEmail(toEmails, false),
-        new[] { EMailSenderName });
-    }
-
-    public void SendMailboxPasswordChanged(List<string> toEmails, string username, string address)
-    {
-        _client.SendNoticeToAsync(
-        Actions.MailboxPasswordChanged,
-        null,
-            _studioNotifyHelper.RecipientFromEmail(toEmails, false),
-        new[] { EMailSenderName },
-        new TagValue(Tags.UserName, username ?? string.Empty),
-        new TagValue(Tags.Address, address ?? string.Empty));
-    }
-
-    #endregion
+    
 
     public void SendMsgMobilePhoneChange(UserInfo userInfo)
     {
@@ -555,42 +456,7 @@ public class StudioNotifyService
         TagValues.GreenButton(greenButtonText, confirmationUrl),
         new TagValue(CommonTags.Culture, user.GetCulture().Name));
     }
-
-    public void SendMsgProfileHasDeletedItself(UserInfo user)
-    {
-        var tenant = _tenantManager.GetCurrentTenant();
-        var admins = _userManager.GetUsers()
-                    .Where(u => _webItemSecurity.IsProductAdministrator(WebItemManager.PeopleProductID, u.Id));
-
-        ThreadPool.QueueUserWorkItem(_ =>
-        {
-            try
-            {
-                _tenantManager.SetCurrentTenant(tenant);
-
-                foreach (var admin in admins)
-                {
-                    var culture = string.IsNullOrEmpty(admin.CultureName) ? tenant.GetCulture() : admin.GetCulture();
-                    Thread.CurrentThread.CurrentCulture = culture;
-                    Thread.CurrentThread.CurrentUICulture = culture;
-
-                    _client.SendNoticeToAsync(
-                    Actions.ProfileHasDeletedItself,
-                    null,
-                    new IRecipient[] { admin },
-                    new[] { EMailSenderName },
-                        new TagValue(Tags.FromUserName, user.DisplayUserName(_displayUserSettingsHelper)),
-                    new TagValue(Tags.FromUserLink, GetUserProfileLink(user)));
-                }
-            }
-            catch (Exception ex)
-            {
-                _log.ErrorSendMsgProfileHasDeletedItself(ex);
-            }
-        });
-
-    }
-
+    
     public void SendMsgReassignsCompleted(Guid recipientId, UserInfo fromUser, UserInfo toUser)
     {
         _client.SendNoticeToAsync(
@@ -644,48 +510,7 @@ public class StudioNotifyService
         new TagValue(Tags.FromUserLink, GetUserProfileLink(user)),
         new TagValue(Tags.Message, message));
     }
-
-    public void SendAdminWelcome(UserInfo newUserInfo)
-    {
-        if (!_userManager.UserExists(newUserInfo))
-        {
-            return;
-        }
-
-        if (!newUserInfo.IsActive)
-        {
-            throw new ArgumentException("User is not activated yet!");
-        }
-
-        INotifyAction notifyAction;
-        var tagValues = new List<ITagValue>();
-
-        if (_tenantExtra.Enterprise)
-        {
-            var defaultRebranding = MailWhiteLabelSettings.IsDefault(_settingsManager);
-            notifyAction = defaultRebranding ? Actions.EnterpriseAdminWelcomeV1 : Actions.EnterpriseWhitelabelAdminWelcomeV1;
-        }
-        else if (_tenantExtra.Opensource)
-        {
-            notifyAction = Actions.OpensourceAdminWelcomeV1;
-            tagValues.Add(new TagValue(CommonTags.Footer, "opensource"));
-        }
-        else
-        {
-            notifyAction = Actions.SaasAdminWelcomeV1;
-            tagValues.Add(new TagValue(CommonTags.Footer, "common"));
-        }
-
-        tagValues.Add(new TagValue(Tags.UserName, newUserInfo.FirstName.HtmlEncode()));
-        tagValues.Add(new TagValue(Tags.PricingPage, _commonLinkUtility.GetFullAbsolutePath("~/payments")));
-
-        _client.SendNoticeToAsync(
-        notifyAction,
-            _studioNotifyHelper.RecipientFromEmail(newUserInfo.Email, false),
-        new[] { EMailSenderName },
-        tagValues.ToArray());
-    }
-
+    
     #region Portal Deactivation & Deletion
 
     public void SendMsgPortalDeactivation(Tenant t, string deactivateUrl, string activateUrl)
@@ -976,32 +801,12 @@ public class StudioNotifyService
     {
         SendStorageEncryptionNotify(Actions.StorageEncryptionStart, false, serverRootPath);
     }
-
-    public void SendStorageEncryptionSuccess(string serverRootPath)
-    {
-        SendStorageEncryptionNotify(Actions.StorageEncryptionSuccess, false, serverRootPath);
-    }
-
-    public void SendStorageEncryptionError(string serverRootPath)
-    {
-        SendStorageEncryptionNotify(Actions.StorageEncryptionError, true, serverRootPath);
-    }
-
+    
     public void SendStorageDecryptionStart(string serverRootPath)
     {
         SendStorageEncryptionNotify(Actions.StorageDecryptionStart, false, serverRootPath);
     }
-
-    public void SendStorageDecryptionSuccess(string serverRootPath)
-    {
-        SendStorageEncryptionNotify(Actions.StorageDecryptionSuccess, false, serverRootPath);
-    }
-
-    public void SendStorageDecryptionError(string serverRootPath)
-    {
-        SendStorageEncryptionNotify(Actions.StorageDecryptionError, true, serverRootPath);
-    }
-
+    
     private void SendStorageEncryptionNotify(INotifyAction action, bool notifyAdminsOnly, string serverRootPath)
     {
         var users = notifyAdminsOnly

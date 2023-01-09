@@ -195,11 +195,6 @@ public class StudioNotifyHelper
         return recipient != null && SubscriptionProvider.IsSubscribed(_logger, notifyAction, recipient, null);
     }
 
-    public void SubscribeToNotify(Guid userId, INotifyAction notifyAction, bool subscribe)
-    {
-        SubscribeToNotify(ToRecipient(userId), notifyAction, subscribe);
-    }
-
     public void SubscribeToNotify(IRecipient recipient, INotifyAction notifyAction, bool subscribe)
     {
         if (recipient == null)

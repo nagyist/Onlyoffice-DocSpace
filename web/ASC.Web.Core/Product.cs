@@ -46,11 +46,7 @@ public abstract class Product : IProduct
     public abstract void Init();
 
     public abstract ProductContext Context { get; }
-
-    public virtual void Shutdown() { }
-
-    public virtual string ExtendedDescription { get { return Description; } }
-
+    
     WebItemContext IWebItem.Context { get { return ((IProduct)this).Context; } }
 
     Guid IWebItem.ID { get { return ProductID; } }

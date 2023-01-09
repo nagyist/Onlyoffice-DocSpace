@@ -317,19 +317,7 @@ public sealed class UserManagerWrapper
     {
         return Guid.NewGuid().ToString();
     }
-
-    internal static string GeneratePassword(int minLength, int maxLength, string noise)
-    {
-        var length = RandomNumberGenerator.GetInt32(minLength, maxLength + 1);
-
-        var sb = new StringBuilder();
-        while (length-- > 0)
-        {
-            sb.Append(noise[RandomNumberGenerator.GetInt32(noise.Length - 1)]);
-        }
-        return sb.ToString();
-    }
-
+    
     public static string GetPasswordHelpMessage(PasswordSettings passwordSettings)
     {
         var text = new StringBuilder();
@@ -356,12 +344,6 @@ public sealed class UserManagerWrapper
 
         return text.ToString();
     }
-
-    public string GetPasswordHelpMessage()
-    {
-        return GetPasswordHelpMessage(_settingsManager.Load<PasswordSettings>());
-    }
-
     #endregion
 
     public static bool ValidateEmail(string email)

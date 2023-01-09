@@ -60,39 +60,7 @@ public class TenantLogoManager
         _cache = cache;
         _cacheNotify = cacheNotify;
     }
-
-    public async Task<string> GetFavicon(bool timeParam, bool dark)
-    {
-        string faviconPath;
-        var tenantWhiteLabelSettings = _settingsManager.Load<TenantWhiteLabelSettings>();
-        if (WhiteLabelEnabled)
-        {
-            faviconPath = await _tenantWhiteLabelSettingsHelper.GetAbsoluteLogoPath(tenantWhiteLabelSettings, WhiteLabelLogoTypeEnum.Favicon, dark);
-            if (timeParam)
-            {
-                var now = DateTime.Now;
-                faviconPath = string.Format("{0}?t={1}", faviconPath, now.Ticks);
-            }
-        }
-        else
-        {
-            faviconPath = await _tenantWhiteLabelSettingsHelper.GetAbsoluteDefaultLogoPath(WhiteLabelLogoTypeEnum.Favicon, dark);
-        }
-
-        return faviconPath;
-    }
-
-    public async Task<string> GetTopLogo(bool dark)//LogoLightSmall
-    {
-        var tenantWhiteLabelSettings = _settingsManager.Load<TenantWhiteLabelSettings>();
-
-        if (WhiteLabelEnabled)
-        {
-            return await _tenantWhiteLabelSettingsHelper.GetAbsoluteLogoPath(tenantWhiteLabelSettings, WhiteLabelLogoTypeEnum.LightSmall, dark);
-        }
-        return await _tenantWhiteLabelSettingsHelper.GetAbsoluteDefaultLogoPath(WhiteLabelLogoTypeEnum.LightSmall, dark);
-    }
-
+    
     public async Task<string> GetLogoDark(bool dark)
     {
         if (WhiteLabelEnabled)
@@ -105,30 +73,7 @@ public class TenantLogoManager
         return _tenantInfoSettingsHelper.GetAbsoluteCompanyLogoPath(_settingsManager.Load<TenantInfoSettings>());
         /***/
     }
-
-    public async Task<string> GetLogoDocsEditor(bool dark)
-    {
-        var tenantWhiteLabelSettings = _settingsManager.Load<TenantWhiteLabelSettings>();
-
-        if (WhiteLabelEnabled)
-        {
-            return await _tenantWhiteLabelSettingsHelper.GetAbsoluteLogoPath(tenantWhiteLabelSettings, WhiteLabelLogoTypeEnum.DocsEditor, dark);
-        }
-        return await _tenantWhiteLabelSettingsHelper.GetAbsoluteDefaultLogoPath(WhiteLabelLogoTypeEnum.DocsEditor, dark);
-    }
-
-    public async Task<string> GetLogoDocsEditorEmbed(bool dark)
-    {
-        var tenantWhiteLabelSettings = _settingsManager.Load<TenantWhiteLabelSettings>();
-
-        if (WhiteLabelEnabled)
-        {
-            return await _tenantWhiteLabelSettingsHelper.GetAbsoluteLogoPath(tenantWhiteLabelSettings, WhiteLabelLogoTypeEnum.DocsEditorEmbed, dark);
-        }
-        return await _tenantWhiteLabelSettingsHelper.GetAbsoluteDefaultLogoPath(WhiteLabelLogoTypeEnum.DocsEditorEmbed, dark);
-    }
-
-
+    
     public string GetLogoText()
     {
         if (WhiteLabelEnabled)

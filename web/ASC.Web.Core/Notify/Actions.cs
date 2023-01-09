@@ -35,10 +35,7 @@ public static class Actions
     public static readonly INotifyAction UserHasJoin = new NotifyAction("user_has_join", "user has join");
     public static readonly INotifyAction UserMessageToAdmin = new NotifyAction("for_admin_notify", "for_admin_notify");
     public static readonly INotifyAction UserMessageToSales = new NotifyAction("for_sales_notify", "for_sales_notify");
-    public static readonly INotifyAction RequestTariff = new NotifyAction("request_tariff", "request_tariff");
-    public static readonly INotifyAction RequestLicense = new NotifyAction("request_license", "request_license");
-
-    public static readonly INotifyAction YourProfileUpdated = new NotifyAction("profile_updated", "profile updated");
+    
     public static readonly INotifyAction JoinUsers = new NotifyAction("join", "join users");
     public static readonly INotifyAction SendWhatsNew = new NotifyAction("send_whats_new", "send whats new");
     public static readonly INotifyAction BackupCreated = new NotifyAction("backup_created", "backup created");
@@ -70,7 +67,6 @@ public static class Actions
 
     public static readonly INotifyAction MailboxCreated = new NotifyAction("mailbox_created");
     public static readonly INotifyAction MailboxWithoutSettingsCreated = new NotifyAction("mailbox_without_settings_created");
-    public static readonly INotifyAction MailboxPasswordChanged = new NotifyAction("mailbox_password_changed");
 
     public static readonly INotifyAction SaasGuestActivationV115 = new NotifyAction("saas_guest_activation_v115");
     public static readonly INotifyAction EnterpriseGuestActivationV10 = new NotifyAction("enterprise_guest_activation_v10");

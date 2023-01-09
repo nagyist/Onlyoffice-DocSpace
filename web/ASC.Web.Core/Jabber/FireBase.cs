@@ -38,16 +38,6 @@ public class FireBase : Consumer
         get { return this["firebase_projectId"]; }
     }
 
-    public string ApiKey
-    {
-        get { return this["firebase_apiKey"]; }
-    }
-
-    public string MessagingSenderId
-    {
-        get { return this["firebase_messagingSenderId"]; }
-    }
-
     public FireBase()
     {
     }

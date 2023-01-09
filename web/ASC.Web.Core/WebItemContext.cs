@@ -38,8 +38,6 @@ public class WebItemContext
 
     public Func<List<string>> AdminOpportunities { get; set; }
 
-    public string SmallIconFileName { get; set; }
-
     public string DisabledIconFileName { get; set; }
 
     public string IconFileName { get; set; }
@@ -47,8 +45,6 @@ public class WebItemContext
     public string LargeIconFileName { get; set; }
 
     public int DefaultSortOrder { get; set; }
-
-    public bool HasComplexHierarchyOfAccessRights { get; set; }
 
     public bool CanNotBeDisabled { get; set; }
 

@@ -126,12 +126,7 @@ public class CommonLinkUtility : BaseCommonLinkUtility
         return ToAbsolute("~/products/people/") +
                (empStatus == EmployeeStatus.Terminated ? "#type=disabled" : string.Empty);
     }
-
-    public string GetDepartment(Guid depId)
-    {
-        return depId != Guid.Empty ? ToAbsolute("~/products/people/#group=") + depId.ToString() : GetEmployees();
-    }
-
+    
     #region user profile link
 
     public string GetUserProfile(Guid userID)
@@ -192,16 +187,6 @@ public class CommonLinkUtility : BaseCommonLinkUtility
 
         return url;
     }
-    public string GetUserProfile(Guid user, bool absolute = true)
-    {
-        var queryParams = GetUserParamsPair(user);
-
-        var url = absolute ? ToAbsolute(VirtualAccountsPath) : AbsoluteAccountsPath;
-        url += "view/";
-        url += queryParams;
-
-        return url;
-    }
 
     #endregion
 
@@ -220,34 +205,7 @@ public class CommonLinkUtility : BaseCommonLinkUtility
 
         return productID;
     }
-
-    public Guid GetAddonID()
-    {
-        var addonID = Guid.Empty;
-
-        if (_httpContextAccessor?.HttpContext != null)
-        {
-            var addonName = GetAddonNameFromUrl(_httpContextAccessor.HttpContext.Request.Url().AbsoluteUri);
-
-            switch (addonName)
-            {
-                case "mail":
-                    addonID = WebItemManager.MailProductID;
-                    break;
-                case "talk":
-                    addonID = WebItemManager.TalkProductID;
-                    break;
-                case "calendar":
-                    addonID = WebItemManager.CalendarProductID;
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        return addonID;
-    }
-
+    
     public void GetLocationByRequest(out IProduct currentProduct, out IModule currentModule)
     {
         var currentURL = string.Empty;
@@ -265,52 +223,7 @@ public class CommonLinkUtility : BaseCommonLinkUtility
 
         GetLocationByUrl(currentURL, out currentProduct, out currentModule);
     }
-
-    public IWebItem GetWebItemByUrl(string currentURL)
-    {
-        if (!string.IsNullOrEmpty(currentURL))
-        {
-
-            var itemName = GetWebItemNameFromUrl(currentURL);
-            if (!string.IsNullOrEmpty(itemName))
-            {
-                foreach (var item in _webItemManager.GetItemsAll())
-                {
-                    var _itemName = GetWebItemNameFromUrl(item.StartURL);
-                    if (itemName.Equals(_itemName, StringComparison.InvariantCultureIgnoreCase))
-                    {
-                        return item;
-                    }
-                }
-            }
-            else
-            {
-                var urlParams = HttpUtility.ParseQueryString(new Uri(currentURL).Query);
-                var productByName = GetProductBySysName(urlParams[ParamName_ProductSysName]);
-                var pid = productByName == null ? Guid.Empty : productByName.ID;
-
-                if (pid == Guid.Empty && !string.IsNullOrEmpty(urlParams["pid"]))
-                {
-                    try
-                    {
-                        pid = new Guid(urlParams["pid"]);
-                    }
-                    catch
-                    {
-                        pid = Guid.Empty;
-                    }
-                }
-
-                if (pid != Guid.Empty)
-                {
-                    return _webItemManager[pid];
-                }
-            }
-        }
-
-        return null;
-    }
-
+    
     public void GetLocationByUrl(string currentURL, out IProduct currentProduct, out IModule currentModule)
     {
         currentProduct = null;
@@ -390,22 +303,6 @@ public class CommonLinkUtility : BaseCommonLinkUtility
         }
     }
 
-    private string GetWebItemNameFromUrl(string url)
-    {
-        var name = GetModuleNameFromUrl(url);
-        if (string.IsNullOrEmpty(name))
-        {
-            name = GetProductNameFromUrl(url);
-            if (string.IsNullOrEmpty(name))
-            {
-                return GetAddonNameFromUrl(url);
-            }
-
-        }
-
-        return name;
-    }
-
     private string GetProductNameFromUrl(string url)
     {
         try
@@ -423,25 +320,7 @@ public class CommonLinkUtility : BaseCommonLinkUtility
         }
         return null;
     }
-
-    private static string GetAddonNameFromUrl(string url)
-    {
-        try
-        {
-            var pos = url.IndexOf("/addons/", StringComparison.InvariantCultureIgnoreCase);
-            if (0 <= pos)
-            {
-                url = url.Substring(pos + 8).ToLower();
-                pos = url.IndexOf('/');
-                return 0 < pos ? url.Substring(0, pos) : url;
-            }
-        }
-        catch
-        {
-        }
-        return null;
-    }
-
+    
     private static string GetModuleNameFromUrl(string url)
     {
         try
@@ -512,16 +391,6 @@ public class CommonLinkUtility : BaseCommonLinkUtility
 
         return GetRegionalUrl(url, inCurrentCulture ? CultureInfo.CurrentCulture.TwoLetterISOLanguageName : null);
     }
-
-    public string GetFeedbackAndSupportLink(SettingsManager settingsManager, bool inCurrentCulture = true)
-    {
-        var settings = settingsManager.LoadForDefaultTenant<AdditionalWhiteLabelSettings>();
-
-        return !settings.FeedbackAndSupportEnabled || string.IsNullOrEmpty(settings.FeedbackAndSupportUrl)
-            ? string.Empty
-            : GetRegionalUrl(settings.FeedbackAndSupportUrl, inCurrentCulture ? CultureInfo.CurrentCulture.TwoLetterISOLanguageName : null);
-    }
-
     #endregion
 
     #region management links

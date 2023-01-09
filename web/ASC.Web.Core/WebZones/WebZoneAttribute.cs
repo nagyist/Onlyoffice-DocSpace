@@ -47,7 +47,3 @@ public class WebZoneAttribute : Attribute
         Type = type;
     }
 }
-
-public interface IRenderWebItem
-{
-}

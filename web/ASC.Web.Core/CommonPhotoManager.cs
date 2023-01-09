@@ -92,18 +92,7 @@ public static class CommonPhotoManager
         img.Save(memoryStream, PngFormat.Instance);
         return memoryStream.ToArray();
     }
-
-    public static byte[] SaveToBytes(Image img, IImageFormat imageFormat)
-    {
-        byte[] data;
-        using (var memoryStream = new MemoryStream())
-        {
-            img.Save(memoryStream, imageFormat);
-            data = memoryStream.ToArray();
-        }
-        return data;
-    }
-
+    
     public static string GetImgFormatName(IImageFormat format)
     {
         return format.Name.ToLower();

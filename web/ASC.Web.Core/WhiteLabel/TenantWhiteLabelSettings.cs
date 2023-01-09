@@ -670,46 +670,6 @@ public class TenantWhiteLabelSettingsHelper
             _ => new Size(0, 0),
         };
     }
-
-    private static async Task ResizeLogo(string fileName, byte[] data, long maxFileSize, Size size, IDataStore store)
-    {
-        //Resize synchronously
-        if (data == null || data.Length <= 0)
-        {
-            throw new UnknownImageFormatException("data null");
-        }
-
-        if (maxFileSize != -1 && data.Length > maxFileSize)
-        {
-            throw new ImageWeightLimitException();
-        }
-
-        try
-        {
-            using var stream = new MemoryStream(data);
-            using var img = Image.Load(stream, out var format);
-
-            if (size != img.Size())
-            {
-                using var img2 = CommonPhotoManager.DoThumbnail(img, size, false, true, false);
-                data = CommonPhotoManager.SaveToBytes(img2);
-            }
-            else
-            {
-                data = CommonPhotoManager.SaveToBytes(img);
-            }
-
-            //fileExt = CommonPhotoManager.GetImgFormatName(imgFormat);
-
-            using var stream2 = new MemoryStream(data);
-            await store.SaveAsync(fileName, stream2);
-        }
-        catch (ArgumentException error)
-        {
-            throw new UnknownImageFormatException(error.Message);
-        }
-    }
-
     #region Save for Resource replacement
 
     private static readonly List<int> _appliedTenants = new List<int>();

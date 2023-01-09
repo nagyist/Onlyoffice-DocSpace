@@ -237,32 +237,7 @@ public class CookiesManager
 
         return cookies;
     }
-
-    public void AuthenticateMeAndSetCookies(string login, string passwordHash, MessageAction action, bool session = false)
-    {
-        var isSuccess = true;
-        var cookies = string.Empty;
-        Func<int> funcLoginEvent = () => { return GetLoginEventId(action); };
-
-        try
-        {
-            cookies = _securityContext.AuthenticateMe(login, passwordHash, funcLoginEvent);
-        }
-        catch (Exception)
-        {
-            isSuccess = false;
-            throw;
-        }
-        finally
-        {
-            if (isSuccess)
-            {
-                SetCookies(CookiesType.AuthKey, cookies, session);
-                _dbLoginEventsManager.ResetCache();
-            }
-        }
-    }
-
+    
     public int GetLoginEventId(MessageAction action)
     {
         var tenantId = _tenantManager.GetCurrentTenant().Id;

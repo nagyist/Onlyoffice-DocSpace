@@ -29,67 +29,11 @@ namespace ASC.Web.Studio.Core.Statistic;
 [Scope]
 public class StatisticManager
 {
-    private static DateTime _lastSave = DateTime.UtcNow;
-    private static readonly TimeSpan _cacheTime = TimeSpan.FromMinutes(2);
-    private static readonly IDictionary<string, UserVisit> _cache = new Dictionary<string, UserVisit>();
     private readonly IDbContextFactory<WebstudioDbContext> _dbContextFactory;
 
     public StatisticManager(IDbContextFactory<WebstudioDbContext> dbContextFactory)
     {
         _dbContextFactory = dbContextFactory;
-    }
-
-    public void SaveUserVisit(int tenantID, Guid userID, Guid productID)
-    {
-        var now = DateTime.UtcNow;
-        var key = string.Format("{0}|{1}|{2}|{3}", tenantID, userID, productID, now.Date);
-
-        lock (_cache)
-        {
-            var visit = _cache.ContainsKey(key) ?
-                            _cache[key] :
-                            new UserVisit
-                            {
-                                TenantID = tenantID,
-                                UserID = userID,
-                                ProductID = productID,
-                                VisitDate = now
-                            };
-
-            visit.VisitCount++;
-            visit.LastVisitTime = now;
-            _cache[key] = visit;
-        }
-
-        if (_cacheTime < DateTime.UtcNow - _lastSave)
-        {
-            FlushCache();
-        }
-    }
-
-    public List<Guid> GetVisitorsToday(int tenantID, Guid productID)
-    {
-        using var webstudioDbContext = _dbContextFactory.CreateDbContext();
-        var users = webstudioDbContext.WebstudioUserVisit
-            .Where(r => r.VisitDate == DateTime.UtcNow.Date)
-            .Where(r => r.TenantId == tenantID)
-            .Where(r => r.ProductId == productID)
-            .OrderBy(r => r.FirstVisitTime)
-            .GroupBy(r => r.UserId)
-            .Select(r => r.Key)
-            .ToList();
-
-        lock (_cache)
-        {
-            foreach (var visit in _cache.Values)
-            {
-                if (!users.Contains(visit.UserID) && visit.VisitDate.Date == DateTime.UtcNow.Date)
-                {
-                    users.Add(visit.UserID);
-                }
-            }
-        }
-        return users;
     }
 
     public List<UserVisit> GetHitsByPeriod(int tenantID, DateTime startDate, DateTime endPeriod)
@@ -115,52 +59,5 @@ public class StatisticManager
             .GroupBy(r => new { r.UserId, r.VisitDate })
             .Select(r => new UserVisit { VisitDate = r.Key.VisitDate, UserID = r.Key.UserId })
             .ToList();
-    }
-
-    private void FlushCache()
-    {
-        if (_cache.Count == 0)
-        {
-            return;
-        }
-
-        List<UserVisit> visits;
-        lock (_cache)
-        {
-            visits = new List<UserVisit>(_cache.Values);
-            _cache.Clear();
-            _lastSave = DateTime.UtcNow;
-        }
-
-        using var webstudioDbContext = _dbContextFactory.CreateDbContext();
-        var strategy = webstudioDbContext.Database.CreateExecutionStrategy();
-
-        strategy.Execute(() =>
-        {
-            using var webstudioDbContext = _dbContextFactory.CreateDbContext();
-            using var tx = webstudioDbContext.Database.BeginTransaction(IsolationLevel.ReadUncommitted);
-
-            foreach (var v in visits)
-            {
-                var w = new DbWebstudioUserVisit
-                {
-                    TenantId = v.TenantID,
-                    ProductId = v.ProductID,
-                    UserId = v.UserID,
-                    VisitDate = v.VisitDate.Date,
-                    FirstVisitTime = v.VisitDate,
-                    VisitCount = v.VisitCount
-                };
-
-                if (v.LastVisitTime.HasValue)
-                {
-                    w.LastVisitTime = v.LastVisitTime.Value;
-                }
-
-                webstudioDbContext.WebstudioUserVisit.Add(w);
-                webstudioDbContext.SaveChanges();
-            }
-            tx.Commit();
-        });
     }
 }

@@ -231,8 +231,6 @@ public class LdapUserImporter : IDisposable
 
         return users;
     }
-
-    const string GROUP_MEMBERSHIP = "groupMembership";
     
     public bool TryLoadLDAPUsers()
     {

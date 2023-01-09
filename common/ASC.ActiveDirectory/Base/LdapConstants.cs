@@ -135,9 +135,6 @@ public sealed class LdapConstants
         /// <summary>Obj-Dist-Name</summary>
         public const string DISTINGUISHED_NAME = "distinguishedName";
 
-        /// <summary>Is-Member-Of-DL</summary>
-        public const string MEMBER_OF = "memberOf";
-
         /// <summary>Users which are members of this object</summary>
         public const string MEMBER = "member";
 

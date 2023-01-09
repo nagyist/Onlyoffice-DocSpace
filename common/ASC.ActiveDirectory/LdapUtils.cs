@@ -195,26 +195,4 @@ public static class LdapUtils
             userInfo.GetContactsString(),
             Enum.GetName(typeof(EmployeeStatus), userInfo.Status));
     }
-
-    public static string UnescapeLdapString(string ldapString)
-    {
-        var sb = new StringBuilder();
-        for (var i = 0; i < ldapString.Length; i++)
-        {
-            var ch = ldapString[i];
-            if (ch == '\\')
-            {
-                if (i + 1 < ldapString.Length && ldapString[i + 1] == ch)
-                {
-                    sb.Append(ch);
-                    i++;
-                }
-            }
-            else
-            {
-                sb.Append(ch);
-            }
-        }
-        return sb.ToString();
-    }
 }

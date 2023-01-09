@@ -64,59 +64,7 @@ public abstract class LdapHelper : IDisposable
     public abstract bool CheckGroupDn(string groupDn);
 
     public abstract List<LdapObject> GetGroups(Criteria criteria = null);
-
-    public bool UserExistsInGroup(LdapObject domainGroup, LdapObject domainUser, LdapSettings settings) // string memberString, string groupAttribute, string primaryGroupId)
-    {
-        try
-        {
-            if (domainGroup == null || domainUser == null)
-            {
-                return false;
-            }
-
-            var memberString = domainUser.GetValue(Settings.UserAttribute) as string;
-            if (string.IsNullOrEmpty(memberString))
-            {
-                return false;
-            }
-
-            var groupAttribute = settings.GroupAttribute;
-            if (string.IsNullOrEmpty(groupAttribute))
-            {
-                return false;
-            }
-
-            var userPrimaryGroupId = domainUser.GetValue(LdapConstants.ADSchemaAttributes.PRIMARY_GROUP_ID) as string;
-
-            if (!string.IsNullOrEmpty(userPrimaryGroupId) && domainGroup.Sid.EndsWith("-" + userPrimaryGroupId))
-            {
-                // Domain Users found
-                return true;
-            }
-            else
-            {
-                var members = domainGroup.GetValues(groupAttribute);
-
-                if (members.Count == 0)
-                {
-                    return false;
-                }
-
-                if (members.Any(member => memberString.Equals(member, StringComparison.InvariantCultureIgnoreCase)
-                    || member.Equals(domainUser.DistinguishedName, StringComparison.InvariantCultureIgnoreCase)))
-                {
-                    return true;
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            _logger.ErrorUserExistsInGroupFailed(e);
-        }
-
-        return false;
-    }
-
+ 
     public string GetPassword(byte[] passwordBytes)
     {
         if (passwordBytes == null || passwordBytes.Length == 0)

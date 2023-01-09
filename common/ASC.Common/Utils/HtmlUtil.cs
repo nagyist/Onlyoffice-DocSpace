@@ -37,10 +37,7 @@ public static class HtmlUtil
     private static readonly Regex _xssReplacer
         = new Regex(@"<\s*(style|script)[^>]*>(.*?)<\s*/\s*(style|script)>", RegexOptions.IgnoreCase
             | RegexOptions.CultureInvariant | RegexOptions.Compiled | RegexOptions.Singleline);
-
-    private static readonly Regex _worder =
-        new Regex(@"\S+", RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-
+    
     public static string GetText(string html, int maxLength = 0, string endBlockTemplate = "...")
     {
         var unformatedText = string.Empty;

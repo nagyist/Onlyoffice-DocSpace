@@ -102,35 +102,7 @@ public class StaticUploader
 
         return _uploadOperation.Result;
     }
-
-    public void UploadDir(string relativePath, string mappedPath)
-    {
-        if (!CanUpload())
-        {
-            return;
-        }
-
-        if (!Directory.Exists(mappedPath))
-        {
-            return;
-        }
-
-        var tenant = _tenantManager.GetCurrentTenant();
-        var key = typeof(UploadOperationProgress).FullName + tenant.Id;
-
-        lock (_locker)
-        {
-            if (_queue.GetAllTasks().Any(x => x.Id != key))
-            {
-                return;
-            }
-
-            var uploadOperation = new UploadOperationProgress(_serviceProvider, key, tenant.Id, relativePath, mappedPath);
-
-            _queue.EnqueueTask(uploadOperation);
-        }
-    }
-
+    
     public bool CanUpload()
     {
         var current = _storageSettingsHelper.DataStoreConsumer(_settingsManager.Load<CdnStorageSettings>());
@@ -146,17 +118,7 @@ public class StaticUploader
     {
         _tokenSource.Cancel();
     }
-
-    public UploadOperationProgress GetProgress(int tenantId)
-    {
-        lock (_locker)
-        {
-            var key = typeof(UploadOperationProgress).FullName + tenantId;
-
-            return _queue.PeekTask<UploadOperationProgress>(key);
-        }
-    }
-
+    
     private static string GetCacheKey(string tenantId, string path)
     {
         return typeof(UploadOperation).FullName + tenantId + path;

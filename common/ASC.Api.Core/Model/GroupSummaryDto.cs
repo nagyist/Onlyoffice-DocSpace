@@ -42,14 +42,4 @@ public class GroupSummaryDto
         Name = group.Name;
         Manager = userManager.GetUsers(userManager.GetDepartmentManager(group.ID)).UserName;
     }
-
-    public static GroupSummaryDto GetSample()
-    {
-        return new GroupSummaryDto
-        {
-            Id = Guid.Empty,
-            Manager = "Jake.Zazhitski",
-            Name = "Group Name"
-        };
-    }
 }

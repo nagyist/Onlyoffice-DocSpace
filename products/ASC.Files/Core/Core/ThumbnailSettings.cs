@@ -78,13 +78,6 @@ public class ThumbnailSettings
         }
     }
 
-    private int _sqlMaxResults;
-    public int SqlMaxResults
-    {
-        get => _sqlMaxResults != 0 ? _sqlMaxResults : 1000;
-        set => _sqlMaxResults = value;
-    }
-
     #endregion
 
 

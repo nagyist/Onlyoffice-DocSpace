@@ -36,17 +36,6 @@ public class EmployeeDto
     public string AvatarSmall { get; set; }
     public string ProfileUrl { get; set; }
     public bool HasAvatar { get; set; }
-
-    public static EmployeeDto GetSample()
-    {
-        return new EmployeeDto
-        {
-            Id = Guid.Empty,
-            DisplayName = "Mike Zanyatski",
-            Title = "Manager",
-            AvatarSmall = "url to small avatar",
-        };
-    }
 }
 
 [Scope]

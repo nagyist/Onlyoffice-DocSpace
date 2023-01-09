@@ -28,8 +28,6 @@ namespace ASC.Feed;
 
 public static class Constants
 {
-    public const string FilesDbId = "files";
-
     #region Modules
 
     public const string BookmarksModule = "bookmarks";

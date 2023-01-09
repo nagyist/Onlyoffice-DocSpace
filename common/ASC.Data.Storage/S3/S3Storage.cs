@@ -67,12 +67,7 @@ public class S3Storage : BaseStorage
         : base(tempStream, tenantManager, pathUtils, emailValidationKeyProvider, httpContextAccessor, factory, options, clientFactory)
     {
     }
-
-    public Uri GetUriInternal(string path)
-    {
-        return new Uri(SecureHelper.IsSecure(_httpContextAccessor?.HttpContext, _options) ? _bucketSSlRoot : _bucketRoot, path);
-    }
-
+    
     public Uri GetUriShared(string domain, string path)
     {
         return new Uri(SecureHelper.IsSecure(_httpContextAccessor?.HttpContext, _options) ? _bucketSSlRoot : _bucketRoot, MakePath(domain, path));

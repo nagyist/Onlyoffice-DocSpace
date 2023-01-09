@@ -51,9 +51,7 @@ public class Settings
 
     private int? _period;
     private long? _maxContentLength;
-    private long? _maxFileSize;
     private int? _threads;
-    private bool? _httpCompression;
 
     public Settings(ConfigurationExtension configuration)
     {

@@ -1112,6 +1112,8 @@ public class FileStorageService<T> //: IFileStorageService
             }
         }
 
+        await _socketManager.UpdateFileAsync(file);
+
         return new KeyValuePair<File<T>, IAsyncEnumerable<File<T>>>(file, GetFileHistoryAsync(fileId));
     }
 
@@ -1174,6 +1176,8 @@ public class FileStorageService<T> //: IFileStorageService
                 file.FolderIdDisplay = await _globalFolderHelper.GetFolderShareAsync<T>();
             }
         }
+
+        await _socketManager.UpdateFileAsync(file);
 
         return file;
     }

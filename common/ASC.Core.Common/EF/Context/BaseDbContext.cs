@@ -92,6 +92,11 @@ public static class BaseDbContextExtension
         services.AddPooledDbContextFactory<T>(OptionsAction);
     }
 
+    public static void AddBaseDbContext<T>(this IServiceCollection services) where T : DbContext
+    {
+        services.AddDbContext<T>(OptionsAction);
+    }
+
     public static T AddOrUpdate<T, TContext>(this TContext b, DbSet<T> dbSet, T entity) where T : BaseEntity where TContext : DbContext
     {
         var keys = entity.GetKeys();

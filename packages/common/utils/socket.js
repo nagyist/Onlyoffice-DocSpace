@@ -5,7 +5,7 @@ let callbacks = [];
 
 class SocketIOHelper {
   socketUrl = null;
-
+  subscriptions = [];
   constructor(url) {
     if (!url) return;
 
@@ -43,6 +43,22 @@ class SocketIOHelper {
 
   emit = ({ command, data, room = null }) => {
     if (!this.isEnabled) return;
+
+    if (command === "subscribe") {
+      if (data.roomParts instanceof Array)
+        data.roomParts.forEach((el) => this.subscriptions.push(el));
+      else this.subscriptions.push(data.roomParts);
+    }
+    if (command === "unsubscribe") {
+      const roomParts =
+        data.roomParts instanceof Array ? data.roomParts : [data.roomParts];
+
+      roomParts.forEach((el) => {
+        const index = this.subscriptions.indexOf(el);
+
+        if (index > 0) this.subscriptions.splice(index, 1);
+      });
+    }
 
     if (!client.connected) {
       client.on("connect", () => {

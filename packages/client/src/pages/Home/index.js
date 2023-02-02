@@ -33,6 +33,7 @@ import RoomsFilter from "@docspace/common/api/rooms/filter";
 import { getCategoryType } from "SRC_DIR/helpers/utils";
 import { CategoryType } from "SRC_DIR/helpers/constants";
 import { InfoPanelBodyContent, InfoPanelHeaderContent } from "./InfoPanel";
+import RoomNoAccessContainer from "../../components/EmptyContainer/RoomNoAccessContainer";
 
 class PureHome extends React.Component {
   componentDidMount() {
@@ -493,11 +494,25 @@ class PureHome extends React.Component {
       withPaging,
       isEmptyPage,
       isLoadedEmptyPage,
+      isNoAccessToFolder,
     } = this.props;
 
     if (window.parent && !frameConfig) {
       frameCallCommand("setConfig");
     }
+
+    if (isNoAccessToFolder)
+      return (
+        <Section>
+          <Section.SectionBody>
+            <Consumer>
+              {(context) => (
+                <RoomNoAccessContainer sectionWidth={context.sectionWidth} />
+              )}
+            </Consumer>
+          </Section.SectionBody>
+        </Section>
+      );
 
     return (
       <>
@@ -632,6 +647,7 @@ export default inject(
       isLoadedEmptyPage,
       disableDrag,
       isErrorRoomNotAvailable,
+      isNoAccessToFolder,
     } = filesStore;
 
     const { gallerySelected } = oformsStore;
@@ -781,6 +797,7 @@ export default inject(
       withPaging,
       isEmptyPage,
       isLoadedEmptyPage,
+      isNoAccessToFolder,
     };
   }
 )(withRouter(observer(Home)));

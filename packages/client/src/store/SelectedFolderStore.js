@@ -115,16 +115,30 @@ class SelectedFolderStore {
     const { socketHelper } = this.settingsStore;
 
     if (this.id !== null) {
+      console.log(
+        "[WS] unsubscribe to selected folders",
+        this.pathParts.map((f) => `DIR-${f}`)
+      );
       socketHelper.emit({
         command: "unsubscribe",
-        data: { roomParts: `DIR-${this.id}`, individual: true },
+        data: {
+          roomParts: this.pathParts.map((f) => `DIR-${f}`),
+          individual: true,
+        },
       });
     }
 
     if (selectedFolder) {
+      console.log(
+        "[WS] subscribe to selected folder",
+        selectedFolder.pathParts.map((f) => `DIR-${f}`)
+      );
       socketHelper.emit({
         command: "subscribe",
-        data: { roomParts: `DIR-${selectedFolder.id}`, individual: true },
+        data: {
+          roomParts: selectedFolder.pathParts.map((f) => `DIR-${f}`),
+          individual: true,
+        },
       });
     }
 
@@ -141,6 +155,10 @@ class SelectedFolderStore {
         }
       }
     }
+
+    const { subscriptions } = this.settingsStore.socketHelper;
+
+    console.log("socket subscriptions", { subscriptions });
   };
 }
 

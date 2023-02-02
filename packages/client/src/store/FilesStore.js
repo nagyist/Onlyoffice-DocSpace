@@ -117,6 +117,7 @@ class FilesStore {
 
   isLoadedEmptyPage = false;
 
+  isNoAccessToFolder = false;
   constructor(
     authStore,
     selectedFolderStore,
@@ -299,7 +300,12 @@ class FilesStore {
             });
           } else if (opt?.type === "folder" && opt?.id) {
             const foundIndex = this.folders.findIndex((x) => x.id === opt?.id);
-            if (foundIndex == -1) return;
+           
+            if (foundIndex == -1) {
+          
+              this.debounceRemoveParentFolder(opt.id);
+              return;
+            }
 
             console.log(
               "[WS] delete folder",
@@ -428,6 +434,10 @@ class FilesStore {
 
   debounceRemoveFolders = debounce(() => {
     this.removeFiles(null, this.tempActionFoldersIds);
+  }, 1000);
+
+  debounceRemoveParentFolder = debounce((id) => {
+    this.removeFiles(null, id);
   }, 1000);
 
   setIsErrorRoomNotAvailable = (state) => {
@@ -966,6 +976,8 @@ class FilesStore {
     withSubfolders = false,
     clearSelection = true
   ) => {
+    this.setIsNoAccessToFolder(false);
+
     const { setSelectedNode } = this.treeFoldersStore;
 
     if (this.isLoading) {
@@ -1096,6 +1108,7 @@ class FilesStore {
           pathParts: data.pathParts,
           navigationPath: navigationPath,
           ...{ new: data.new },
+          pathParts: data.pathParts,
         });
 
         const selectedFolder = {
@@ -2058,8 +2071,13 @@ class FilesStore {
         showToast && showToast();
       })
       .catch((err) => {
+        if (err?.response?.status === 403) {
+          console.log("403");
+
+          this.setIsNoAccessToFolder(true);
+          return;
+        }
         toastr.error(err);
-        console.log("Need page reload");
       })
       .finally(() => {
         this.setOperationAction(false);
@@ -2067,6 +2085,9 @@ class FilesStore {
       });
   };
 
+  setIsNoAccessToFolder = (bool) => {
+    this.isNoAccessToFolder = bool;
+  };
   updateFile = (fileId, title) => {
     return api.files
       .updateFile(fileId, title)

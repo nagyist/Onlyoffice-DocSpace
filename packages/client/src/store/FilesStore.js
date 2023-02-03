@@ -300,9 +300,8 @@ class FilesStore {
             });
           } else if (opt?.type === "folder" && opt?.id) {
             const foundIndex = this.folders.findIndex((x) => x.id === opt?.id);
-           
+
             if (foundIndex == -1) {
-          
               this.debounceRemoveParentFolder(opt.id);
               return;
             }
@@ -437,7 +436,7 @@ class FilesStore {
   }, 1000);
 
   debounceRemoveParentFolder = debounce((id) => {
-    this.removeFiles(null, id);
+    this.removeFiles(null, [id]);
   }, 1000);
 
   setIsErrorRoomNotAvailable = (state) => {
@@ -2049,6 +2048,7 @@ class FilesStore {
     api.files
       .getFolder(newFilter.folder, newFilter)
       .then((res) => {
+        console.log("RES", res);
         const files = fileIds
           ? this.files.filter((x) => !fileIds.includes(x.id))
           : this.files;
@@ -2061,7 +2061,7 @@ class FilesStore {
 
         const filter = this.filter.clone();
         filter.total = res.total;
-
+        console.log("filter", filter);
         runInAction(() => {
           this.setFilter(filter);
           this.setFiles(newFiles);

@@ -23,7 +23,6 @@ const RoomNoAccessContainer = (props) => {
     categoryType,
     isEmptyPage,
     sectionWidth,
-    setIsNoAccessToDeletedFolder,
   } = props;
 
   const descriptionRoomNoAccess = t("NoAccessRoomDescription");
@@ -47,8 +46,6 @@ const RoomNoAccessContainer = (props) => {
         const url = getCategoryUrl(categoryType, filter.folder);
 
         const pathname = `${url}?${filterParamsStr}`;
-
-        setIsNoAccessToDeletedFolder(false);
 
         history.push(
           combineUrl(
@@ -102,7 +99,6 @@ export default inject(({ filesStore }) => {
     categoryType,
     setAlreadyFetchingRooms,
     isEmptyPage,
-    setIsNoAccessToDeletedFolder,
   } = filesStore;
   return {
     setIsLoading,
@@ -110,6 +106,5 @@ export default inject(({ filesStore }) => {
     categoryType,
     setAlreadyFetchingRooms,
     isEmptyPage,
-    setIsNoAccessToDeletedFolder,
   };
 })(withTranslation(["Files"])(observer(RoomNoAccessContainer)));

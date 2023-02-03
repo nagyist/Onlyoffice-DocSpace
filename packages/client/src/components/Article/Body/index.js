@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import styled from "styled-components";
 import { inject, observer } from "mobx-react";
 import { withRouter } from "react-router";
@@ -46,7 +46,13 @@ const ArticleBodyContent = (props) => {
     filesIsLoading,
     roomsFolderId,
     archiveFolderId,
+    history,
+    setIsNoAccessToFolder,
   } = props;
+
+  useEffect(() => {
+    setIsNoAccessToFolder(false);
+  }, [history.location.pathname]);
 
   const [disableBadgeClick, setDisableBadgeClick] = React.useState(false);
 
@@ -206,6 +212,7 @@ export default inject(
       isLoaded,
       categoryType,
       filesIsLoading,
+      setIsNoAccessToFolder,
     } = filesStore;
 
     const { roomsFolderId, archiveFolderId } = treeFoldersStore;
@@ -263,6 +270,7 @@ export default inject(
 
       categoryType,
       filesIsLoading,
+      setIsNoAccessToFolder,
     };
   }
 )(

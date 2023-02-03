@@ -975,8 +975,6 @@ class FilesStore {
     withSubfolders = false,
     clearSelection = true
   ) => {
-    this.setIsNoAccessToFolder(false);
-
     const { setSelectedNode } = this.treeFoldersStore;
 
     if (this.isLoading) {

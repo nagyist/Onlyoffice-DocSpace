@@ -2047,7 +2047,6 @@ class FilesStore {
     api.files
       .getFolder(newFilter.folder, newFilter)
       .then((res) => {
-        console.log("RES", res);
         const files = fileIds
           ? this.files.filter((x) => !fileIds.includes(x.id))
           : this.files;
@@ -2060,7 +2059,7 @@ class FilesStore {
 
         const filter = this.filter.clone();
         filter.total = res.total;
-        console.log("filter", filter);
+
         runInAction(() => {
           this.setFilter(filter);
           this.setFiles(newFiles);

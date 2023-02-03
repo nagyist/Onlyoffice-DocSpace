@@ -117,7 +117,8 @@ class FilesStore {
 
   isLoadedEmptyPage = false;
 
-  isNoAccessToFolder = false;
+  isNoAccessToDeletedFolder = false;
+
   constructor(
     authStore,
     selectedFolderStore,
@@ -2072,7 +2073,7 @@ class FilesStore {
         if (err?.response?.status === 403) {
           console.log("403");
 
-          this.setIsNoAccessToFolder(true);
+          this.setIsNoAccessToDeletedFolder(true);
           return;
         }
         toastr.error(err);
@@ -2083,8 +2084,8 @@ class FilesStore {
       });
   };
 
-  setIsNoAccessToFolder = (bool) => {
-    this.isNoAccessToFolder = bool;
+  setIsNoAccessToDeletedFolder = (bool) => {
+    this.isNoAccessToDeletedFolder = bool;
   };
   updateFile = (fileId, title) => {
     return api.files

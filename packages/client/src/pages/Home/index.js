@@ -494,14 +494,14 @@ class PureHome extends React.Component {
       withPaging,
       isEmptyPage,
       isLoadedEmptyPage,
-      isNoAccessToFolder,
+      isNoAccessToDeletedFolder,
     } = this.props;
 
     if (window.parent && !frameConfig) {
       frameCallCommand("setConfig");
     }
 
-    if (isNoAccessToFolder)
+    if (isNoAccessToDeletedFolder)
       return (
         <Section>
           <Section.SectionBody>
@@ -647,7 +647,7 @@ export default inject(
       isLoadedEmptyPage,
       disableDrag,
       isErrorRoomNotAvailable,
-      isNoAccessToFolder,
+      isNoAccessToDeletedFolder,
     } = filesStore;
 
     const { gallerySelected } = oformsStore;
@@ -797,7 +797,7 @@ export default inject(
       withPaging,
       isEmptyPage,
       isLoadedEmptyPage,
-      isNoAccessToFolder,
+      isNoAccessToDeletedFolder,
     };
   }
 )(withRouter(observer(Home)));

@@ -47,11 +47,11 @@ const ArticleBodyContent = (props) => {
     roomsFolderId,
     archiveFolderId,
     history,
-    setIsNoAccessToFolder,
+    setIsNoAccessToDeletedFolder,
   } = props;
 
   useEffect(() => {
-    setIsNoAccessToFolder(false);
+    setIsNoAccessToDeletedFolder(false);
   }, [history.location.pathname]);
 
   const [disableBadgeClick, setDisableBadgeClick] = React.useState(false);
@@ -212,7 +212,7 @@ export default inject(
       isLoaded,
       categoryType,
       filesIsLoading,
-      setIsNoAccessToFolder,
+      setIsNoAccessToDeletedFolder,
     } = filesStore;
 
     const { roomsFolderId, archiveFolderId } = treeFoldersStore;
@@ -270,7 +270,7 @@ export default inject(
 
       categoryType,
       filesIsLoading,
-      setIsNoAccessToFolder,
+      setIsNoAccessToDeletedFolder,
     };
   }
 )(

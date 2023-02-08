@@ -51,6 +51,7 @@ class PureHome extends React.Component {
       getFileInfo,
       gallerySelected,
       setIsUpdatingRowItem,
+      setIsPreview,
     } = this.props;
 
     if (!window.location.href.includes("#preview")) {
@@ -74,6 +75,7 @@ class PureHome extends React.Component {
               data.viewAccessability.MediaView;
             const file = { ...data, canOpenPlayer };
             setToPreviewFile(file, true);
+            setIsPreview(true);
           })
           .catch((err) => {
             toastr.error(err);
@@ -305,7 +307,7 @@ class PureHome extends React.Component {
           );
         }
         return toastr.success(
-          <Trans t={t} i18nKey="CopyItem" ns="Filesы">
+          <Trans t={t} i18nKey="CopyItem" ns="Files">
             {{ title }} copied
           </Trans>
         );
@@ -647,6 +649,7 @@ export default inject(
       isLoadedEmptyPage,
       disableDrag,
       isErrorRoomNotAvailable,
+      setIsPreview,
       isNoAccessToDeletedFolder,
     } = filesStore;
 
@@ -772,6 +775,7 @@ export default inject(
       setHeaderVisible,
       personal,
       setToPreviewFile,
+      setIsPreview,
       playlist,
 
       getFileInfo,

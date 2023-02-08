@@ -1693,6 +1693,7 @@ const Base = {
   },
 
   toggleButton: {
+    fillColorDefault: "#4781D1",
     fillColorOff: "#D0D5DA",
     hoverFillColorOff: "#A3A9AE",
     fillCircleColor: white,
@@ -2301,6 +2302,8 @@ const Base = {
       color: black,
       textColor: gray,
     },
+
+    animationColor: "rgba(82, 153, 224, 0.16)",
   },
 
   advancedSelector: {

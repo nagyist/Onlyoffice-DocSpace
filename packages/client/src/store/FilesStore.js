@@ -2172,6 +2172,8 @@ class FilesStore {
       (newFilter.page + 1) * newFilter.pageCount - deleteCount
     );
 
+    if (newFilter.total <= newFilter.pageCount) return;
+
     newFilter.startIndex =
       (newFilter.page + 1) * newFilter.pageCount - deleteCount;
     newFilter.pageCount = deleteCount;

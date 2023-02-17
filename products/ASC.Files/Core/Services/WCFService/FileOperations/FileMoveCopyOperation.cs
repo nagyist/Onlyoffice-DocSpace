@@ -311,6 +311,8 @@ class FileMoveCopyOperation<T> : FileOperation<FileMoveCopyOperationData<T>, T>
                                 needToMark.Add(newFolder);
                             }
 
+                            await socketManager.CreateFolderAsync(newFolder);
+
                             if (ProcessedFolder(folderId))
                             {
                                 sb.Append($"folder_{newFolder.Id}{SplitChar}");
@@ -358,6 +360,8 @@ class FileMoveCopyOperation<T> : FileOperation<FileMoveCopyOperationData<T>, T>
                                         needToMark.Add(newFolder);
                                     }
 
+                                    await socketManager.CreateFolderAsync(newFolder);
+
                                     if (ProcessedFolder(folderId))
                                     {
                                         sb.Append($"folder_{newFolderId}{SplitChar}");
@@ -377,12 +381,16 @@ class FileMoveCopyOperation<T> : FileOperation<FileMoveCopyOperationData<T>, T>
 
                                     newFolderId = await FolderDao.MoveFolderAsync(folder.Id, toFolderId, CancellationToken);
                                     newFolder = await folderDao.GetFolderAsync(newFolderId);
+
                                     filesMessageService.Send(folder, toFolder, _headers, MessageAction.FolderMovedWithOverwriting, folder.Title, toFolder.Title);
 
                                     if (isToFolder)
                                     {
                                         needToMark.Add(newFolder);
                                     }
+
+                                    await socketManager.CreateFolderAsync(newFolder);
+                                    await socketManager.DeleteFolder(folder);
 
                                     if (ProcessedFolder(folderId))
                                     {
@@ -465,17 +473,29 @@ class FileMoveCopyOperation<T> : FileOperation<FileMoveCopyOperationData<T>, T>
                                 filesMessageService.Send(folder, toFolder, _headers, MessageAction.FolderMovedFrom, folder.Title, parentFolder.Title, toFolder.Title);
                             }
 
-
-                            if (isToFolder && toFolder.FolderType != FolderType.Archive)
+                            if (isToFolder)
                             {
                                 if (isThirdPartyRoom)
                                 {
-                                    needToMark.Add(folder);
+                                    await socketManager.CreateFolderAsync(folder);
+                                    await socketManager.DeleteFolder(folder);
+
+                                    if (toFolder.FolderType != FolderType.Archive)
+                                    {
+                                        needToMark.Add(folder);
+                                    }
                                 }
                                 else
                                 {
                                     newFolder = await folderDao.GetFolderAsync(newFolderId);
-                                    needToMark.Add(newFolder);
+
+                                    await socketManager.CreateFolderAsync(newFolder);
+                                    await socketManager.DeleteFolder(folder);
+                                    
+                                    if(toFolder.FolderType != FolderType.Archive)
+                                    {
+                                        needToMark.Add(newFolder);
+                                    }
                                 }
                             }
 

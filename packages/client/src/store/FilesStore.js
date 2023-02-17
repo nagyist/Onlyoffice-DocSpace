@@ -1066,6 +1066,50 @@ class FilesStore {
     return this.fetchFiles(this.selectedFolderStore.id, this.filter);
   };
 
+  getNavigationPath = async (data) => {
+    return await Promise.all(
+      data.pathParts.map(async (folder) => {
+        const { Rooms, Archive } = FolderType;
+
+        let folderId = folder;
+
+        if (
+          data.current.providerKey &&
+          data.current.rootFolderType === Rooms &&
+          this.treeFoldersStore.myRoomsId
+        ) {
+          folderId = this.treeFoldersStore.myRoomsId;
+        }
+
+        const folderInfo =
+          data.current.id === folderId
+            ? data.current
+            : await api.files.getFolderInfo(folderId);
+
+        const {
+          id,
+          title,
+          roomType,
+          rootFolderId,
+          rootFolderType,
+        } = folderInfo;
+
+        const isRootRoom =
+          rootFolderId === id &&
+          (rootFolderType === Rooms || rootFolderType === Archive);
+
+        return {
+          id: folderId,
+          title,
+          isRoom: !!roomType,
+          isRootRoom,
+        };
+      })
+    ).then((res) => {
+      return res.filter((item, index) => index !== res.length - 1).reverse();
+    });
+  };
+
   fetchFiles = (
     folderId,
     filter,
@@ -1158,49 +1202,7 @@ class FilesStore {
           }
         }
 
-        const navigationPath = await Promise.all(
-          data.pathParts.map(async (folder) => {
-            const { Rooms, Archive } = FolderType;
-
-            let folderId = folder;
-
-            if (
-              data.current.providerKey &&
-              data.current.rootFolderType === Rooms &&
-              this.treeFoldersStore.myRoomsId
-            ) {
-              folderId = this.treeFoldersStore.myRoomsId;
-            }
-
-            const folderInfo =
-              data.current.id === folderId
-                ? data.current
-                : await api.files.getFolderInfo(folderId);
-
-            const {
-              id,
-              title,
-              roomType,
-              rootFolderId,
-              rootFolderType,
-            } = folderInfo;
-
-            const isRootRoom =
-              rootFolderId === id &&
-              (rootFolderType === Rooms || rootFolderType === Archive);
-
-            return {
-              id: folderId,
-              title,
-              isRoom: !!roomType,
-              isRootRoom,
-            };
-          })
-        ).then((res) => {
-          return res
-            .filter((item, index) => index !== res.length - 1)
-            .reverse();
-        });
+        const navigationPath = await this.getNavigationPath(data);
 
         this.selectedFolderStore.setSelectedFolder({
           folders: data.folders,
@@ -2134,9 +2136,41 @@ class FilesStore {
     this.scrollToTop();
   };
 
+  updateFolderLocation = async (data, filter) => {
+    const { setSelectedNode } = this.treeFoldersStore;
+
+    setSelectedNode([data.current.rootFolderId + ""]);
+
+    this.categoryType = getCategoryTypeByFolderType(
+      data.current.rootFolderType,
+      data.current.parentId
+    );
+
+    const navigationPath = await this.getNavigationPath(data);
+
+    this.selectedFolderStore.setSelectedFolder({
+      folders: data.folders,
+      ...data.current,
+      pathParts: data.pathParts,
+      navigationPath: navigationPath,
+      ...{ new: data.new },
+      pathParts: data.pathParts,
+    });
+
+    this.setFilterUrl(filter);
+  };
   removeFiles = (fileIds, folderIds, showToast) => {
+    const { rootFolderId } = this.selectedFolderStore;
+
     const newFilter = this.filter.clone();
     const deleteCount = (fileIds?.length ?? 0) + (folderIds?.length ?? 0);
+    console.log(
+      "newFilter.page",
+      newFilter.page,
+      newFilter.pageCount,
+      deleteCount,
+      (newFilter.page + 1) * newFilter.pageCount - deleteCount
+    );
 
     newFilter.startIndex =
       (newFilter.page + 1) * newFilter.pageCount - deleteCount;
@@ -2157,11 +2191,16 @@ class FilesStore {
 
         const filter = this.filter.clone();
         filter.total = res.total;
-
+        console.log("res", res);
         runInAction(() => {
           this.setFilter(filter);
           this.setFiles(newFiles);
           this.setFolders(newFolders);
+          console.log("rootFolderId", rootFolderId, res.current.rootFolderId);
+
+          //if (rootFolderId !== res.current.rootFolderId) {
+          this.updateFolderLocation(res, filter);
+          // }
         });
 
         showToast && showToast();

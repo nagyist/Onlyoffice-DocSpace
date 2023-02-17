@@ -444,6 +444,7 @@ class FilesStore {
     this.removeFiles(null, this.tempActionFoldersIds);
   }, 1000);
 
+  // TODO: use removeFolders
   debounceRemoveParentFolder = debounce((id) => {
     this.removeFiles(null, [id]);
   }, 1000);
@@ -2160,19 +2161,27 @@ class FilesStore {
     this.setFilterUrl(filter);
   };
   removeFiles = (fileIds, folderIds, showToast) => {
-    const { rootFolderId } = this.selectedFolderStore;
-
     const newFilter = this.filter.clone();
     const deleteCount = (fileIds?.length ?? 0) + (folderIds?.length ?? 0);
-    console.log(
-      "newFilter.page",
-      newFilter.page,
-      newFilter.pageCount,
-      deleteCount,
-      (newFilter.page + 1) * newFilter.pageCount - deleteCount
-    );
 
-    if (newFilter.total <= newFilter.pageCount) return;
+    if (newFilter.total <= newFilter.pageCount) {
+      const files = fileIds
+        ? this.files.filter((x) => !fileIds.includes(x.id))
+        : this.files;
+      const folders = folderIds
+        ? this.folders.filter((x) => !folderIds.includes(x.id))
+        : this.folders;
+
+      newFilter.total -= deleteCount;
+
+      runInAction(() => {
+        this.setFilter(newFilter);
+        this.setFiles(files);
+        this.setFolders(folders);
+      });
+
+      return;
+    }
 
     newFilter.startIndex =
       (newFilter.page + 1) * newFilter.pageCount - deleteCount;
@@ -2193,16 +2202,10 @@ class FilesStore {
 
         const filter = this.filter.clone();
         filter.total = res.total;
-        console.log("res", res);
         runInAction(() => {
           this.setFilter(filter);
           this.setFiles(newFiles);
           this.setFolders(newFolders);
-          console.log("rootFolderId", rootFolderId, res.current.rootFolderId);
-
-          //if (rootFolderId !== res.current.rootFolderId) {
-          this.updateFolderLocation(res, filter);
-          // }
         });
 
         showToast && showToast();
@@ -2220,6 +2223,14 @@ class FilesStore {
         this.setOperationAction(false);
         this.setTempActionFilesIds([]);
       });
+  };
+
+  removeFolders = () => {
+    const { rootFolderId } = this.selectedFolderStore;
+
+    //if (rootFolderId !== res.current.rootFolderId) {
+    this.updateFolderLocation(res, filter);
+    // }
   };
 
   setIsNoAccessToDeletedFolder = (bool) => {

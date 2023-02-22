@@ -174,7 +174,8 @@ public abstract class BaseStartup
 
             config.OutputFormatters.RemoveType<XmlSerializerOutputFormatter>();
             config.OutputFormatters.Add(new XmlOutputFormatter());
-        });
+        })
+        .AddApiExplorer();
 
         var authBuilder = services.AddAuthentication(options =>
         {
@@ -258,6 +259,8 @@ public abstract class BaseStartup
             services.AddStartupTask<WarmupServicesStartupTask>()
                     .TryAddSingleton(services);
         }
+
+        services.AddSwaggerGen();
     }
 
     public static IEnumerable<Assembly> GetAutoMapperProfileAssemblies()
@@ -288,11 +291,16 @@ public abstract class BaseStartup
 
         app.UseAuthorization();
 
+        app.UseSwagger();
+        app.UseSwaggerUI();
+
         app.UseCultureMiddleware();
 
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapCustom();
+
+            endpoints.MapSwagger();
 
             endpoints.MapHealthChecks("/health", new HealthCheckOptions()
             {

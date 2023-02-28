@@ -91,6 +91,24 @@ declare global {
     themes: ITheme[];
   }
 
+  interface ILogoPath {
+    light: string;
+    dark?: string;
+  }
+
+  interface ILogoSize {
+    height: number;
+    width: number;
+    isEmpty: boolean;
+  }
+
+  interface EnumLogoItem {
+    name: string;
+    path: ILogoPath;
+    size: ILogoSize;
+  }
+  interface ILogoUrls extends Array<EnumLogoItem> { }
+
   interface IError {
     status: number;
     standalone: boolean;
@@ -105,7 +123,7 @@ declare global {
     match?: MatchType;
     currentColorScheme?: ITheme;
     isAuth?: boolean;
-    logoUrls?: any;
+    logoUrls?: ILogoUrls;
     error?: IError;
   }
 

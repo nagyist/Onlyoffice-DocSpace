@@ -51,8 +51,8 @@ export const getInitialState = async (
     providers: ProvidersType,
     capabilities: ICapabilities,
     availableThemes: IThemes,
-    isAuth: any,
-    logoUrls: any;
+    isAuth: boolean,
+    logoUrls: ILogoUrls;
 
   const baseSettings = [
     getSettings(),

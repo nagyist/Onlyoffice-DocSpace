@@ -148,8 +148,10 @@ services:
       - "8081"
       - "8099"
       - "8092"
+      - "8093"
     ports:
       - 8092:8092
+      - 8093:8093
     depends_on:
       - onlyoffice-backup-background-tasks
       - onlyoffice-backup
@@ -194,6 +196,7 @@ services:
     volumes:
       - proxy_log:/var/log/nginx
       - ${ROOT_DIR}/public:/var/www/public
+      - ${ROOT_DIR}/Certs:/usr/certs
 
 networks:
   default:

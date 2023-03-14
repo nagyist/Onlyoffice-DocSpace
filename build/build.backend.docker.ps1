@@ -1,3 +1,8 @@
+Param (
+  [switch]$https,
+  [switch]$no_ds
+)
+
 $PSversionMajor = $PSVersionTable.PSVersion | sort-object major | ForEach-Object { $_.major }
 $PSversionMinor = $PSVersionTable.PSVersion | sort-object minor | ForEach-Object { $_.minor }
 
@@ -12,7 +17,7 @@ $BranchExistRemote = git ls-remote --heads origin $Branch
 if (-not $BranchExistRemote) {
   Write-Error "The current branch does not exist in the remote repository. Please push changes."
   exit
-}
+} 
 
 $RootDir = Split-Path -Parent $PSScriptRoot
 $DockerDir = ($RootDir + "\build\install\docker")
@@ -52,10 +57,9 @@ Write-Host "Run environments (redis, rabbitmq)" -ForegroundColor Green
 $Env:DOCKERFILE = $DockerFile
 docker compose -f ($DockerDir + "\redis.yml") -f ($DockerDir + "\rabbitmq.yml") up -d
 
-if ($args[0] -eq "--no_ds") {
+if ($no_ds) {
   Write-Host "SKIP Document server" -ForegroundColor Blue
-}
-else { 
+} else { 
   Write-Host "Run Document server" -ForegroundColor Green
   $Env:DOCUMENT_SERVER_IMAGE_NAME = "onlyoffice/documentserver-de:latest"
   $Env:ROOT_DIR = $RootDir
@@ -79,3 +83,23 @@ docker compose -f ($DockerDir + "\migration-runner.yml") up -d
 
 # Start all backend services"
 & "$PSScriptRoot\start\start.backend.docker.ps1"
+
+if ($https) {
+  $ConfigPath = ($RootDir + "/config/nginx/includes/onlyoffice-ssl.conf")
+  $ContainerRunning = docker inspect --format '{{json .State.Running}}' onlyoffice-proxy
+
+  if ($ContainerRunning -eq $True) {
+    if (Test-Path -Path $ConfigPath -PathType Leaf) {
+      docker cp $ConfigPath onlyoffice-proxy:etc/nginx/includes/onlyoffice-ssl.conf
+      Write-Host "HTTPS settings applied" -ForegroundColor Green
+      docker restart onlyoffice-proxy
+      Write-Host "Contatiner restarted" -ForegroundColor Blue
+    } else {
+      Write-Error "Config file 'onlyoffice-ssl.conf' not exist"
+      exit
+    }
+  } else {
+    Write-Error "Proxy container is not running"
+    exit
+  }
+}

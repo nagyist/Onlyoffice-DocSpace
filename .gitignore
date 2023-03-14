@@ -11,6 +11,7 @@
 *.log
 /products/ASC.People/Data/
 /Data
+/Certs
 Logs/
 **/.DS_Store
 .eslintcache

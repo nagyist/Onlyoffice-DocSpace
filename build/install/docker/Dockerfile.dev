@@ -129,8 +129,8 @@ ENV DNS_NAMESERVER=127.0.0.11 \
     MAP_HASH_BUCKET_SIZE=""
 
 RUN apt-get -y update && \
-    apt-get install -yq vim && \
-    apt-get install -y dos2unix && \
+    apt-get install -yq vim \
+    dos2unix && \
     rm -rf /var/lib/apt/lists/* && \
     rm -rf /usr/share/nginx/html/* 
 
@@ -328,7 +328,7 @@ ENV SRC_PATH=${SRC_PATH}
 WORKDIR ${BUILD_PATH}/services/ASC.Migration.Runner/
 
 RUN apt-get update && \
-    apt-get install -y dos2unix
+    apt-get install -yq dos2unix
 
 COPY docker-migration-entrypoint.sh docker-migration-entrypoint.sh
 
